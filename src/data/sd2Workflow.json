@@ -1,0 +1,345 @@
+{
+  "title": "SD2.0真人短剧——剧集操作流程（女频向）",
+  "sourceNote": "已略去文档开头“前期准备”部分，保留后续操作流程与示例图片。",
+  "assetCount": 33,
+  "sections": [
+    {
+      "title": "1.人物换装",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "——次元神笔网站（www.ciyuanshenbi.com）换装",
+          "images": [],
+          "role": "subhead"
+        },
+        {
+          "type": "paragraph",
+          "text": "（1）首先用人物高清的半身特写进行换装，不要全身图，否则会变模糊\n（2）我们寻找需要的风格素材，多图发给豆包，让豆包分析这些服设，再总结提示词\n（3）加上写实摄影等关键词，最后做出高清二宫格人设图",
+          "images": [
+            "/sd2-assets/sd2-image-01.png"
+          ],
+          "role": "subhead"
+        },
+        {
+          "type": "paragraph",
+          "text": "",
+          "images": [
+            "/sd2-assets/sd2-image-02.png"
+          ],
+          "role": "subhead"
+        },
+        {
+          "type": "paragraph",
+          "text": "——运用 APIMart（apimart.ai）制作人设图（人物比例更好看，皮肤质感更真实）：",
+          "images": [],
+          "role": "subhead"
+        },
+        {
+          "type": "paragraph",
+          "text": "1.有参考图的前提下，进行人物换装\n示例图＋关键词",
+          "images": [
+            "/sd2-assets/sd2-image-03.png",
+            "/sd2-assets/sd2-image-04.jpeg",
+            "/sd2-assets/sd2-image-05.png"
+          ],
+          "role": "body"
+        },
+        {
+          "type": "paragraph",
+          "text": "最终成图",
+          "images": [],
+          "role": "body"
+        },
+        {
+          "type": "paragraph",
+          "text": "",
+          "images": [
+            "/sd2-assets/sd2-image-06.png"
+          ],
+          "role": "body"
+        },
+        {
+          "type": "paragraph",
+          "text": "2.无参考，直接想要的人设图",
+          "images": [],
+          "role": "body"
+        },
+        {
+          "type": "paragraph",
+          "text": "依旧是固定参考词，这时我们可以添加详细的风格（中式/韩式/日式等等），再添加人物的长相，外貌，性格等等。",
+          "images": [],
+          "role": "body"
+        },
+        {
+          "type": "paragraph",
+          "text": "",
+          "images": [
+            "/sd2-assets/sd2-image-07.png"
+          ],
+          "role": "body"
+        },
+        {
+          "type": "paragraph",
+          "text": "——2d转写实",
+          "images": [],
+          "role": "subhead"
+        },
+        {
+          "type": "paragraph",
+          "text": "简单来说，就是把我们设计好的2d服设，让路人演员cos，或者直接让我们的演员cos一下就可以，质感可以去gpt洗一下",
+          "images": [
+            "/sd2-assets/sd2-image-08.png"
+          ],
+          "role": "body"
+        },
+        {
+          "type": "paragraph",
+          "text": "",
+          "images": [
+            "/sd2-assets/sd2-image-09.png",
+            "/sd2-assets/sd2-image-10.png"
+          ],
+          "role": "subhead"
+        }
+      ]
+    },
+    {
+      "title": "2.写实场景",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "（1）和人设图不一样的是场景图可以选择不需要垫图，多参考其他影视的场景，我们同样去分析这张场景图的构图/光影/氛围感等等。",
+          "images": [],
+          "role": "body"
+        },
+        {
+          "type": "paragraph",
+          "text": "（2）直接抽图，自行添加打光构图氛围感描述，依旧要添加“写实摄影”这是必不可少的，不然就会偏3d。",
+          "images": [
+            "/sd2-assets/sd2-image-11.png",
+            "/sd2-assets/sd2-image-12.png",
+            "/sd2-assets/sd2-image-13.png",
+            "/sd2-assets/sd2-image-14.png",
+            "/sd2-assets/sd2-image-15.png",
+            "/sd2-assets/sd2-image-16.png",
+            "/sd2-assets/sd2-image-17.png",
+            "/sd2-assets/sd2-image-18.png",
+            "/sd2-assets/sd2-image-19.png",
+            "/sd2-assets/sd2-image-20.png"
+          ],
+          "role": "body"
+        }
+      ]
+    },
+    {
+      "title": "3.道具（系统）",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "（1）和上述思路是一样的",
+          "images": [
+            "/sd2-assets/sd2-image-21.png"
+          ],
+          "role": "body"
+        }
+      ]
+    },
+    {
+      "title": "4.剧本优化",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "（1）我们首先将整理好的所有学习资料发给豆包，让豆包帮我们整理，示例：",
+          "images": [],
+          "role": "body"
+        },
+        {
+          "type": "paragraph",
+          "text": "",
+          "images": [
+            "/sd2-assets/sd2-image-22.png"
+          ],
+          "role": "body"
+        },
+        {
+          "type": "paragraph",
+          "text": "（2）我们也可以去学习优秀短剧/影视剧的构图，截图去让豆包分析，示例：",
+          "images": [],
+          "role": "body"
+        },
+        {
+          "type": "paragraph",
+          "text": "",
+          "images": [
+            "/sd2-assets/sd2-image-23.png"
+          ],
+          "role": "body"
+        },
+        {
+          "type": "paragraph",
+          "text": "（3）我们将这些整理好的资料全部发给deepseek，让dp学习,最后整理格式和要求，示例：",
+          "images": [],
+          "role": "body"
+        },
+        {
+          "type": "paragraph",
+          "text": "",
+          "images": [
+            "/sd2-assets/sd2-image-24.png",
+            "/sd2-assets/sd2-image-25.png"
+          ],
+          "role": "body"
+        },
+        {
+          "type": "paragraph",
+          "text": "（4）到这里dp已经很好的梳理了一遍剧本，但是ai只是公式化的整理，我们具体的分镜还需要自己再去审核，遇到不满意的运镜，构图，打光等就让dp再去修改，剧本是主要核心，想让画面提升，剧本的优化是需要花费时间精力研究的。\n分享我目前使用的格式，仅供参考：",
+          "images": [],
+          "role": "body"
+        },
+        {
+          "type": "paragraph",
+          "text": "时间/天气:",
+          "images": [],
+          "role": "body"
+        },
+        {
+          "type": "paragraph",
+          "text": "地点:",
+          "images": [],
+          "role": "body"
+        },
+        {
+          "type": "paragraph",
+          "text": "景别:",
+          "images": [],
+          "role": "body"
+        },
+        {
+          "type": "paragraph",
+          "text": "机位:",
+          "images": [],
+          "role": "body"
+        },
+        {
+          "type": "paragraph",
+          "text": "运镜:",
+          "images": [],
+          "role": "body"
+        },
+        {
+          "type": "paragraph",
+          "text": "打光:",
+          "images": [],
+          "role": "body"
+        },
+        {
+          "type": "paragraph",
+          "text": "构图:",
+          "images": [],
+          "role": "body"
+        },
+        {
+          "type": "paragraph",
+          "text": "节奏:",
+          "images": [],
+          "role": "body"
+        },
+        {
+          "type": "paragraph",
+          "text": "情绪/动作:",
+          "images": [],
+          "role": "body"
+        },
+        {
+          "type": "paragraph",
+          "text": "台词: \n调色备注:",
+          "images": [],
+          "role": "body"
+        }
+      ]
+    },
+    {
+      "title": "5.实际操作——剧集制作关键词优化",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "（1）我们可以添加一点关于镜头，皮肤质感等关键词，提升真人的感觉",
+          "images": [
+            "/sd2-assets/sd2-image-26.png"
+          ],
+          "role": "body"
+        },
+        {
+          "type": "paragraph",
+          "text": "生成一段流畅的真人写实风格动画，古风，风格，打光唯美，高对比度，皮肤质感真实，电影色调，真人实拍摄、纪录片风格、轻微胶片颗粒，film grain(胶片颗粒.Noisel噪点.Raw ohoto(原片，Ski n texture(皮肤纹理，Pores(毛孔)Fine wrinkles(细纹。4K分辨率，画面中不出现字幕，不出现文字，不出现背景音乐和音效。图1是少年夜无痕的长相。景别：特写（夜无痕的手握住七首）",
+          "images": [],
+          "role": "body"
+        },
+        {
+          "type": "paragraph",
+          "text": "（2）sd跑出来的画面怎么都不能到达预想，就自己做分镜图（放了分镜图背景图就不需要放了，sd会自己参考分镜图的光影质感）",
+          "images": [
+            "/sd2-assets/sd2-image-27.png"
+          ],
+          "role": "body"
+        },
+        {
+          "type": "paragraph",
+          "text": "（3）多人站位可以制作场景图，再进行名字标记，这样sd更能明白每个人的位置",
+          "images": [],
+          "role": "body"
+        },
+        {
+          "type": "paragraph",
+          "text": "1.看剧本，剧本只是简单的交代了御花园，男人围着女人，那女人具体在哪，男人的位置顺序怎么安排，周围的环境打光又是怎么样的，都是需要自己去思考的。\n\n2.在次元寻找到谷歌模型，把脑海里面的站位描述清楚，生成站位图分镜图。\n\n示例：柳依依坐在御花园石凳上面，她的对面坐着皇帝，四个男人依次站在他们身后。男人们看向女人，女人看向对面的人，写实摄影，打光亮，唯美。\n\n\n\n3.我发现有很多同学在多人站位的时候，人物总会错乱，我们首先做一张全景的人物站位分镜图，在正剧制作的过程中，谁说话就放谁的单人人设图和音色，就可以避免sd乱说话和错脸",
+          "images": [
+            "/sd2-assets/sd2-image-28.png",
+            "/sd2-assets/sd2-image-29.png",
+            "/sd2-assets/sd2-image-30.png"
+          ],
+          "role": "body"
+        },
+        {
+          "type": "paragraph",
+          "text": "（4）制作发现成片背景不对怎么办",
+          "images": [],
+          "role": "body"
+        },
+        {
+          "type": "paragraph",
+          "text": "——在女频竖屏当中，可以选择直接虚化，依靠好看的人脸打光来丰富画面既可\n尽量不出现全景，远景。在切换场景我们可以使用同动作叠化转场，以及移焦镜头，变焦镜头，手持缓慢上摇下摇镜头等等。",
+          "images": [],
+          "role": "body"
+        }
+      ]
+    },
+    {
+      "title": "6.配音错乱",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "（1）人物多，配音也多，经常出现配音音色对不上想要的角色",
+          "images": [
+            "/sd2-assets/sd2-image-31.png"
+          ],
+          "role": "body"
+        },
+        {
+          "type": "paragraph",
+          "text": "——解决方法：",
+          "images": [],
+          "role": "subhead"
+        },
+        {
+          "type": "paragraph",
+          "text": "1.\n我们首先把最重要的人设放在前面，或者按照分镜图的位置放入人设图，谁说话就把谁的音频放在人设图的后面，在文本当中我们也要按照这个顺序进行。女配和五个男主都放了，还有分镜图参考站位，谁说话放谁的音频，不要妄想一个镜头所有人说完话，人物说话是要有气口的。\n\n\n2.\n在口型没问题，但是音色不对，我们进行后期配音，只需要放入人设图＋音色参考和台词，备注什么样的语气，什么心情，室内还是室外，根据自己的镜头时长或者人物口型对话时长进行二次配音",
+          "images": [
+            "/sd2-assets/sd2-image-32.png",
+            "/sd2-assets/sd2-image-33.png"
+          ],
+          "role": "body"
+        }
+      ]
+    }
+  ]
+}
