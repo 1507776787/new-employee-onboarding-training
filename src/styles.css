@@ -51,15 +51,24 @@ body.security-protected a {
 
 .security-watermark {
   position: fixed;
-  inset: -14vh -12vw;
+  left: -55vw;
+  top: -70vh;
+  width: 220vw;
+  height: 240vh;
   z-index: 380;
   display: grid;
-  grid-template-columns: repeat(7, minmax(220px, 1fr));
-  gap: 42px 54px;
-  align-content: center;
+  grid-template-columns: repeat(10, minmax(240px, 1fr));
+  grid-auto-rows: 54px;
+  gap: 28px 46px;
+  align-content: start;
+  justify-content: start;
+  place-items: start;
   pointer-events: none;
   opacity: 0.16;
   transform: rotate(-18deg);
+  transform-origin: center;
+  overflow: hidden;
+  contain: layout paint style;
 }
 
 .security-watermark span {
@@ -2194,9 +2203,13 @@ body.security-protected a {
   }
 
   .security-watermark {
-    inset: -10vh -42vw;
-    grid-template-columns: repeat(4, minmax(180px, 1fr));
-    gap: 36px 42px;
+    left: -120vw;
+    top: -85vh;
+    width: 300vw;
+    height: 260vh;
+    grid-template-columns: repeat(6, minmax(170px, 1fr));
+    grid-auto-rows: 48px;
+    gap: 22px 30px;
     opacity: 0.14;
   }
 
@@ -2601,6 +2614,10 @@ body.security-protected a {
   }
 
   .security-watermark {
-    grid-template-columns: repeat(3, minmax(160px, 1fr));
+    left: -140vw;
+    top: -90vh;
+    width: 330vw;
+    height: 280vh;
+    grid-template-columns: repeat(5, minmax(150px, 1fr));
   }
 }

@@ -98,7 +98,7 @@ const ACCESS_CODE_HASH =
 const ACCESS_SESSION_KEY = 'training-access-until';
 const ACCESS_SESSION_DURATION = 12 * 60 * 60 * 1000;
 
-const watermarkTiles = Array.from({ length: 84 }, (_, index) => index);
+const watermarkTiles = Array.from({ length: 360 }, (_, index) => index);
 
 const formatWatermarkTime = () => {
   const now = new Date();
