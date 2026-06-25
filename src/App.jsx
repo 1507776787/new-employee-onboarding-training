@@ -1141,7 +1141,7 @@ function TopBar({ onOpenChecklist, onToggleTheme, theme }) {
           >
             {isDark ? <Sun size={19} /> : <Moon size={19} />}
           </button>
-          <a className="ghost-button" href="/script-assets/trap-of-love-script.pdf" target="_blank" rel="noreferrer">
+          <a className="ghost-button" href="/script-assets/Trap_of_Love-1.pdf" target="_blank" rel="noreferrer">
             <FileText size={18} />
             剧本
           </a>
