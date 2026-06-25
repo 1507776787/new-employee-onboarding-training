@@ -38,6 +38,17 @@ body.security-protected {
   user-select: none;
 }
 
+body.security-protected,
+body.security-protected * {
+  -webkit-touch-callout: none;
+}
+
+body.security-protected img {
+  pointer-events: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
 body.security-protected img,
 body.security-protected a {
   -webkit-user-drag: none;
@@ -1224,10 +1235,29 @@ body.security-protected a {
   position: relative;
 }
 
+.protected-image-trigger,
+.protected-image-preview {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  user-select: none;
+}
+
+.protected-image-trigger::before,
+.protected-image-preview::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: auto;
+}
+
 .doc-image-trigger picture,
 .storyboard-reference-trigger picture {
   display: block;
   width: 100%;
+  pointer-events: none;
+  -webkit-touch-callout: none;
 }
 
 .doc-image-trigger img {
@@ -1589,10 +1619,16 @@ body.security-protected a {
 
 .storyboard-reference-trigger img,
 .image-preview-dialog img {
+  position: relative;
+  z-index: 0;
   display: block;
   width: 100%;
   border-radius: 8px;
   background: #1c232e;
+  pointer-events: none;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 .storyboard-reference-trigger img {
@@ -1607,6 +1643,7 @@ body.security-protected a {
   position: absolute;
   right: 14px;
   bottom: 14px;
+  z-index: 2;
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -1617,6 +1654,7 @@ body.security-protected a {
   background: rgba(23, 36, 58, 0.88);
   font-weight: 800;
   box-shadow: 0 10px 24px rgba(0, 0, 0, 0.24);
+  pointer-events: none;
 }
 
 .checklist-backdrop {
@@ -1711,7 +1749,7 @@ body.security-protected a {
 
 .image-preview-close {
   justify-self: end;
-  z-index: 2;
+  z-index: 3;
   width: 42px;
   height: 42px;
   display: grid;

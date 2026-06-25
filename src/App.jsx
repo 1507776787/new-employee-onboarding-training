@@ -1338,9 +1338,14 @@ function StoryboardReferencePanel({ id }) {
   );
 }
 
+const preventImageSaveMenu = (event) => {
+  event.preventDefault();
+};
+
 function PreviewableImage({ src, alt, previewAlt = alt, triggerClassName }) {
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const imageAsset = imageAssets[src];
+  const triggerClasses = ['protected-image-trigger', triggerClassName].filter(Boolean).join(' ');
   const previewDialog =
     isPreviewOpen && typeof document !== 'undefined'
       ? createPortal(
@@ -1350,16 +1355,17 @@ function PreviewableImage({ src, alt, previewAlt = alt, triggerClassName }) {
             onClick={() => setIsPreviewOpen(false)}
           >
             <div
-              className="image-preview-dialog"
+              className="image-preview-dialog protected-image-preview"
               role="dialog"
               aria-modal="true"
               aria-label={previewAlt}
+              onContextMenu={preventImageSaveMenu}
               onClick={(event) => event.stopPropagation()}
             >
               <button className="image-preview-close" type="button" onClick={() => setIsPreviewOpen(false)} aria-label="关闭大图">
                 <X size={22} />
               </button>
-              <img src={src} alt={previewAlt} decoding="async" draggable="false" />
+              <img src={src} alt={previewAlt} decoding="async" draggable="false" onContextMenu={preventImageSaveMenu} />
             </div>
           </div>,
           document.body,
@@ -1369,8 +1375,9 @@ function PreviewableImage({ src, alt, previewAlt = alt, triggerClassName }) {
   return (
     <>
       <button
-        className={triggerClassName}
+        className={triggerClasses}
         type="button"
+        onContextMenu={preventImageSaveMenu}
         onClick={() => setIsPreviewOpen(true)}
         aria-label={`放大查看${alt}`}
       >
@@ -1384,6 +1391,7 @@ function PreviewableImage({ src, alt, previewAlt = alt, triggerClassName }) {
             height={imageAsset?.height}
             loading="lazy"
             draggable="false"
+            onContextMenu={preventImageSaveMenu}
             width={imageAsset?.width}
           />
         </picture>
