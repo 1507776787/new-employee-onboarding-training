@@ -96,7 +96,7 @@ const isMicrosoftEdge = () =>
 const ACCESS_CODE_HASH =
   import.meta.env.VITE_ACCESS_CODE_HASH || 'dfea2868a5a060839c502d91d71a0e802723c39abc460d71f82e6bd27701e852';
 const ACCESS_SESSION_KEY = 'training-access-until';
-const ACCESS_SESSION_DURATION = 12 * 60 * 60 * 1000;
+const ACCESS_SESSION_DURATION = 4 * 60 * 60 * 1000;
 
 const watermarkTiles = Array.from({ length: 360 }, (_, index) => index);
 
