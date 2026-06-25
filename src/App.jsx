@@ -93,6 +93,17 @@ const cleanNavTitle = (title) => title.replace(/^\d+\./, '').replace(/\s+/g, ' '
 const isMicrosoftEdge = () =>
   typeof navigator !== 'undefined' && /\bEdg\//.test(navigator.userAgent);
 
+const watermarkTiles = Array.from({ length: 84 }, (_, index) => index);
+
+const formatWatermarkTime = () => {
+  const now = new Date();
+  const pad = (value) => String(value).padStart(2, '0');
+
+  return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(
+    now.getMinutes(),
+  )}`;
+};
+
 const workflowNavItems = (sections, idPrefix, includeSubsections = true) =>
   sections.map((section, sectionIndex) => {
     const sectionId = `${idPrefix}-section-${sectionIndex + 1}`;
@@ -881,8 +892,84 @@ function App() {
           </ContentModule>
         </section>
       </div>
+      <SecurityShield />
       <ChecklistModal isOpen={isChecklistOpen} onClose={() => setIsChecklistOpen(false)} />
     </main>
+  );
+}
+
+function SecurityShield() {
+  const [watermarkTime, setWatermarkTime] = useState(() => formatWatermarkTime());
+  const [notice, setNotice] = useState('');
+  const canUsePortal = typeof document !== 'undefined';
+
+  useEffect(() => {
+    const intervalId = window.setInterval(() => setWatermarkTime(formatWatermarkTime()), 60 * 1000);
+
+    return () => window.clearInterval(intervalId);
+  }, []);
+
+  useEffect(() => {
+    let noticeTimeout = 0;
+    const showNotice = (message) => {
+      setNotice(message);
+      window.clearTimeout(noticeTimeout);
+      noticeTimeout = window.setTimeout(() => setNotice(''), 1800);
+    };
+
+    const blockEvent = (event) => {
+      event.preventDefault();
+      showNotice('内部培训资料已启用防外传保护');
+    };
+
+    const blockShortcut = (event) => {
+      const key = event.key.toLowerCase();
+
+      if ((event.ctrlKey || event.metaKey) && ['c', 's', 'p', 'u'].includes(key)) {
+        event.preventDefault();
+        showNotice('内部培训资料禁止复制、保存、打印和查看源码');
+      }
+    };
+
+    const blockPrint = (event) => {
+      event.preventDefault();
+      showNotice('内部培训资料禁止打印外传');
+    };
+
+    document.body.classList.add('security-protected');
+    document.addEventListener('contextmenu', blockEvent);
+    document.addEventListener('copy', blockEvent);
+    document.addEventListener('cut', blockEvent);
+    document.addEventListener('dragstart', blockEvent);
+    document.addEventListener('keydown', blockShortcut);
+    window.addEventListener('beforeprint', blockPrint);
+
+    return () => {
+      window.clearTimeout(noticeTimeout);
+      document.body.classList.remove('security-protected');
+      document.removeEventListener('contextmenu', blockEvent);
+      document.removeEventListener('copy', blockEvent);
+      document.removeEventListener('cut', blockEvent);
+      document.removeEventListener('dragstart', blockEvent);
+      document.removeEventListener('keydown', blockShortcut);
+      window.removeEventListener('beforeprint', blockPrint);
+    };
+  }, []);
+
+  if (!canUsePortal) {
+    return null;
+  }
+
+  return createPortal(
+    <>
+      <div className="security-watermark" aria-hidden="true">
+        {watermarkTiles.map((tile) => (
+          <span key={tile}>内部资料 禁止外传 · 中文在线版权所有 · {watermarkTime}</span>
+        ))}
+      </div>
+      {notice ? <div className="security-toast">{notice}</div> : null}
+    </>,
+    document.body,
   );
 }
 
@@ -1165,7 +1252,7 @@ function PreviewableImage({ src, alt, previewAlt = alt, triggerClassName }) {
               <button className="image-preview-close" type="button" onClick={() => setIsPreviewOpen(false)} aria-label="关闭大图">
                 <X size={22} />
               </button>
-              <img src={src} alt={previewAlt} decoding="async" />
+              <img src={src} alt={previewAlt} decoding="async" draggable="false" />
             </div>
           </div>,
           document.body,
@@ -1189,6 +1276,7 @@ function PreviewableImage({ src, alt, previewAlt = alt, triggerClassName }) {
             fetchPriority="low"
             height={imageAsset?.height}
             loading="lazy"
+            draggable="false"
             width={imageAsset?.width}
           />
         </picture>
