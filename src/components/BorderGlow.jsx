@@ -164,7 +164,9 @@ export default function BorderGlow({
   );
 
   useEffect(() => {
-    if (!animated || !cardRef.current) return undefined;
+    const isEdge = /\bEdg\//.test(window.navigator.userAgent);
+
+    if (!animated || isEdge || !cardRef.current) return undefined;
 
     const card = cardRef.current;
     const angleStart = 110;

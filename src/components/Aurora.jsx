@@ -114,6 +114,7 @@ export default function Aurora(props) {
     colorStops = ['#57c9dd', '#79b225', '#84355c'],
     amplitude = 1.0,
     blend = 0.5,
+    fps = 45,
     maxDpr = 1.5,
   } = props;
   const propsRef = useRef(props);
@@ -125,11 +126,16 @@ export default function Aurora(props) {
     const container = containerRef.current;
     if (!container) return undefined;
 
+    const isEdge = /\bEdg\//.test(window.navigator.userAgent);
+    const effectiveMaxDpr = isEdge ? Math.min(maxDpr, 1) : maxDpr;
+    const effectiveFps = isEdge ? Math.min(fps, 24) : fps;
+    const frameInterval = 1000 / Math.max(12, effectiveFps);
+
     const renderer = new Renderer({
       alpha: true,
       premultipliedAlpha: true,
       antialias: false,
-      dpr: Math.min(window.devicePixelRatio || 1, maxDpr),
+      dpr: Math.min(window.devicePixelRatio || 1, effectiveMaxDpr),
     });
     const gl = renderer.gl;
     gl.clearColor(0, 0, 0, 0);
@@ -186,6 +192,7 @@ export default function Aurora(props) {
     let animateId = 0;
     let isPageVisible = !document.hidden;
     let lastColorStopsKey = colorStops.join('|');
+    let lastFrameTime = 0;
 
     const updateColorStops = (stops) => {
       const colorStopsKey = stops.join('|');
@@ -208,6 +215,12 @@ export default function Aurora(props) {
       }
 
       animateId = requestAnimationFrame(update);
+
+      if (time - lastFrameTime < frameInterval) {
+        return;
+      }
+
+      lastFrameTime = time;
       const { time: customTime = time * 0.01, speed = 1.0 } = propsRef.current;
       program.uniforms.uTime.value = customTime * speed * 0.1;
       program.uniforms.uAmplitude.value = propsRef.current.amplitude ?? 1.0;

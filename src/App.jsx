@@ -90,6 +90,9 @@ const voiceIssueSection = sd2Workflow.sections.find((section) => section.title.s
 
 const cleanNavTitle = (title) => title.replace(/^\d+\./, '').replace(/\s+/g, ' ').trim();
 
+const isMicrosoftEdge = () =>
+  typeof navigator !== 'undefined' && /\bEdg\//.test(navigator.userAgent);
+
 const workflowNavItems = (sections, idPrefix, includeSubsections = true) =>
   sections.map((section, sectionIndex) => {
     const sectionId = `${idPrefix}-section-${sectionIndex + 1}`;
@@ -300,7 +303,8 @@ function useTrainingMotion(rootRef) {
 
     let openingFrame = 0;
     let refreshCall;
-    const allowImageParallax = window.matchMedia('(min-width: 900px)').matches;
+    const isEdge = isMicrosoftEdge();
+    const allowImageParallax = !isEdge && window.matchMedia('(min-width: 900px)').matches;
 
     const context = gsap.context(() => {
         const select = gsap.utils.selector(root);
@@ -312,7 +316,11 @@ function useTrainingMotion(rootRef) {
         });
 
         gsap.set(select('.top-bar'), { autoAlpha: 0, yPercent: -100 });
-        gsap.set(select('.side-panel'), { autoAlpha: 0, filter: 'blur(14px)', x: -72 });
+        gsap.set(select('.side-panel'), {
+          autoAlpha: 0,
+          ...(isEdge ? {} : { filter: 'blur(14px)' }),
+          x: -72,
+        });
         gsap.set(select('.overview-band'), {
           autoAlpha: 0,
           clipPath: 'inset(18% 0% 18% 0% round 8px)',
@@ -351,7 +359,7 @@ function useTrainingMotion(rootRef) {
             select('.opening-title-text'),
             {
               autoAlpha: 0,
-              filter: 'blur(12px)',
+              ...(isEdge ? {} : { filter: 'blur(12px)' }),
               scaleX: 0.78,
               scaleY: 1.24,
               yPercent: 86,
@@ -359,7 +367,7 @@ function useTrainingMotion(rootRef) {
             {
               autoAlpha: 1,
               duration: 0.88,
-              filter: 'blur(0px)',
+              ...(isEdge ? {} : { filter: 'blur(0px)' }),
               scaleX: 1,
               scaleY: 1,
               yPercent: 0,
@@ -379,7 +387,16 @@ function useTrainingMotion(rootRef) {
             0.26,
           )
           .to(select('.top-bar'), { autoAlpha: 1, duration: 0.72, yPercent: 0 }, 0.16)
-          .to(select('.side-panel'), { autoAlpha: 1, duration: 0.88, filter: 'blur(0px)', x: 0 }, 0.34)
+          .to(
+            select('.side-panel'),
+            {
+              autoAlpha: 1,
+              duration: 0.88,
+              ...(isEdge ? {} : { filter: 'blur(0px)' }),
+              x: 0,
+            },
+            0.34,
+          )
           .to(
             select('.overview-band'),
             {
@@ -430,143 +447,145 @@ function useTrainingMotion(rootRef) {
               autoAlpha: 0,
               duration: 0.58,
               ease: 'power3.out',
-              filter: 'blur(12px)',
+              ...(isEdge ? {} : { filter: 'blur(12px)' }),
               scale: 0.96,
               y: -8,
             },
             1.48,
           );
 
-        gsap.utils.toArray(select('.section-block')).forEach((section) => {
-          const icon = section.querySelector('.section-icon');
-          const kicker = section.querySelector('.section-title .eyebrow');
-          const title = section.querySelector('.section-title h2');
-          const desc = section.querySelector('.section-title p:last-child');
-          const cards = section.querySelectorAll(
-            ':scope > .task-panel, :scope > .production-grid > *, :scope > .workflow-methods, :scope > .storyboard-shell, :scope > .storyboard-reference-panel, :scope > .quality-strip > *, :scope > .notice-panel, :scope > .border-glow-inner > .task-panel, :scope > .border-glow-inner > .production-grid > *, :scope > .border-glow-inner > .workflow-methods, :scope > .border-glow-inner > .storyboard-shell, :scope > .border-glow-inner > .storyboard-reference-panel, :scope > .border-glow-inner > .quality-strip > *, :scope > .border-glow-inner > .notice-panel',
-          );
+        if (!isEdge) {
+          gsap.utils.toArray(select('.section-block')).forEach((section) => {
+            const icon = section.querySelector('.section-icon');
+            const kicker = section.querySelector('.section-title .eyebrow');
+            const title = section.querySelector('.section-title h2');
+            const desc = section.querySelector('.section-title p:last-child');
+            const cards = section.querySelectorAll(
+              ':scope > .task-panel, :scope > .production-grid > *, :scope > .workflow-methods, :scope > .storyboard-shell, :scope > .storyboard-reference-panel, :scope > .quality-strip > *, :scope > .notice-panel, :scope > .border-glow-inner > .task-panel, :scope > .border-glow-inner > .production-grid > *, :scope > .border-glow-inner > .workflow-methods, :scope > .border-glow-inner > .storyboard-shell, :scope > .border-glow-inner > .storyboard-reference-panel, :scope > .border-glow-inner > .quality-strip > *, :scope > .border-glow-inner > .notice-panel',
+            );
 
-          const timeline = gsap.timeline({
-            scrollTrigger: {
-              once: true,
-              start: 'top 78%',
-              trigger: section,
-            },
+            const timeline = gsap.timeline({
+              scrollTrigger: {
+                once: true,
+                start: 'top 78%',
+                trigger: section,
+              },
+            });
+
+            timeline
+              .fromTo(
+                icon,
+                { autoAlpha: 0, rotate: -18, scale: 0.34, y: 82 },
+                { autoAlpha: 1, duration: 1.04, rotate: 0, scale: 1, y: 0 },
+                0,
+              )
+              .fromTo(kicker, { autoAlpha: 0, y: 36 }, { autoAlpha: 1, duration: 0.74, y: 0 }, 0.12)
+              .fromTo(
+                title,
+                {
+                  autoAlpha: 1,
+                  clipPath: 'inset(0% 100% 0% 0%)',
+                  scale: 1.26,
+                  transformOrigin: 'left center',
+                  y: 92,
+                },
+                {
+                  clipPath: 'inset(0% 0% 0% 0%)',
+                  duration: 1.12,
+                  scale: 1,
+                  y: 0,
+                },
+                0.16,
+              )
+              .fromTo(desc, { autoAlpha: 0, y: 38 }, { autoAlpha: 1, duration: 0.8, y: 0 }, 0.34)
+              .fromTo(
+                cards,
+                { autoAlpha: 0, filter: 'blur(10px)', rotateX: -7, scale: 0.94, y: 96 },
+                {
+                  autoAlpha: 1,
+                  duration: 1.02,
+                  filter: 'blur(0px)',
+                  rotateX: 0,
+                  scale: 1,
+                  stagger: 0.13,
+                  y: 0,
+                },
+                0.46,
+              );
           });
 
-          timeline
-            .fromTo(
-              icon,
-              { autoAlpha: 0, rotate: -18, scale: 0.34, y: 82 },
-              { autoAlpha: 1, duration: 1.04, rotate: 0, scale: 1, y: 0 },
-              0,
-            )
-            .fromTo(kicker, { autoAlpha: 0, y: 36 }, { autoAlpha: 1, duration: 0.74, y: 0 }, 0.12)
-            .fromTo(
-              title,
-              {
-                autoAlpha: 1,
-                clipPath: 'inset(0% 100% 0% 0%)',
-                scale: 1.26,
-                transformOrigin: 'left center',
-                y: 92,
-              },
-              {
-                clipPath: 'inset(0% 0% 0% 0%)',
-                duration: 1.12,
-                scale: 1,
-                y: 0,
-              },
-              0.16,
-            )
-            .fromTo(desc, { autoAlpha: 0, y: 38 }, { autoAlpha: 1, duration: 0.8, y: 0 }, 0.34)
-            .fromTo(
-              cards,
-              { autoAlpha: 0, filter: 'blur(10px)', rotateX: -7, scale: 0.94, y: 96 },
-              {
-                autoAlpha: 1,
-                duration: 1.02,
-                filter: 'blur(0px)',
-                rotateX: 0,
-                scale: 1,
-                stagger: 0.13,
-                y: 0,
-              },
-              0.46,
+          gsap.utils.toArray(select('.doc-section-card')).forEach((card) => {
+            const head = card.querySelector('.doc-section-head');
+            const contentBlocks = card.querySelectorAll(
+              '.doc-block, .doc-subsection, .storyboard-meta-item, .shot-card, .notice-card',
             );
-        });
 
-        gsap.utils.toArray(select('.doc-section-card')).forEach((card) => {
-          const head = card.querySelector('.doc-section-head');
-          const contentBlocks = card.querySelectorAll(
-            '.doc-block, .doc-subsection, .storyboard-meta-item, .shot-card, .notice-card',
-          );
+            gsap
+              .timeline({
+                scrollTrigger: {
+                  once: true,
+                  start: 'top 82%',
+                  trigger: card,
+                },
+              })
+              .fromTo(
+                card,
+                { autoAlpha: 0, filter: 'blur(8px)', scale: 0.96, y: 74 },
+                { autoAlpha: 1, duration: 0.9, filter: 'blur(0px)', scale: 1, y: 0 },
+                0,
+              )
+              .fromTo(
+                head,
+                { clipPath: 'inset(0% 100% 0% 0%)', y: 28 },
+                { clipPath: 'inset(0% 0% 0% 0%)', duration: 0.86, y: 0 },
+                0.1,
+              )
+              .fromTo(
+                contentBlocks,
+                { autoAlpha: 0, scale: 0.97, y: 54 },
+                { autoAlpha: 1, duration: 0.78, scale: 1, stagger: 0.08, y: 0 },
+                0.32,
+              );
+          });
 
-          gsap
-            .timeline({
-              scrollTrigger: {
-                once: true,
-                start: 'top 82%',
-                trigger: card,
-              },
-            })
-            .fromTo(
-              card,
-              { autoAlpha: 0, filter: 'blur(8px)', scale: 0.96, y: 74 },
-              { autoAlpha: 1, duration: 0.9, filter: 'blur(0px)', scale: 1, y: 0 },
-              0,
-            )
-            .fromTo(
-              head,
-              { clipPath: 'inset(0% 100% 0% 0%)', y: 28 },
-              { clipPath: 'inset(0% 0% 0% 0%)', duration: 0.86, y: 0 },
-              0.1,
-            )
-            .fromTo(
-              contentBlocks,
-              { autoAlpha: 0, scale: 0.97, y: 54 },
-              { autoAlpha: 1, duration: 0.78, scale: 1, stagger: 0.08, y: 0 },
-              0.32,
-            );
-        });
+          gsap.utils.toArray(select('.doc-image-frame, .storyboard-reference-figure')).forEach((frame) => {
+            const image = frame.querySelector('img');
 
-        gsap.utils.toArray(select('.doc-image-frame, .storyboard-reference-figure')).forEach((frame) => {
-          const image = frame.querySelector('img');
+            gsap
+              .timeline({
+                scrollTrigger: {
+                  once: true,
+                  start: 'top 84%',
+                  trigger: frame,
+                },
+              })
+              .fromTo(
+                frame,
+                { clipPath: 'inset(0% 0% 100% 0% round 8px)', y: 46 },
+                { clipPath: 'inset(0% 0% 0% 0% round 8px)', duration: 1.08, ease: 'power3.out', y: 0 },
+                0,
+              )
+              .fromTo(
+                image,
+                { scale: 1.14, yPercent: 8 },
+                { duration: 1.2, ease: 'power3.out', scale: 1.03, yPercent: 0 },
+                0.05,
+              );
 
-          gsap
-            .timeline({
-              scrollTrigger: {
-                once: true,
-                start: 'top 84%',
-                trigger: frame,
-              },
-            })
-            .fromTo(
-              frame,
-              { clipPath: 'inset(0% 0% 100% 0% round 8px)', y: 46 },
-              { clipPath: 'inset(0% 0% 0% 0% round 8px)', duration: 1.08, ease: 'power3.out', y: 0 },
-              0,
-            )
-          .fromTo(
-            image,
-            { scale: 1.14, yPercent: 8 },
-            { duration: 1.2, ease: 'power3.out', scale: 1.03, yPercent: 0 },
-            0.05,
-          );
-
-          if (image && allowImageParallax) {
-            gsap.to(image, {
-              ease: 'none',
-              scrollTrigger: {
-                end: 'bottom top',
-                scrub: 0.85,
-                start: 'top bottom',
-                trigger: frame,
-              },
-              yPercent: -5,
-            });
-          }
-        });
+            if (image && allowImageParallax) {
+              gsap.to(image, {
+                ease: 'none',
+                scrollTrigger: {
+                  end: 'bottom top',
+                  scrub: 0.85,
+                  start: 'top bottom',
+                  trigger: frame,
+                },
+                yPercent: -5,
+              });
+            }
+          });
+        }
 
         openingFrame = window.requestAnimationFrame(() => {
           openingTimeline.play(0);
@@ -589,6 +608,7 @@ function useTrainingMotion(rootRef) {
 function App() {
   const appShellRef = useRef(null);
   const [isChecklistOpen, setIsChecklistOpen] = useState(false);
+  const [isEdgeBrowser] = useState(() => isMicrosoftEdge());
   const [theme, setTheme] = useState(() => {
     if (typeof window === 'undefined') {
       return 'light';
@@ -618,6 +638,12 @@ function App() {
     }
   }, [theme]);
 
+  useEffect(() => {
+    if (isEdgeBrowser) {
+      document.documentElement.dataset.browser = 'edge';
+    }
+  }, [isEdgeBrowser]);
+
   const toggleTheme = () => {
     setTheme((currentTheme) => (currentTheme === 'dark' ? 'light' : 'dark'));
   };
@@ -627,12 +653,14 @@ function App() {
   return (
     <main className="app-shell" data-theme={theme} ref={appShellRef}>
       <div className="page-aurora-background" aria-hidden="true">
-        <Aurora
-          colorStops={['#57c9dd', '#79b225', '#84355c']}
-          blend={0.53}
-          amplitude={1.0}
-          speed={0.9}
-        />
+        {isEdgeBrowser ? null : (
+          <Aurora
+            colorStops={['#57c9dd', '#79b225', '#84355c']}
+            blend={0.53}
+            amplitude={1.0}
+            speed={0.9}
+          />
+        )}
       </div>
       <TopBar onOpenChecklist={() => setIsChecklistOpen(true)} onToggleTheme={toggleTheme} theme={theme} />
       <div className="workspace">

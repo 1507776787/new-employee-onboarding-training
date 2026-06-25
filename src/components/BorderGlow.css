@@ -134,3 +134,24 @@
   flex-direction: column;
   overflow: auto;
 }
+
+:root[data-browser="edge"] .border-glow-card {
+  transform: none;
+  border-color: rgba(23, 124, 114, 0.22);
+  box-shadow:
+    0 12px 28px rgba(25, 45, 70, 0.08),
+    inset 0 0 0 1px rgba(87, 201, 221, 0.08);
+}
+
+:root[data-browser="edge"][data-theme="dark"] .border-glow-card {
+  border-color: rgba(87, 201, 221, 0.2);
+  box-shadow:
+    0 14px 34px rgba(0, 0, 0, 0.2),
+    inset 0 0 0 1px rgba(121, 178, 37, 0.08);
+}
+
+:root[data-browser="edge"] .border-glow-card::before,
+:root[data-browser="edge"] .border-glow-card::after,
+:root[data-browser="edge"] .border-glow-card > .edge-light {
+  display: none;
+}
