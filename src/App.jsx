@@ -29,10 +29,12 @@ import {
 } from 'lucide-react';
 import Aurora from './components/Aurora';
 import BorderGlow from './components/BorderGlow';
+import imageAssets from './data/imageAssets.json';
 import scriptStoryboardWorkflow from './data/scriptStoryboardWorkflow.json';
 import sd2Workflow from './data/sd2Workflow.json';
 
 gsap.registerPlugin(ScrollTrigger);
+ScrollTrigger.config({ ignoreMobileResize: true });
 
 const inlineLinks = new Map([
   ['www.ciyuanshenbi.com', 'https://www.ciyuanshenbi.com/'],
@@ -298,6 +300,7 @@ function useTrainingMotion(rootRef) {
 
     let openingFrame = 0;
     let refreshCall;
+    const allowImageParallax = window.matchMedia('(min-width: 900px)').matches;
 
     const context = gsap.context(() => {
         const select = gsap.utils.selector(root);
@@ -551,7 +554,7 @@ function useTrainingMotion(rootRef) {
             0.05,
           );
 
-          if (image) {
+          if (image && allowImageParallax) {
             gsap.to(image, {
               ease: 'none',
               scrollTrigger: {
@@ -1115,6 +1118,7 @@ function StoryboardReferencePanel({ id }) {
 
 function PreviewableImage({ src, alt, previewAlt = alt, triggerClassName }) {
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+  const imageAsset = imageAssets[src];
   const previewDialog =
     isPreviewOpen && typeof document !== 'undefined'
       ? createPortal(
@@ -1133,7 +1137,7 @@ function PreviewableImage({ src, alt, previewAlt = alt, triggerClassName }) {
               <button className="image-preview-close" type="button" onClick={() => setIsPreviewOpen(false)} aria-label="关闭大图">
                 <X size={22} />
               </button>
-              <img src={src} alt={previewAlt} />
+              <img src={src} alt={previewAlt} decoding="async" />
             </div>
           </div>,
           document.body,
@@ -1148,7 +1152,18 @@ function PreviewableImage({ src, alt, previewAlt = alt, triggerClassName }) {
         onClick={() => setIsPreviewOpen(true)}
         aria-label={`放大查看${alt}`}
       >
-        <img src={src} alt={alt} />
+        <picture>
+          {imageAsset?.src ? <source srcSet={imageAsset.src} type="image/webp" /> : null}
+          <img
+            src={src}
+            alt={alt}
+            decoding="async"
+            fetchPriority="low"
+            height={imageAsset?.height}
+            loading="lazy"
+            width={imageAsset?.width}
+          />
+        </picture>
         <span className="image-zoom-label">
           <Maximize2 size={18} />
           点击放大

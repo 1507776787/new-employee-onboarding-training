@@ -1025,6 +1025,12 @@ button {
   position: relative;
 }
 
+.doc-image-trigger picture,
+.storyboard-reference-trigger picture {
+  display: block;
+  width: 100%;
+}
+
 .doc-image-trigger img {
   display: block;
   width: 100%;

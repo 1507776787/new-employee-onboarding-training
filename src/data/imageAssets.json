@@ -1,0 +1,308 @@
+{
+  "/sd2-assets/storyboard-reference.png": {
+    "src": "/optimized-assets/sd2-assets/storyboard-reference.webp",
+    "width": 2903,
+    "height": 1935,
+    "optimizedWidth": 1800,
+    "optimizedHeight": 1200,
+    "originalBytes": 3048958,
+    "optimizedBytes": 114970
+  },
+  "/sd2-assets/sd2-image-01.png": {
+    "src": "/optimized-assets/sd2-assets/sd2-image-01.webp",
+    "width": 1163,
+    "height": 551,
+    "optimizedWidth": 1163,
+    "optimizedHeight": 551,
+    "originalBytes": 378085,
+    "optimizedBytes": 57256
+  },
+  "/sd2-assets/sd2-image-02.png": {
+    "src": "/optimized-assets/sd2-assets/sd2-image-02.webp",
+    "width": 809,
+    "height": 539,
+    "optimizedWidth": 809,
+    "optimizedHeight": 539,
+    "originalBytes": 205629,
+    "optimizedBytes": 32344
+  },
+  "/sd2-assets/sd2-image-03.png": {
+    "src": "/optimized-assets/sd2-assets/sd2-image-03.webp",
+    "width": 730,
+    "height": 1298,
+    "optimizedWidth": 730,
+    "optimizedHeight": 1298,
+    "originalBytes": 1657093,
+    "optimizedBytes": 137742
+  },
+  "/sd2-assets/sd2-image-04.jpeg": {
+    "src": "/optimized-assets/sd2-assets/sd2-image-04.webp",
+    "width": 1068,
+    "height": 1152,
+    "optimizedWidth": 1068,
+    "optimizedHeight": 1152,
+    "originalBytes": 162492,
+    "optimizedBytes": 88942
+  },
+  "/sd2-assets/sd2-image-05.png": {
+    "src": "/optimized-assets/sd2-assets/sd2-image-05.webp",
+    "width": 716,
+    "height": 723,
+    "optimizedWidth": 716,
+    "optimizedHeight": 723,
+    "originalBytes": 195606,
+    "optimizedBytes": 90830
+  },
+  "/sd2-assets/sd2-image-06.png": {
+    "src": "/optimized-assets/sd2-assets/sd2-image-06.webp",
+    "width": 1497,
+    "height": 1996,
+    "optimizedWidth": 1350,
+    "optimizedHeight": 1800,
+    "originalBytes": 3934298,
+    "optimizedBytes": 267708
+  },
+  "/sd2-assets/sd2-image-07.png": {
+    "src": "/optimized-assets/sd2-assets/sd2-image-07.webp",
+    "width": 1908,
+    "height": 1143,
+    "optimizedWidth": 1800,
+    "optimizedHeight": 1078,
+    "originalBytes": 1796744,
+    "optimizedBytes": 199974
+  },
+  "/sd2-assets/sd2-image-08.png": {
+    "src": "/optimized-assets/sd2-assets/sd2-image-08.webp",
+    "width": 1320,
+    "height": 915,
+    "optimizedWidth": 1320,
+    "optimizedHeight": 915,
+    "originalBytes": 613648,
+    "optimizedBytes": 58260
+  },
+  "/sd2-assets/sd2-image-09.png": {
+    "src": "/optimized-assets/sd2-assets/sd2-image-09.webp",
+    "width": 928,
+    "height": 1189,
+    "optimizedWidth": 928,
+    "optimizedHeight": 1189,
+    "originalBytes": 525256,
+    "optimizedBytes": 57292
+  },
+  "/sd2-assets/sd2-image-10.png": {
+    "src": "/optimized-assets/sd2-assets/sd2-image-10.webp",
+    "width": 1223,
+    "height": 648,
+    "optimizedWidth": 1223,
+    "optimizedHeight": 648,
+    "originalBytes": 357102,
+    "optimizedBytes": 36122
+  },
+  "/sd2-assets/sd2-image-11.png": {
+    "src": "/optimized-assets/sd2-assets/sd2-image-11.webp",
+    "width": 947,
+    "height": 526,
+    "optimizedWidth": 947,
+    "optimizedHeight": 526,
+    "originalBytes": 571292,
+    "optimizedBytes": 89012
+  },
+  "/sd2-assets/sd2-image-12.png": {
+    "src": "/optimized-assets/sd2-assets/sd2-image-12.webp",
+    "width": 1058,
+    "height": 523,
+    "optimizedWidth": 1058,
+    "optimizedHeight": 523,
+    "originalBytes": 506816,
+    "optimizedBytes": 86762
+  },
+  "/sd2-assets/sd2-image-13.png": {
+    "src": "/optimized-assets/sd2-assets/sd2-image-13.webp",
+    "width": 689,
+    "height": 463,
+    "optimizedWidth": 689,
+    "optimizedHeight": 463,
+    "originalBytes": 432243,
+    "optimizedBytes": 70598
+  },
+  "/sd2-assets/sd2-image-14.png": {
+    "src": "/optimized-assets/sd2-assets/sd2-image-14.webp",
+    "width": 688,
+    "height": 475,
+    "optimizedWidth": 688,
+    "optimizedHeight": 475,
+    "originalBytes": 354729,
+    "optimizedBytes": 49914
+  },
+  "/sd2-assets/sd2-image-15.png": {
+    "src": "/optimized-assets/sd2-assets/sd2-image-15.webp",
+    "width": 749,
+    "height": 467,
+    "optimizedWidth": 749,
+    "optimizedHeight": 467,
+    "originalBytes": 454556,
+    "optimizedBytes": 67710
+  },
+  "/sd2-assets/sd2-image-16.png": {
+    "src": "/optimized-assets/sd2-assets/sd2-image-16.webp",
+    "width": 704,
+    "height": 480,
+    "optimizedWidth": 704,
+    "optimizedHeight": 480,
+    "originalBytes": 439418,
+    "optimizedBytes": 63242
+  },
+  "/sd2-assets/sd2-image-17.png": {
+    "src": "/optimized-assets/sd2-assets/sd2-image-17.webp",
+    "width": 689,
+    "height": 462,
+    "optimizedWidth": 689,
+    "optimizedHeight": 462,
+    "originalBytes": 400071,
+    "optimizedBytes": 55098
+  },
+  "/sd2-assets/sd2-image-18.png": {
+    "src": "/optimized-assets/sd2-assets/sd2-image-18.webp",
+    "width": 688,
+    "height": 503,
+    "optimizedWidth": 688,
+    "optimizedHeight": 503,
+    "originalBytes": 531020,
+    "optimizedBytes": 89226
+  },
+  "/sd2-assets/sd2-image-19.png": {
+    "src": "/optimized-assets/sd2-assets/sd2-image-19.webp",
+    "width": 621,
+    "height": 490,
+    "optimizedWidth": 621,
+    "optimizedHeight": 490,
+    "originalBytes": 154119,
+    "optimizedBytes": 26488
+  },
+  "/sd2-assets/sd2-image-20.png": {
+    "src": "/optimized-assets/sd2-assets/sd2-image-20.webp",
+    "width": 692,
+    "height": 440,
+    "optimizedWidth": 692,
+    "optimizedHeight": 440,
+    "originalBytes": 163426,
+    "optimizedBytes": 27088
+  },
+  "/sd2-assets/sd2-image-21.png": {
+    "src": "/optimized-assets/sd2-assets/sd2-image-21.webp",
+    "width": 795,
+    "height": 543,
+    "optimizedWidth": 795,
+    "optimizedHeight": 543,
+    "originalBytes": 166890,
+    "optimizedBytes": 25782
+  },
+  "/sd2-assets/sd2-image-26.png": {
+    "src": "/optimized-assets/sd2-assets/sd2-image-26.webp",
+    "width": 1541,
+    "height": 70,
+    "optimizedWidth": 1541,
+    "optimizedHeight": 70,
+    "originalBytes": 59716,
+    "optimizedBytes": 33048
+  },
+  "/sd2-assets/sd2-image-27.png": {
+    "src": "/optimized-assets/sd2-assets/sd2-image-27.webp",
+    "width": 1522,
+    "height": 650,
+    "optimizedWidth": 1522,
+    "optimizedHeight": 650,
+    "originalBytes": 345370,
+    "optimizedBytes": 61498
+  },
+  "/sd2-assets/sd2-image-28.png": {
+    "src": "/optimized-assets/sd2-assets/sd2-image-28.webp",
+    "width": 714,
+    "height": 208,
+    "optimizedWidth": 714,
+    "optimizedHeight": 208,
+    "originalBytes": 5923,
+    "optimizedBytes": 13836
+  },
+  "/sd2-assets/sd2-image-29.png": {
+    "src": "/optimized-assets/sd2-assets/sd2-image-29.webp",
+    "width": 1386,
+    "height": 773,
+    "optimizedWidth": 1386,
+    "optimizedHeight": 773,
+    "originalBytes": 2343816,
+    "optimizedBytes": 306256
+  },
+  "/sd2-assets/sd2-image-30.png": {
+    "src": "/optimized-assets/sd2-assets/sd2-image-30.webp",
+    "width": 715,
+    "height": 843,
+    "optimizedWidth": 715,
+    "optimizedHeight": 843,
+    "originalBytes": 163854,
+    "optimizedBytes": 80962
+  },
+  "/sd2-assets/sd2-image-31.png": {
+    "src": "/optimized-assets/sd2-assets/sd2-image-31.webp",
+    "width": 193,
+    "height": 212,
+    "optimizedWidth": 193,
+    "optimizedHeight": 212,
+    "originalBytes": 5497,
+    "optimizedBytes": 4354
+  },
+  "/sd2-assets/sd2-image-32.png": {
+    "src": "/optimized-assets/sd2-assets/sd2-image-32.webp",
+    "width": 740,
+    "height": 997,
+    "optimizedWidth": 740,
+    "optimizedHeight": 997,
+    "originalBytes": 253642,
+    "optimizedBytes": 82776
+  },
+  "/sd2-assets/sd2-image-33.png": {
+    "src": "/optimized-assets/sd2-assets/sd2-image-33.webp",
+    "width": 675,
+    "height": 1014,
+    "optimizedWidth": 675,
+    "optimizedHeight": 1014,
+    "originalBytes": 84491,
+    "optimizedBytes": 37974
+  },
+  "/storyboard-assets/script-storyboard-image-01.png": {
+    "src": "/optimized-assets/storyboard-assets/script-storyboard-image-01.webp",
+    "width": 1055,
+    "height": 1491,
+    "optimizedWidth": 1055,
+    "optimizedHeight": 1491,
+    "originalBytes": 1619109,
+    "optimizedBytes": 136276
+  },
+  "/storyboard-assets/script-storyboard-image-02.png": {
+    "src": "/optimized-assets/storyboard-assets/script-storyboard-image-02.webp",
+    "width": 891,
+    "height": 1764,
+    "optimizedWidth": 891,
+    "optimizedHeight": 1764,
+    "originalBytes": 222240,
+    "optimizedBytes": 124780
+  },
+  "/storyboard-assets/script-storyboard-image-03.png": {
+    "src": "/optimized-assets/storyboard-assets/script-storyboard-image-03.webp",
+    "width": 1956,
+    "height": 1472,
+    "optimizedWidth": 1800,
+    "optimizedHeight": 1355,
+    "originalBytes": 156317,
+    "optimizedBytes": 97706
+  },
+  "/storyboard-assets/script-storyboard-image-04.png": {
+    "src": "/optimized-assets/storyboard-assets/script-storyboard-image-04.webp",
+    "width": 2113,
+    "height": 1422,
+    "optimizedWidth": 1800,
+    "optimizedHeight": 1211,
+    "originalBytes": 210736,
+    "optimizedBytes": 124280
+  }
+}

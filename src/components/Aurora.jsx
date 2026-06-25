@@ -114,6 +114,7 @@ export default function Aurora(props) {
     colorStops = ['#57c9dd', '#79b225', '#84355c'],
     amplitude = 1.0,
     blend = 0.5,
+    maxDpr = 1.5,
   } = props;
   const propsRef = useRef(props);
   const containerRef = useRef(null);
@@ -127,7 +128,8 @@ export default function Aurora(props) {
     const renderer = new Renderer({
       alpha: true,
       premultipliedAlpha: true,
-      antialias: true,
+      antialias: false,
+      dpr: Math.min(window.devicePixelRatio || 1, maxDpr),
     });
     const gl = renderer.gl;
     gl.clearColor(0, 0, 0, 0);
@@ -136,8 +138,10 @@ export default function Aurora(props) {
     gl.canvas.style.backgroundColor = 'transparent';
 
     let program;
+    let resizeFrame = 0;
 
     function resize() {
+      resizeFrame = 0;
       const width = Math.max(1, container.offsetWidth);
       const height = Math.max(1, container.offsetHeight);
       renderer.setSize(width, height);
@@ -146,7 +150,13 @@ export default function Aurora(props) {
       }
     }
 
-    window.addEventListener('resize', resize);
+    function queueResize() {
+      if (!resizeFrame) {
+        resizeFrame = requestAnimationFrame(resize);
+      }
+    }
+
+    window.addEventListener('resize', queueResize);
 
     const geometry = new Triangle(gl);
     if (geometry.attributes.uv) {
@@ -174,27 +184,63 @@ export default function Aurora(props) {
     container.appendChild(gl.canvas);
 
     let animateId = 0;
+    let isPageVisible = !document.hidden;
+    let lastColorStopsKey = colorStops.join('|');
+
+    const updateColorStops = (stops) => {
+      const colorStopsKey = stops.join('|');
+
+      if (colorStopsKey === lastColorStopsKey) {
+        return;
+      }
+
+      lastColorStopsKey = colorStopsKey;
+      program.uniforms.uColorStops.value = stops.map((hex) => {
+        const color = new Color(hex);
+        return [color.r, color.g, color.b];
+      });
+    };
 
     const update = (time) => {
+      if (!isPageVisible) {
+        animateId = 0;
+        return;
+      }
+
       animateId = requestAnimationFrame(update);
       const { time: customTime = time * 0.01, speed = 1.0 } = propsRef.current;
       program.uniforms.uTime.value = customTime * speed * 0.1;
       program.uniforms.uAmplitude.value = propsRef.current.amplitude ?? 1.0;
       program.uniforms.uBlend.value = propsRef.current.blend ?? blend;
       const stops = propsRef.current.colorStops ?? colorStops;
-      program.uniforms.uColorStops.value = stops.map((hex) => {
-        const color = new Color(hex);
-        return [color.r, color.g, color.b];
-      });
+      updateColorStops(stops);
       renderer.render({ scene: mesh });
     };
+
+    const handleVisibilityChange = () => {
+      isPageVisible = !document.hidden;
+
+      if (isPageVisible && !animateId) {
+        animateId = requestAnimationFrame(update);
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
 
     resize();
     animateId = requestAnimationFrame(update);
 
     return () => {
-      cancelAnimationFrame(animateId);
-      window.removeEventListener('resize', resize);
+      if (animateId) {
+        cancelAnimationFrame(animateId);
+      }
+
+      if (resizeFrame) {
+        cancelAnimationFrame(resizeFrame);
+      }
+
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('resize', queueResize);
       if (gl.canvas.parentNode === container) {
         container.removeChild(gl.canvas);
       }

@@ -56,20 +56,38 @@ function easeInCubic(x) {
 
 function animateValue({ start = 0, end = 100, duration = 1000, delay = 0, ease = easeOutCubic, onUpdate, onEnd }) {
   const startTime = performance.now() + delay;
+  let frameId = 0;
+  let timeoutId = 0;
+  let isCanceled = false;
 
   function tick() {
+    if (isCanceled) {
+      return;
+    }
+
     const elapsed = performance.now() - startTime;
     const progress = Math.min(elapsed / duration, 1);
     onUpdate(start + (end - start) * ease(progress));
 
     if (progress < 1) {
-      requestAnimationFrame(tick);
+      frameId = requestAnimationFrame(tick);
     } else if (onEnd) {
       onEnd();
     }
   }
 
-  setTimeout(() => requestAnimationFrame(tick), delay);
+  timeoutId = setTimeout(() => {
+    frameId = requestAnimationFrame(tick);
+  }, delay);
+
+  return () => {
+    isCanceled = true;
+    clearTimeout(timeoutId);
+
+    if (frameId) {
+      cancelAnimationFrame(frameId);
+    }
+  };
 }
 
 export default function BorderGlow({
@@ -154,36 +172,41 @@ export default function BorderGlow({
     card.classList.add('sweep-active');
     card.style.setProperty('--cursor-angle', `${angleStart}deg`);
 
-    animateValue({ duration: 500, onUpdate: (value) => card.style.setProperty('--edge-proximity', value) });
-    animateValue({
-      ease: easeInCubic,
-      duration: 1500,
-      end: 50,
-      onUpdate: (value) => {
-        card.style.setProperty('--cursor-angle', `${(angleEnd - angleStart) * (value / 100) + angleStart}deg`);
-      },
-    });
-    animateValue({
-      ease: easeOutCubic,
-      delay: 1500,
-      duration: 2250,
-      start: 50,
-      end: 100,
-      onUpdate: (value) => {
-        card.style.setProperty('--cursor-angle', `${(angleEnd - angleStart) * (value / 100) + angleStart}deg`);
-      },
-    });
-    animateValue({
-      ease: easeInCubic,
-      delay: 2500,
-      duration: 1500,
-      start: 100,
-      end: 0,
-      onUpdate: (value) => card.style.setProperty('--edge-proximity', value),
-      onEnd: () => card.classList.remove('sweep-active'),
-    });
+    const cancelAnimations = [
+      animateValue({ duration: 500, onUpdate: (value) => card.style.setProperty('--edge-proximity', value) }),
+      animateValue({
+        ease: easeInCubic,
+        duration: 1500,
+        end: 50,
+        onUpdate: (value) => {
+          card.style.setProperty('--cursor-angle', `${(angleEnd - angleStart) * (value / 100) + angleStart}deg`);
+        },
+      }),
+      animateValue({
+        ease: easeOutCubic,
+        delay: 1500,
+        duration: 2250,
+        start: 50,
+        end: 100,
+        onUpdate: (value) => {
+          card.style.setProperty('--cursor-angle', `${(angleEnd - angleStart) * (value / 100) + angleStart}deg`);
+        },
+      }),
+      animateValue({
+        ease: easeInCubic,
+        delay: 2500,
+        duration: 1500,
+        start: 100,
+        end: 0,
+        onUpdate: (value) => card.style.setProperty('--edge-proximity', value),
+        onEnd: () => card.classList.remove('sweep-active'),
+      }),
+    ];
 
-    return undefined;
+    return () => {
+      cancelAnimations.forEach((cancelAnimation) => cancelAnimation());
+      card.classList.remove('sweep-active');
+    };
   }, [animated]);
 
   return (
