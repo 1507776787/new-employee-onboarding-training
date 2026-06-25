@@ -1,5 +1,5 @@
 {
-  "name": "new-employee-onboarding-training",
+  "name": "ai-short-drama-production-onboarding-training",
   "private": true,
   "version": "0.1.0",
   "type": "module",
@@ -10,10 +10,11 @@
   },
   "dependencies": {
     "@vitejs/plugin-react": "^5.0.0",
-    "vite": "^7.0.0",
+    "gsap": "^3.15.0",
+    "lucide-react": "^0.468.0",
+    "ogl": "^1.0.11",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "lucide-react": "^0.468.0"
-  },
-  "devDependencies": {}
+    "vite": "^7.0.0"
+  }
 }

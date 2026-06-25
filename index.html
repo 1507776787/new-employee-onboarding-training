@@ -3,7 +3,33 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>新员工入职培训制作流程</title>
+    <title>AI 短剧制作入职培训</title>
+    <script>
+      (function () {
+        try {
+          var savedTheme = window.localStorage.getItem('training-theme');
+          var theme = savedTheme === 'dark' ? 'dark' : 'light';
+          document.documentElement.dataset.theme = theme;
+          document.documentElement.style.colorScheme = theme;
+        } catch (error) {
+          document.documentElement.dataset.theme = 'light';
+          document.documentElement.style.colorScheme = 'light';
+        }
+      })();
+    </script>
+    <style>
+      html[data-theme="dark"],
+      html[data-theme="dark"] body {
+        background: #0f1722;
+        color: #e6edf7;
+      }
+
+      html[data-theme="light"],
+      html[data-theme="light"] body {
+        background: #f5f7fb;
+        color: #1b2533;
+      }
+    </style>
   </head>
   <body>
     <div id="root"></div>

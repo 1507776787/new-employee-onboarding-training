@@ -1,8 +1,12 @@
-import { useState } from 'react';
+import { Fragment, useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import {
   AlertTriangle,
   BookOpenText,
   Camera,
+  ChevronDown,
   CircleDotDashed,
   Clapperboard,
   ClipboardCheck,
@@ -12,16 +16,29 @@ import {
   Layers3,
   Maximize2,
   MessageSquareText,
+  Moon,
   PencilRuler,
   PlaySquare,
   Route,
+  Sun,
   UserRoundCog,
   UsersRound,
   WandSparkles,
   X,
   Zap,
 } from 'lucide-react';
+import Aurora from './components/Aurora';
+import BorderGlow from './components/BorderGlow';
+import scriptStoryboardWorkflow from './data/scriptStoryboardWorkflow.json';
 import sd2Workflow from './data/sd2Workflow.json';
+
+gsap.registerPlugin(ScrollTrigger);
+
+const inlineLinks = new Map([
+  ['www.ciyuanshenbi.com', 'https://www.ciyuanshenbi.com/'],
+  ['apimart.ai', 'https://apimart.ai/'],
+]);
+const inlineLinkPattern = /(https?:\/\/[^\s)）]+|www\.ciyuanshenbi\.com|apimart\.ai)/g;
 
 const phases = [
   {
@@ -68,6 +85,69 @@ const keywordOptimizationSection = sd2Workflow.sections.find((section) =>
   section.title.startsWith('5.实际操作'),
 );
 const voiceIssueSection = sd2Workflow.sections.find((section) => section.title.startsWith('6.配音错乱'));
+
+const cleanNavTitle = (title) => title.replace(/^\d+\./, '').replace(/\s+/g, ' ').trim();
+
+const workflowNavItems = (sections, idPrefix, includeSubsections = true) =>
+  sections.map((section, sectionIndex) => {
+    const sectionId = `${idPrefix}-section-${sectionIndex + 1}`;
+    const children = includeSubsections
+      ? section.blocks
+          .map((block, blockIndex) => {
+            if (block.type !== 'subsection' || block.hideTitle) {
+              return null;
+            }
+
+            return {
+              id: `${sectionId}-block-${blockIndex + 1}`,
+              title: cleanNavTitle([block.kicker, block.title].filter(Boolean).join(' ')),
+            };
+          })
+          .filter(Boolean)
+      : [];
+
+    return {
+      id: sectionId,
+      title: cleanNavTitle(section.title),
+      children,
+    };
+  });
+
+const phaseNavItems = [
+  {
+    ...phases[0],
+    children: [
+      { id: 'phase-01-checklist', title: '动画制作前核对记录' },
+      { id: 'phase-01-alert', title: '审核提醒' },
+    ],
+  },
+  {
+    ...phases[1],
+    children: [
+      ...workflowNavItems(assetMethodSections, 'phase-02-methods', false),
+    ],
+  },
+  {
+    ...phases[2],
+    children: workflowNavItems(scriptStoryboardWorkflow.sections, 'phase-03-workflow'),
+  },
+  {
+    ...phases[3],
+    children: [
+      ...workflowNavItems(keywordOptimizationSection ? [keywordOptimizationSection] : [], 'phase-04-keywords'),
+      { id: 'phase-04-storyboard-format', title: '分镜表样式' },
+      { id: 'phase-04-reference', title: '图片教学参考' },
+    ],
+  },
+  {
+    ...phases[4],
+    children: [
+      { id: 'phase-05-quality', title: '成片质量检查' },
+      { id: 'phase-05-notices', title: 'Seedance 制作注意事项' },
+      ...workflowNavItems(voiceIssueSection ? [voiceIssueSection] : [], 'phase-05-voice'),
+    ],
+  },
+];
 
 const storyboardExample = {
   intro:
@@ -201,19 +281,378 @@ const seedanceNotices = [
   },
 ];
 
+function useTrainingMotion(rootRef) {
+  useEffect(() => {
+    const root = rootRef.current;
+
+    if (!root || typeof window === 'undefined') {
+      return undefined;
+    }
+
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (reducedMotion) {
+      root.querySelector('.opening-sequence')?.setAttribute('data-motion-hidden', 'true');
+      return undefined;
+    }
+
+    let openingFrame = 0;
+    let refreshCall;
+
+    const context = gsap.context(() => {
+        const select = gsap.utils.selector(root);
+        const openingSequence = select('.opening-sequence');
+
+        gsap.defaults({
+          ease: 'power4.out',
+          overwrite: 'auto',
+        });
+
+        gsap.set(select('.top-bar'), { autoAlpha: 0, yPercent: -100 });
+        gsap.set(select('.side-panel'), { autoAlpha: 0, filter: 'blur(14px)', x: -72 });
+        gsap.set(select('.overview-band'), {
+          autoAlpha: 0,
+          clipPath: 'inset(18% 0% 18% 0% round 8px)',
+          scale: 0.94,
+          y: 110,
+        });
+        gsap.set(select('.overview-copy .eyebrow'), { autoAlpha: 0, y: 32 });
+        gsap.set(select('.overview-copy h2'), {
+          autoAlpha: 1,
+          clipPath: 'inset(0% 100% 0% 0%)',
+          scaleX: 0.82,
+          scaleY: 1.2,
+          transformOrigin: 'left center',
+          y: 96,
+        });
+        gsap.set(select('.overview-points span'), { autoAlpha: 0, scale: 0.94, y: 56 });
+        gsap.set(select('.phase-nav-item'), { autoAlpha: 0, x: -34 });
+
+        const openingTimeline = gsap.timeline({
+          defaults: { ease: 'expo.out' },
+          onComplete: () => {
+            gsap.set(openingSequence, { autoAlpha: 0 });
+            ScrollTrigger.refresh();
+          },
+          paused: true,
+        });
+
+        openingTimeline
+          .fromTo(
+            select('.opening-line'),
+            { scaleX: 0 },
+            { duration: 0.68, scaleX: 1, stagger: 0.08 },
+            0.04,
+          )
+          .fromTo(
+            select('.opening-title-text'),
+            {
+              autoAlpha: 0,
+              filter: 'blur(12px)',
+              scaleX: 0.78,
+              scaleY: 1.24,
+              yPercent: 86,
+            },
+            {
+              autoAlpha: 1,
+              duration: 0.88,
+              filter: 'blur(0px)',
+              scaleX: 1,
+              scaleY: 1,
+              yPercent: 0,
+            },
+            0.14,
+          )
+          .fromTo(
+            select('.opening-title-accent'),
+            { xPercent: -118 },
+            { duration: 0.68, ease: 'power3.inOut', xPercent: 118 },
+            0.34,
+          )
+          .fromTo(
+            select('.opening-scan'),
+            { xPercent: -120 },
+            { duration: 0.82, ease: 'power2.inOut', xPercent: 120 },
+            0.26,
+          )
+          .to(select('.top-bar'), { autoAlpha: 1, duration: 0.72, yPercent: 0 }, 0.16)
+          .to(select('.side-panel'), { autoAlpha: 1, duration: 0.88, filter: 'blur(0px)', x: 0 }, 0.34)
+          .to(
+            select('.overview-band'),
+            {
+              autoAlpha: 1,
+              clipPath: 'inset(0% 0% 0% 0% round 8px)',
+              duration: 0.9,
+              scale: 1,
+              y: 0,
+            },
+            0.42,
+          )
+          .to(select('.overview-copy .eyebrow'), { autoAlpha: 1, duration: 0.56, y: 0 }, 0.72)
+          .to(
+            select('.overview-copy h2'),
+            {
+              clipPath: 'inset(0% 0% 0% 0%)',
+              duration: 0.84,
+              scaleX: 1,
+              scaleY: 1,
+              y: 0,
+            },
+            0.76,
+          )
+          .to(
+            select('.overview-points span'),
+            {
+              autoAlpha: 1,
+              duration: 0.68,
+              scale: 1,
+              stagger: 0.07,
+              y: 0,
+            },
+            1.02,
+          )
+          .to(
+            select('.phase-nav-item'),
+            {
+              autoAlpha: 1,
+              duration: 0.64,
+              stagger: 0.07,
+              x: 0,
+            },
+            0.56,
+          )
+          .to(
+            openingSequence,
+            {
+              autoAlpha: 0,
+              duration: 0.58,
+              ease: 'power3.out',
+              filter: 'blur(12px)',
+              scale: 0.96,
+              y: -8,
+            },
+            1.48,
+          );
+
+        gsap.utils.toArray(select('.section-block')).forEach((section) => {
+          const icon = section.querySelector('.section-icon');
+          const kicker = section.querySelector('.section-title .eyebrow');
+          const title = section.querySelector('.section-title h2');
+          const desc = section.querySelector('.section-title p:last-child');
+          const cards = section.querySelectorAll(
+            ':scope > .task-panel, :scope > .production-grid > *, :scope > .workflow-methods, :scope > .storyboard-shell, :scope > .storyboard-reference-panel, :scope > .quality-strip > *, :scope > .notice-panel, :scope > .border-glow-inner > .task-panel, :scope > .border-glow-inner > .production-grid > *, :scope > .border-glow-inner > .workflow-methods, :scope > .border-glow-inner > .storyboard-shell, :scope > .border-glow-inner > .storyboard-reference-panel, :scope > .border-glow-inner > .quality-strip > *, :scope > .border-glow-inner > .notice-panel',
+          );
+
+          const timeline = gsap.timeline({
+            scrollTrigger: {
+              once: true,
+              start: 'top 78%',
+              trigger: section,
+            },
+          });
+
+          timeline
+            .fromTo(
+              icon,
+              { autoAlpha: 0, rotate: -18, scale: 0.34, y: 82 },
+              { autoAlpha: 1, duration: 1.04, rotate: 0, scale: 1, y: 0 },
+              0,
+            )
+            .fromTo(kicker, { autoAlpha: 0, y: 36 }, { autoAlpha: 1, duration: 0.74, y: 0 }, 0.12)
+            .fromTo(
+              title,
+              {
+                autoAlpha: 1,
+                clipPath: 'inset(0% 100% 0% 0%)',
+                scale: 1.26,
+                transformOrigin: 'left center',
+                y: 92,
+              },
+              {
+                clipPath: 'inset(0% 0% 0% 0%)',
+                duration: 1.12,
+                scale: 1,
+                y: 0,
+              },
+              0.16,
+            )
+            .fromTo(desc, { autoAlpha: 0, y: 38 }, { autoAlpha: 1, duration: 0.8, y: 0 }, 0.34)
+            .fromTo(
+              cards,
+              { autoAlpha: 0, filter: 'blur(10px)', rotateX: -7, scale: 0.94, y: 96 },
+              {
+                autoAlpha: 1,
+                duration: 1.02,
+                filter: 'blur(0px)',
+                rotateX: 0,
+                scale: 1,
+                stagger: 0.13,
+                y: 0,
+              },
+              0.46,
+            );
+        });
+
+        gsap.utils.toArray(select('.doc-section-card')).forEach((card) => {
+          const head = card.querySelector('.doc-section-head');
+          const contentBlocks = card.querySelectorAll(
+            '.doc-block, .doc-subsection, .storyboard-meta-item, .shot-card, .notice-card',
+          );
+
+          gsap
+            .timeline({
+              scrollTrigger: {
+                once: true,
+                start: 'top 82%',
+                trigger: card,
+              },
+            })
+            .fromTo(
+              card,
+              { autoAlpha: 0, filter: 'blur(8px)', scale: 0.96, y: 74 },
+              { autoAlpha: 1, duration: 0.9, filter: 'blur(0px)', scale: 1, y: 0 },
+              0,
+            )
+            .fromTo(
+              head,
+              { clipPath: 'inset(0% 100% 0% 0%)', y: 28 },
+              { clipPath: 'inset(0% 0% 0% 0%)', duration: 0.86, y: 0 },
+              0.1,
+            )
+            .fromTo(
+              contentBlocks,
+              { autoAlpha: 0, scale: 0.97, y: 54 },
+              { autoAlpha: 1, duration: 0.78, scale: 1, stagger: 0.08, y: 0 },
+              0.32,
+            );
+        });
+
+        gsap.utils.toArray(select('.doc-image-frame, .storyboard-reference-figure')).forEach((frame) => {
+          const image = frame.querySelector('img');
+
+          gsap
+            .timeline({
+              scrollTrigger: {
+                once: true,
+                start: 'top 84%',
+                trigger: frame,
+              },
+            })
+            .fromTo(
+              frame,
+              { clipPath: 'inset(0% 0% 100% 0% round 8px)', y: 46 },
+              { clipPath: 'inset(0% 0% 0% 0% round 8px)', duration: 1.08, ease: 'power3.out', y: 0 },
+              0,
+            )
+          .fromTo(
+            image,
+            { scale: 1.14, yPercent: 8 },
+            { duration: 1.2, ease: 'power3.out', scale: 1.03, yPercent: 0 },
+            0.05,
+          );
+
+          if (image) {
+            gsap.to(image, {
+              ease: 'none',
+              scrollTrigger: {
+                end: 'bottom top',
+                scrub: 0.85,
+                start: 'top bottom',
+                trigger: frame,
+              },
+              yPercent: -5,
+            });
+          }
+        });
+
+        openingFrame = window.requestAnimationFrame(() => {
+          openingTimeline.play(0);
+        });
+
+        refreshCall = gsap.delayedCall(0.5, () => ScrollTrigger.refresh());
+      }, root);
+
+    return () => {
+      if (openingFrame) {
+        window.cancelAnimationFrame(openingFrame);
+      }
+
+      refreshCall?.kill();
+      context.revert();
+    };
+  }, [rootRef]);
+}
+
 function App() {
+  const appShellRef = useRef(null);
   const [isChecklistOpen, setIsChecklistOpen] = useState(false);
+  const [theme, setTheme] = useState(() => {
+    if (typeof window === 'undefined') {
+      return 'light';
+    }
+
+    try {
+      const savedTheme = window.localStorage.getItem('training-theme');
+
+      if (savedTheme === 'dark' || savedTheme === 'light') {
+        return savedTheme;
+      }
+    } catch (error) {
+      return document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light';
+    }
+
+    return document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light';
+  });
+
+  useEffect(() => {
+    document.documentElement.dataset.theme = theme;
+    document.documentElement.style.colorScheme = theme;
+
+    try {
+      window.localStorage.setItem('training-theme', theme);
+    } catch (error) {
+      // Ignore private-mode storage failures; the visible theme still updates.
+    }
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme((currentTheme) => (currentTheme === 'dark' ? 'light' : 'dark'));
+  };
+
+  useTrainingMotion(appShellRef);
 
   return (
-    <main className="app-shell">
-      <TopBar onOpenChecklist={() => setIsChecklistOpen(true)} />
+    <main className="app-shell" data-theme={theme} ref={appShellRef}>
+      <div className="page-aurora-background" aria-hidden="true">
+        <Aurora
+          colorStops={['#57c9dd', '#79b225', '#84355c']}
+          blend={0.53}
+          amplitude={1.0}
+          speed={0.9}
+        />
+      </div>
+      <TopBar onOpenChecklist={() => setIsChecklistOpen(true)} onToggleTheme={toggleTheme} theme={theme} />
       <div className="workspace">
         <aside className="side-panel">
-          <WorkflowNavPanel />
+          <BorderGlow
+            animated
+            backgroundColor={theme === 'dark' ? '#111a29' : '#ffffff'}
+            borderRadius={8}
+            className="side-panel-glow"
+            colors={theme === 'dark' ? ['#10b981', '#38bdf8', '#84cc16'] : ['#177c72', '#57c9dd', '#79b225']}
+            coneSpread={24}
+            edgeSensitivity={24}
+            fillOpacity={theme === 'dark' ? 0.2 : 0.12}
+            glowColor={theme === 'dark' ? '164 85 58' : '174 70 46'}
+            glowIntensity={1.18}
+            glowRadius={24}
+          >
+            <WorkflowNavPanel />
+          </BorderGlow>
         </aside>
 
         <section className="content-area">
-          <section className="overview-band" aria-labelledby="overview-title">
+          <ContentModule as="section" className="overview-band" aria-labelledby="overview-title" theme={theme}>
             <div className="overview-copy">
               <p className="eyebrow">面向动画师的前期制作流程</p>
               <h2 id="overview-title">从剧本理解到高质量分镜的制作路径</h2>
@@ -224,16 +663,16 @@ function App() {
                 <span>沉淀可复用提示词，重点检查画面衔接、站位一致和配音顺序</span>
               </div>
             </div>
-          </section>
+          </ContentModule>
 
-          <section id="phase-01" className="section-block">
+          <ContentModule as="section" id="phase-01" className="section-block" theme={theme}>
             <SectionTitle
               icon={FileText}
               kicker="第一步"
               title="拿到剧本后先做资产核对"
               desc="这一阶段面向动画师，目标是理清本集需要的人设、场景、道具和前后集衔接要求，确认素材表是否齐全，再进入动画制作。"
             />
-            <div className="task-panel">
+            <div id="phase-01-checklist" className="task-panel">
               <h3>动画制作前核对记录</h3>
               <ul className="check-list">
                 <li>理清本集需要的人设、场景、道具、宠物、系统等制作资产。</li>
@@ -241,7 +680,7 @@ function App() {
                 <li>确认本集是否涉及人物换装、宠物换装、同场景变化或道具、系统变化。</li>
                 <li>和前后集制作同学协商人物站位、人物背景是否一致，能否顺利衔接上下集。</li>
               </ul>
-              <div className="script-alert">
+              <div id="phase-01-alert" className="script-alert">
                 <AlertTriangle size={20} />
                 <p>
                   <strong>注意：</strong>
@@ -249,27 +688,30 @@ function App() {
                 </p>
               </div>
             </div>
-          </section>
+          </ContentModule>
 
-          <section id="phase-02" className="section-block">
+          <ContentModule as="section" id="phase-02" className="section-block" theme={theme}>
             <SectionTitle
               icon={UserRoundCog}
               kicker="第二步"
               title="制作人设、场景和道具"
-              desc="编导会拆分好人设、场景和道具描述，制作同学按描述各做三版左右，审核通过后将最终通过图沉淀下来。"
+              desc="编导会拆分好人设、场景和道具描述，制作同学按描述各做三版左右，审核通过后将最终通过的图保留下来。"
             />
             <div className="production-grid">
               <ProductionColumn
+                id="phase-02-character"
                 title="人设制作区"
                 icon={PencilRuler}
                 brief="按照编导拆分的人物年龄、岗位、气质、服装和动作描述制作。"
               />
               <ProductionColumn
+                id="phase-02-scene"
                 title="场景制作区"
                 icon={Layers3}
                 brief="明确场景外观、时间光源、室内外空间类型、科技等级或异能痕迹，并补充冷、危险、暧昧、压迫等氛围关键词。"
               />
               <ProductionColumn
+                id="phase-02-props"
                 title="道具制作区"
                 icon={Image}
                 brief="按照道具、系统界面、特殊物件的造型和质感要求制作。"
@@ -278,26 +720,27 @@ function App() {
             <WorkflowSectionGroup
               title="人设、场景和道具制作方法"
               sections={assetMethodSections}
+              idPrefix="phase-02-methods"
             />
-          </section>
+          </ContentModule>
 
-          <section id="phase-03" className="section-block">
+          <ContentModule as="section" id="phase-03" className="section-block" theme={theme}>
             <SectionTitle
               icon={Clapperboard}
               kicker="第三步"
               title="剧本转分镜流程"
-              desc="这一环节的具体剧本优化方案后续补充，当前页面先保留流程位置。"
+              desc="将剧本规范、模型训练提示词、配音真实感、去 AI 味、镜头处理和整体视觉基调串成可执行的分镜工作流。"
             />
-            <div className="script-placeholder">
-              <div>
-                <p className="eyebrow">剧本优化</p>
-                <h3>剧本转分镜方案待补充</h3>
-                <p>这里后续放新的剧本优化和转分镜方案。</p>
-              </div>
-            </div>
-          </section>
+            <WorkflowSectionGroup
+              title={scriptStoryboardWorkflow.title}
+              desc="内容来自《剧本分镜处理.docx》，已按文档顺序整理为网页模块，并保留原文示例、表格和图片。"
+              sections={scriptStoryboardWorkflow.sections}
+              idPrefix="phase-03-workflow"
+              hideHeader
+            />
+          </ContentModule>
 
-          <section id="phase-04" className="section-block">
+          <ContentModule as="section" id="phase-04" className="section-block" theme={theme}>
             <SectionTitle
               icon={WandSparkles}
               kicker="第四步"
@@ -308,10 +751,11 @@ function App() {
               title="剧集制作关键词优化"
               desc="将真人写实质感、分镜图、多人物站位和背景补救方法放在分镜与提示词阶段使用。"
               sections={keywordOptimizationSection ? [keywordOptimizationSection] : []}
+              idPrefix="phase-04-keywords"
               showSectionIndex={false}
             />
 
-            <div className="storyboard-shell">
+            <div id="phase-04-storyboard-format" className="storyboard-shell">
               <div className="storyboard-head">
                 <div>
                   <p className="eyebrow">分镜表样式</p>
@@ -350,17 +794,17 @@ function App() {
               </div>
             </div>
 
-            <StoryboardReferencePanel />
-          </section>
+            <StoryboardReferencePanel id="phase-04-reference" />
+          </ContentModule>
 
-          <section id="phase-05" className="section-block">
+          <ContentModule as="section" id="phase-05" className="section-block" theme={theme}>
             <SectionTitle
               icon={ClipboardCheck}
               kicker="第五步"
               title="注意事项"
               desc="这里集中放置生成、衔接、成片检查和配音错乱处理相关注意事项。"
             />
-            <div className="quality-strip">
+            <div id="phase-05-quality" className="quality-strip">
               <QualityCard
                 icon={Camera}
                 title="镜头不平淡"
@@ -378,7 +822,7 @@ function App() {
               />
             </div>
 
-            <div className="notice-panel">
+            <div id="phase-05-notices" className="notice-panel">
               <div className="notice-title">
                 <div>
                   <p className="eyebrow">Word 文档整理</p>
@@ -400,9 +844,10 @@ function App() {
               title="配音错乱处理"
               desc="配音问题放在注意事项阶段，便于动画师按角色、人设图、音频顺序复核。"
               sections={voiceIssueSection ? [voiceIssueSection] : []}
+              idPrefix="phase-05-voice"
               showSectionIndex={false}
             />
-          </section>
+          </ContentModule>
         </section>
       </div>
       <ChecklistModal isOpen={isChecklistOpen} onClose={() => setIsChecklistOpen(false)} />
@@ -410,15 +855,68 @@ function App() {
   );
 }
 
-function TopBar({ onOpenChecklist }) {
+function ContentModule({ as = 'section', children, className = '', theme, ...props }) {
+  const isDark = theme === 'dark';
+
+  return (
+    <BorderGlow
+      {...props}
+      animated
+      as={as}
+      backgroundColor={isDark ? '#111a29' : '#ffffff'}
+      borderRadius={8}
+      className={`content-module-glow ${className}`}
+      colors={isDark ? ['#10b981', '#38bdf8', '#84cc16'] : ['#177c72', '#57c9dd', '#79b225']}
+      coneSpread={24}
+      edgeSensitivity={24}
+      fillOpacity={isDark ? 0.16 : 0.08}
+      glowColor={isDark ? '164 85 58' : '174 70 46'}
+      glowIntensity={1.12}
+      glowRadius={24}
+      innerClassName="content-module-inner"
+    >
+      {children}
+    </BorderGlow>
+  );
+}
+
+function OpeningSequence() {
+  return (
+    <div className="opening-sequence" aria-hidden="true">
+      <div className="opening-scan" />
+      <div className="opening-stage">
+        <span className="opening-line opening-line-top" />
+        <div className="opening-title-mask">
+          <span className="opening-title-accent" />
+          <span className="opening-title-text">AI 短剧制作入职培训</span>
+        </div>
+        <span className="opening-line opening-line-bottom" />
+      </div>
+    </div>
+  );
+}
+
+function TopBar({ onOpenChecklist, onToggleTheme, theme }) {
+  const isDark = theme === 'dark';
+
   return (
     <header className="top-bar">
       <div className="top-inner">
         <div className="brand-mark">
           <Clapperboard size={22} />
-          <span>入职培训制作流程</span>
+          <span>AI 短剧制作流程</span>
         </div>
+        <OpeningSequence />
         <div className="top-actions">
+          <button
+            className="theme-toggle-button"
+            type="button"
+            onClick={onToggleTheme}
+            aria-label={isDark ? '切换为浅色模式' : '切换为深色模式'}
+            title={isDark ? '切换为浅色模式' : '切换为深色模式'}
+          >
+            {isDark ? <Sun size={19} /> : <Moon size={19} />}
+          </button>
           <a className="ghost-button" href="/script-assets/trap-of-love-script.pdf" target="_blank" rel="noreferrer">
             <FileText size={18} />
             剧本
@@ -434,6 +932,30 @@ function TopBar({ onOpenChecklist }) {
 }
 
 function WorkflowNavPanel() {
+  const [expandedPhaseNumbers, setExpandedPhaseNumbers] = useState(['03']);
+  const [activeAnchor, setActiveAnchor] = useState('phase-03');
+
+  const navigateToAnchor = (anchorId) => {
+    const target = document.getElementById(anchorId);
+
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      window.history.replaceState(null, '', `#${anchorId}`);
+      setActiveAnchor(anchorId);
+    }
+  };
+
+  const handlePhaseClick = (phaseNumber) => {
+    const phaseId = `phase-${phaseNumber}`;
+
+    setExpandedPhaseNumbers((current) =>
+      current.includes(phaseNumber)
+        ? current.filter((number) => number !== phaseNumber)
+        : [...current, phaseNumber],
+    );
+    navigateToAnchor(phaseId);
+  };
+
   return (
     <>
       <div className="project-card">
@@ -442,25 +964,81 @@ function WorkflowNavPanel() {
         </div>
         <div>
           <p className="eyebrow">制作项目</p>
-          <h1>新员工入职培训</h1>
+          <h1>AI 短剧制作入职培训</h1>
         </div>
       </div>
       <nav className="phase-nav" aria-label="制作流程">
-        {phases.map((phase) => {
+        {phaseNavItems.map((phase) => {
           const Icon = phase.icon;
+          const isExpanded = expandedPhaseNumbers.includes(phase.number);
+
           return (
-            <a key={phase.number} href={`#phase-${phase.number}`} className="phase-link">
-              <span className="phase-index">{phase.number}</span>
-              <span>
-                <strong>{phase.title}</strong>
-                <small>{phase.status}</small>
-              </span>
-              <Icon size={18} />
-            </a>
+            <div className="phase-nav-item" key={phase.number}>
+              <button
+                className="phase-link"
+                type="button"
+                onClick={() => handlePhaseClick(phase.number)}
+                aria-expanded={isExpanded}
+                aria-controls={`phase-subnav-${phase.number}`}
+              >
+                <span className="phase-index">{phase.number}</span>
+                <span>
+                  <strong>{phase.title}</strong>
+                  <small>{phase.status}</small>
+                </span>
+                <Icon className="phase-symbol" size={18} />
+                <ChevronDown className={`phase-chevron ${isExpanded ? 'is-open' : ''}`} size={16} />
+              </button>
+              {isExpanded ? (
+                <div className="phase-subnav" id={`phase-subnav-${phase.number}`}>
+                  {phase.children.map((child) => (
+                    <NavChildLink
+                      activeAnchor={activeAnchor}
+                      item={child}
+                      key={child.id}
+                      onNavigate={navigateToAnchor}
+                    />
+                  ))}
+                </div>
+              ) : null}
+            </div>
           );
         })}
       </nav>
     </>
+  );
+}
+
+function NavChildLink({ item, onNavigate, activeAnchor, level = 0 }) {
+  const isActive = activeAnchor === item.id;
+
+  return (
+    <div className={`phase-child-wrap ${level > 0 ? 'is-nested' : ''}`}>
+      <a
+        className={`phase-child-link ${isActive ? 'is-active' : ''}`}
+        href={`#${item.id}`}
+        onClick={(event) => {
+          event.preventDefault();
+          onNavigate(item.id);
+        }}
+      >
+        <span className="phase-child-dot" />
+        <span>{item.title}</span>
+      </a>
+      {item.children?.length ? (
+        <div className="phase-child-sublist">
+          {item.children.map((child) => (
+            <NavChildLink
+              activeAnchor={activeAnchor}
+              item={child}
+              key={child.id}
+              level={level + 1}
+              onNavigate={onNavigate}
+            />
+          ))}
+        </div>
+      ) : null}
+    </div>
   );
 }
 
@@ -513,11 +1091,11 @@ function StoryboardField({ label, value, wide = false }) {
   );
 }
 
-function StoryboardReferencePanel() {
+function StoryboardReferencePanel({ id }) {
   const imageSrc = '/sd2-assets/storyboard-reference.png';
 
   return (
-    <div className="storyboard-reference-panel">
+    <div className="storyboard-reference-panel" id={id}>
       <div className="reference-copy">
         <p className="eyebrow">图片教学参考</p>
         <h3>分镜提示词排版示例</h3>
@@ -537,6 +1115,30 @@ function StoryboardReferencePanel() {
 
 function PreviewableImage({ src, alt, previewAlt = alt, triggerClassName }) {
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+  const previewDialog =
+    isPreviewOpen && typeof document !== 'undefined'
+      ? createPortal(
+          <div
+            className="image-preview-backdrop"
+            role="presentation"
+            onClick={() => setIsPreviewOpen(false)}
+          >
+            <div
+              className="image-preview-dialog"
+              role="dialog"
+              aria-modal="true"
+              aria-label={previewAlt}
+              onClick={(event) => event.stopPropagation()}
+            >
+              <button className="image-preview-close" type="button" onClick={() => setIsPreviewOpen(false)} aria-label="关闭大图">
+                <X size={22} />
+              </button>
+              <img src={src} alt={previewAlt} />
+            </div>
+          </div>,
+          document.body,
+        )
+      : null;
 
   return (
     <>
@@ -552,26 +1154,7 @@ function PreviewableImage({ src, alt, previewAlt = alt, triggerClassName }) {
           点击放大
         </span>
       </button>
-      {isPreviewOpen ? (
-        <div
-          className="image-preview-backdrop"
-          role="presentation"
-          onClick={() => setIsPreviewOpen(false)}
-        >
-          <div
-            className="image-preview-dialog"
-            role="dialog"
-            aria-modal="true"
-            aria-label={previewAlt}
-            onClick={(event) => event.stopPropagation()}
-          >
-            <button className="image-preview-close" type="button" onClick={() => setIsPreviewOpen(false)} aria-label="关闭大图">
-              <X size={22} />
-            </button>
-            <img src={src} alt={previewAlt} />
-          </div>
-        </div>
-      ) : null}
+      {previewDialog}
     </>
   );
 }
@@ -592,12 +1175,13 @@ function PlaceholderPanel({ icon: Icon, title, desc, action }) {
 }
 
 function ProductionColumn({
+  id,
   title,
   icon: Icon,
   brief,
 }) {
   return (
-    <div className="production-column">
+    <div className="production-column" id={id}>
       <div className="column-title">
         <Icon size={22} />
         <div>
@@ -619,39 +1203,50 @@ function QualityCard({ icon: Icon, title, text }) {
   );
 }
 
-function WorkflowSectionGroup({ title, desc, sections, showSectionIndex = true }) {
+function WorkflowSectionGroup({ title, desc, sections, showSectionIndex = true, hideHeader = false, idPrefix }) {
   if (!sections.length) {
     return null;
   }
 
   return (
-    <div className="workflow-methods">
-      <div className="workflow-methods-head">
-        <div>
-          <p className="eyebrow">操作方法</p>
-          <h3>{title}</h3>
-          {desc ? <p>{desc}</p> : null}
+    <div className={`workflow-methods ${hideHeader ? 'is-headless' : ''}`}>
+      {!hideHeader ? (
+        <div className="workflow-methods-head">
+          <div>
+            <p className="eyebrow">操作方法</p>
+            <h3>{title}</h3>
+            {desc ? <p>{desc}</p> : null}
+          </div>
         </div>
-      </div>
+      ) : null}
       <div className="doc-section-list">
         {sections.map((section, sectionIndex) => {
           const displayTitle = showSectionIndex ? section.title : section.title.replace(/^\d+\./, '');
+          const sectionId = idPrefix ? `${idPrefix}-section-${sectionIndex + 1}` : undefined;
 
           return (
-            <article className="doc-section-card" key={section.title}>
+            <article className="doc-section-card" id={sectionId} key={section.title}>
               <div className={showSectionIndex ? 'doc-section-head' : 'doc-section-head doc-section-head-no-index'}>
                 {showSectionIndex ? <span>{String(sectionIndex + 1).padStart(2, '0')}</span> : null}
                 <h3>{displayTitle}</h3>
               </div>
               <div className="doc-block-list">
-                {section.blocks.map((block, blockIndex) => (
-                  <DocumentBlock
-                    block={block}
-                    blockIndex={blockIndex}
-                    key={`${section.title}-${blockIndex}`}
-                    sectionTitle={displayTitle}
-                  />
-                ))}
+                {section.blocks.map((block, blockIndex) => {
+                  const blockAnchorId =
+                    sectionId && block.type === 'subsection' && !block.hideTitle
+                      ? `${sectionId}-block-${blockIndex + 1}`
+                      : undefined;
+
+                  return (
+                    <DocumentBlock
+                      anchorId={blockAnchorId}
+                      block={block}
+                      blockIndex={blockIndex}
+                      key={`${section.title}-${blockIndex}`}
+                      sectionTitle={displayTitle}
+                    />
+                  );
+                })}
               </div>
             </article>
           );
@@ -661,7 +1256,31 @@ function WorkflowSectionGroup({ title, desc, sections, showSectionIndex = true }
   );
 }
 
-function DocumentBlock({ block, blockIndex, sectionTitle }) {
+function DocumentBlock({ block, blockIndex, sectionTitle, anchorId }) {
+  if (block.type === 'subsection') {
+    return (
+      <section className={`doc-subsection ${block.hideTitle ? 'is-titleless' : ''}`} id={anchorId}>
+        {!block.hideTitle ? (
+          <div className="doc-subsection-head">
+            {block.kicker ? <span className="doc-subsection-kicker">{block.kicker}</span> : null}
+            <h4>{block.title}</h4>
+            {block.desc ? <p>{block.desc}</p> : null}
+          </div>
+        ) : null}
+        <div className="doc-sub-block-list">
+          {block.blocks.map((childBlock, childIndex) => (
+            <DocumentBlock
+              block={childBlock}
+              blockIndex={`${blockIndex}-${childIndex}`}
+              key={`${block.title}-${childIndex}`}
+              sectionTitle={`${sectionTitle} ${block.title}`}
+            />
+          ))}
+        </div>
+      </section>
+    );
+  }
+
   if (block.type === 'table') {
     return (
       <div className="doc-block">
@@ -671,7 +1290,9 @@ function DocumentBlock({ block, blockIndex, sectionTitle }) {
               {block.rows.map((row, rowIndex) => (
                 <tr key={`${blockIndex}-${rowIndex}`}>
                   {row.map((cell, cellIndex) => (
-                    <td key={`${blockIndex}-${rowIndex}-${cellIndex}`}>{cell}</td>
+                    <td key={`${blockIndex}-${rowIndex}-${cellIndex}`}>
+                      <LinkedText text={cell} />
+                    </td>
                   ))}
                 </tr>
               ))}
@@ -683,12 +1304,34 @@ function DocumentBlock({ block, blockIndex, sectionTitle }) {
     );
   }
 
+  const roleClass = block.role ? ` is-${block.role}` : '';
+
   return (
-    <div className={`doc-block ${block.role === 'subhead' ? 'is-subhead' : ''}`}>
-      {block.text ? <p>{block.text}</p> : null}
+    <div className={`doc-block${roleClass}`}>
+      {block.text ? (
+        <p>
+          <LinkedText text={block.text} />
+        </p>
+      ) : null}
       <DocumentImages images={block.images} sectionTitle={sectionTitle} blockIndex={blockIndex} />
     </div>
   );
+}
+
+function LinkedText({ text }) {
+  return text.split(inlineLinkPattern).map((part, index) => {
+    const href = part.startsWith('http') ? part : inlineLinks.get(part);
+
+    if (href) {
+      return (
+        <a className="inline-link" href={href} key={`${part}-${index}`} target="_blank" rel="noreferrer">
+          {part}
+        </a>
+      );
+    }
+
+    return <Fragment key={`${part}-${index}`}>{part}</Fragment>;
+  });
 }
 
 function DocumentImages({ images = [], sectionTitle, blockIndex }) {

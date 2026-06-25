@@ -1,0 +1,1465 @@
+{
+  "title": "剧本转分镜处理流程",
+  "source": "剧本分镜处理.docx",
+  "sections": [
+    {
+      "title": "剧本转分镜流程总览",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "这里是最终要的一步\n剧本转分镜，通常剧本都有固定格式，以下是短剧剧本格式的规范示例，可以仔细看下。",
+          "images": [],
+          "role": "module-start"
+        },
+        {
+          "type": "paragraph",
+          "text": "",
+          "images": [
+            "/storyboard-assets/script-storyboard-image-01.png"
+          ],
+          "role": "body"
+        },
+        {
+          "type": "subsection",
+          "title": "打开 GLM 并喂入剧本规范",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "接下来我们需要打开大模型网站，我推荐使用GLM5.2（chat.z.ai）这个是目前国内能力最强的模型，即有很强的理解能力和分析能力，还能准确无误的分析图片，上下文强度高达1M无损上下文，上下文的强度决定着模型会不会遗忘。\n以下开始演示操作，首先将剧本格式规范喂给它，这样它就会理解剧本特殊符号的含义，随后输入一段固定的提示词。\n演示的对话链接：\nhttps://chat.z.ai/s/824d428a-e6e8-43ed-9136-7af7aad390e4",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "根据我提供的剧本片段和剧本规范格式帮我生成一个专业的分镜脚本，一共30 个分镜，从左至右依次包含镜号、景别、运镜、情绪/动作、台词、音效、时长。",
+              "images": [],
+              "role": "body"
+            }
+          ]
+        },
+        {
+          "type": "subsection",
+          "title": "输出分镜脚本格式范例",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "最后输出为文字脚本，按照以下的范例：\n场次：1-1\n地点：中国某三甲医院精神科门诊诊室\n时间：日/内\n人物：女医生、男患者",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "镜号：1\n景别：全景/建立镜头\n运镜：固定镜头，轻微前推\n情绪/动作：交代三甲医院门诊室环境。女医生低头翻病例，男患者坐对面低头，气氛压抑。\n台词：无\n音效：门诊室环境底噪、纸张翻动、远处候诊叫号声\n时长：2s",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "镜号：2\n景别：近景/女医生\n运镜：固定镜头\n情绪/动作：女医生翻病例，眉头轻皱，专业、冷静。\n台词：无\n音效：纸张翻动声、笔尖轻敲桌面\n时长：3s",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "镜号：3\n景别：近景/男患者\n运镜：固定，略低机位\n情绪/动作：男患者微微低头，手指交握，表情凝重，制造不安感。\n台词：无\n音效：轻微呼吸声、低频氛围音起\n时长：3s",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "镜号：4\n景别：过肩镜头/患者看医生\n运镜：切入，稳定构图\n情绪/动作：女医生抬头看向男患者，进入问诊。\n台词：女医生：这些症状是从什么时候开始的？\n音效：环境底噪降低，语音清晰\n时长：4s",
+              "images": [],
+              "role": "body"
+            }
+          ]
+        },
+        {
+          "type": "subsection",
+          "title": "示例剧本与 GLM 首轮回答",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "剧本：\nEPISODE 1 / 第 1 集\n1-1 豪宅-主卧室 夜 内\n人物：科尔·亨特、首席调查员\n△快速剪辑：相机闪光、血迹飞溅、证据标记、大理石地板上的道森尸体。科尔·亨特（30 岁）身穿 FBI 冲锋衣，冷静精 准地勘查现场。首席调查员在他身旁。\n1-2 豪宅-客房 夜 内\n人物：伊娃·克拉克\n△伊娃·克拉克（22 岁，外号“变局者”）正在房间里翻找。她身穿定制西装，发型完美，FBI 徽章别在腰带上，脖子上挂 着一个银色小盒吊坠。 伊娃（OS）：They call me Gambit. The best fraudster in the country. / 他们叫我“变局者”。全美最厉害的诈骗犯。 △她停在一幅画前，将其倾斜。 伊娃（OS）：And now? My burner phone is inside a safe. If the Feds find it, they'll pin the man's death on me. / 现在呢？我 的一次性手机在一个保险箱里。如果联邦调查局找到它，他们会把那个男人的死栽赃给我。 △她找到了一个保险箱。 伊娃：That's it. / 就是它。 △当她正在破解时，脚步声靠近。 伊娃：Shit. / 该死。\n1-3 豪宅-走廊 夜 内\n人物：科尔、首席调查员\n△科尔和首席调查员走向客房。 首席调查员：The victim's identity is completely fabricated. Exceptionally well done. / 受害者的身份完全是伪造的。做得非 常出色。 科尔：Gambit. Intel says she killed him. We need evidence. / 变局者。情报说是她杀了他。我们需要证据。 伊娃（OS）：That's where you're wrong, Agent. / 那你就错了，探员。 △他们开门，看到伊娃背对着他们。她转过身——冷静、专业。 伊娃：It's clearly not her style. / 这显然不是她的风格。 △首席调查员拿起她的 FBI 徽章，眯着眼看。 首席调查员：Clarke... Eva Clarke. Don't think we've met. / 克拉克……伊娃·克拉克。我们好像没见过。 伊娃：Just transferred in. Still finding my way around. / 刚调过来。还在熟悉环境。 △伊娃转头看向科尔。他们的目光锁在一起。一切静止。 【闪回】 △快速剪辑：缠绕的床单。深吻。伊娃的黑色吊带裙被科尔脱下。科尔的衬衫被撕开。赤裸的身体交织在一起。纯粹的 热度。 【闪回结束】 △科尔的喉结滚动。伊娃的手指在背后颤抖。 伊娃/科尔（OS）：Why is he/she here? / 他/她为什么在这里？ 伊娃（OS）：I need to go. / 我得走了。 首席调查员：Clarke! I have another case. Why don't you work with Hunter on this one? Full report by morning. / 克拉克！我 还有一个案子。你不如和亨特一起办这个？明天早上交完整报告。 △首席调查员与她握手后离开。 △伊娃不能走了。伊娃和科尔对视。她伸出手。科尔握住。接触灼烫。",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "GLM的回答：",
+              "images": [],
+              "role": "subhead"
+            },
+            {
+              "type": "paragraph",
+              "text": "场次：1-1\n地点：豪宅-主卧室\n时间：夜/内\n人物：科尔·亨特、首席调查员",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "镜号：1\n景别：全景/建立镜头\n运镜：缓慢前推\n情绪/动作：交代豪宅案发现场全貌，大理石地板上躺着道森的尸体，现场冷峻压抑。\n台词：无\n音效：低频环境底噪、远处隐隐的雷声\n时长：3s",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "镜号：2\n景别：特写\n运镜：快速摇摄/定格\n情绪/动作：相机闪光灯亮起，照亮血迹飞溅的瞬间，视觉冲击力强。\n台词：无\n音效：相机快门声（咔嚓）、刺耳的电流声\n时长：1s",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "镜号：3\n景别：特写\n运镜：固定镜头\n情绪/动作：地面的证据标记牌，周围是干涸的血迹。\n台词：无\n音效：快门声余音、血液滴落声（拟音）\n时长：1s",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "镜号：4\n景别：近景/科尔\n运镜：跟镜头\n情绪/动作：科尔身穿FBI冲锋衣，冷静精准地蹲下勘查现场细节，眼神锐利。\n台词：无\n音效：衣物摩擦声、手套橡胶声\n时长：3s",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "镜号：5\n景别：中景\n运镜：固定镜头\n情绪/动作：科尔与首席调查员同框，首席调查员拿着取证设备，两人背光站立，气氛紧张。\n台词：无\n音效：环境底噪、设备轻微电子声\n时长：2s",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "场次：1-2\n地点：豪宅-客房\n时间：夜/内\n人物：伊娃·克拉克",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "镜号：6\n景别：全景/建立镜头\n运镜：横向平移\n情绪/动作：客房内昏暗，伊娃的身影在书架前快速翻找，动作利落。\n台词：无\n音效：急促的呼吸声、翻找物品的摩擦声\n时长：2s",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "镜号：7\n景别：特写\n运镜：推镜头\n情绪/动作：聚焦伊娃腰间的FBI徽章，随后视线移至她脖子上的银色小盒吊坠，闪烁微光。\n台词：无\n音效：金属徽章轻微碰撞声\n时长：2s",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "镜号：8\n景别：中景/伊娃\n运镜：固定镜头\n情绪/动作：伊娃停在一幅画前，双手将画框向外倾斜，眼神警惕。\n台词：无\n音效：画框摩擦墙壁的沉闷声\n时长：2s",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "镜号：9\n景别：近景/伊娃\n运镜：微推至面部\n情绪/动作：伊娃盯着画后的暗格，嘴角微扬，透出自信与狡黠。\n台词：伊娃（OS）：They call me Gambit. The best fraudster in the country. / 他们叫我“变局者”。全美最厉害的诈骗犯。\n音效：低频节奏音起，带出悬疑感\n时长：4s",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "镜号：10\n景别：特写\n运镜：推镜头\n情绪/动作：伊娃的手指抚摸到隐藏的保险箱表面，神情变得凝重。\n台词：伊娃（OS）：And now? My burner phone is inside a safe. If the Feds find it, they'll pin the man's death on me. / 现在呢？我的一次性手机在一个保险箱里。如果联邦调查局找到它，他们会把那个男人的死栽赃给我。\n音效：手指敲击金属箱体的清脆声\n时长：4s",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "镜号：11\n景别：近景/伊娃\n运镜：固定镜头\n情绪/动作：伊娃找到保险箱，眼中闪过一丝惊喜，紧盯密码锁。\n台词：伊娃：That's it. / 就是它。\n音效：电子锁启动的蜂鸣声\n时长：2s",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "镜号：12\n景别：特写\n运镜：固定镜头\n情绪/动作：伊娃的手指在密码锁上飞速拨动破解，动作熟练。\n台词：无\n音效：快速按键的滴滴声\n时长：2s",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "镜号：13\n景别：近景/伊娃\n运镜：固定镜头\n情绪/动作：破解即将完成时，伊娃突然停住，瞳孔微缩，察觉到异常。\n台词：无\n音效：按键声骤停，走廊传来沉闷的脚步声\n时长：1s",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "镜号：14\n景别：特写\n运镜：轻微晃动（手持感）\n情绪/动作：伊娃眉头紧锁，嘴唇微动，压抑着内心的慌乱。\n台词：伊娃：Shit. / 该死。\n音效：脚步声逼近，心跳声加入\n时长：2s",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "场次：1-3\n地点：豪宅-走廊\n时间：夜/内\n人物：科尔、首席调查员",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "镜号：15\n景别：中景\n运镜：跟镜头/后退\n情绪/动作：科尔和首席调查员走在昏暗的走廊上，向客房方向移动，压迫感十足。\n台词：无\n音效：皮鞋踩在木地板上的沉重脚步声\n时长：2s",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "镜号：16\n景别：近景/首席调查员\n运镜：固定镜头\n情绪/动作：首席调查员边走边翻看手中的资料，语气中带着一丝赞赏。\n台词：首席调查员：The victim's identity is completely fabricated. Exceptionally well done. / 受害者的身份完全是伪造的。做得非常出色。\n音效：纸张翻动声\n时长：4s",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "镜号：17\n景别：近景/科尔\n运镜：固定镜头\n情绪/动作：科尔眼神坚定冷酷，直视前方客房的门。\n台词：科尔：Gambit. Intel says she killed him. We need evidence. / 变局者。情报说是她杀了他。我们需要证据。\n音效：脚步声同步，低频音效加重\n时长：3s",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "场次：1-3\n地点：豪宅-客房\n时间：夜/内\n人物：伊娃、科尔、首席调查员",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "镜号：18\n景别：全景\n运镜：推镜头\n情绪/动作：门被猛地推开，科尔和首席站在门口，伊娃背对他们站在房间深处。\n台词：伊娃（OS）：That's where you're wrong, Agent. / 那你就错了，探员。\n音效：开门声（砰），风声骤起\n时长：3s",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "镜号：19\n景别：中景/伊娃\n运镜：固定镜头\n情绪/动作：伊娃缓缓转身，表情冷静、专业，完美掩饰了内心的波澜。\n台词：伊娃：It's clearly not her style. / 这显然不是她的风格。\n音效：衣物转动摩擦声\n时长：3s",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "镜号：20\n景别：特写\n运镜：推镜头\n情绪/动作：首席调查员拿起伊娃腰间的FBI徽章，眯起眼睛审视。\n台词：无\n音效：金属碰撞声\n时长：2s",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "镜号：21\n景别：近景/首席调查员\n运镜：固定镜头\n情绪/动作：首席调查员抬头打量伊娃，眼神充满怀疑。\n台词：首席调查员：Clarke... Eva Clarke. Don't think we've met. / 克拉克……伊娃·克拉克。我们好像没见过。\n音效：悬疑氛围音垫底\n时长：3s",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "镜号：22\n景别：近景/伊娃\n运镜：固定镜头\n情绪/动作：伊娃保持镇定，露出职业化的假笑。\n台词：伊娃：Just transferred in. Still finding my way around. / 刚调过来。还在熟悉环境。\n音效：无\n时长：3s",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "镜号：23\n景别：中景/双人\n运镜：极缓前推\n情绪/动作：伊娃转头看向科尔，两人视线瞬间锁定，空气中弥漫着强烈的张力，周围仿佛静止。\n台词：无\n音效：环境音瞬间抽离，只剩极高频的耳鸣声\n时长：3s",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "【闪回】\n镜号：24\n景别：特写\n运镜：快速剪辑/闪白\n情绪/动作：缠绕的床单，昏暗灯光下肌肤的纠缠，热烈且充满欲望。\n台词：无\n音效：急促的呼吸声、心跳声放大\n时长：1s",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "镜号：25\n景别：特写\n运镜：快速剪辑/闪白\n情绪/动作：深吻特写，伊娃的黑色吊带裙滑落，科尔的衬衫被粗暴撕开。\n台词：无\n音效：布料撕裂声、喘息声\n时长：1s",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "镜号：26\n景别：近景\n运镜：快速剪辑/闪白\n情绪/动作：赤裸的身体交织在一起，纯粹的热度与激情。\n台词：无\n音效：轰鸣的音效失真声\n时长：1s",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "【闪回结束】\n镜号：27\n景别：特写/科尔\n运镜：固定镜头\n情绪/动作：回到现实，科尔的喉结缓缓滚动，眼神中透着震惊与克制。\n台词：科尔（OS）：Why is she here? / 她为什么在这里？\n音效：吞咽声，心跳声重击\n时长：2s",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "镜号：28\n景别：特写/伊娃\n运镜：固定镜头\n情绪/动作：伊娃表面冷硬，但双手在背后紧紧交握，手指微微颤抖。\n台词：伊娃（OS）：Why is he here? I need to go. / 他为什么在这里？我得走了。\n音效：指尖摩擦的细微声响\n时长：2s",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "镜号：29\n景别：中景\n运镜：固定镜头\n情绪/动作：首席调查员打断沉默，下达指令，随后伸手与伊娃短暂握手，转身离开。\n台词：首席调查员：Clarke! I have another case. Why don't you work with Hunter on this one? Full report by morning. / 克拉克！我还有一个案子。你不如和亨特一起办这个？明天早上交完整报告。\n音效：环境音恢复，脚步声远去\n时长：4s",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "镜号：30\n景别：特写\n运镜：极缓推镜头\n情绪/动作：伊娃无路可退，她伸出悬在半空的手。科尔迟疑片刻，伸手握住。两人的指尖接触，仿佛触电般灼烫。\n台词：无\n音效：一声沉闷的低音BASS落下，指尖接触的细微电流声\n时长：4s",
+              "images": [],
+              "role": "body"
+            }
+          ],
+          "hideTitle": true
+        },
+        {
+          "type": "paragraph",
+          "text": "当然它以上的回答也是可以直接用的 但是生出来的效果就会非常的差 人物直视镜头 镜头与镜头之间的衔接不流畅...等等一系列问题 没有丝毫训练的痕迹 直出的提示词 可能10次会有一次完美的分镜词吧 但是我们还是要对分镜词进行一个优化 毕竟谁也不想重做 甘愿在前期多花点功夫也不想被批评重新制作",
+          "images": [],
+          "role": "module-end"
+        }
+      ]
+    },
+    {
+      "title": "分镜二次优化训练",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "接下来第二步是分镜二次优化训练，需要分多次向大模型提问。每一次提问都负责一个明确目标：先训练配音真实感，再训练去 AI 味与强真人感，最后训练镜头处理与构图衔接。\n演示的对话链接：\nhttps://chat.z.ai/s/bd4b0a42-e41a-4e03-abdb-3f76861fd60b",
+          "images": [],
+          "role": "module-start"
+        },
+        {
+          "type": "subsection",
+          "title": "直接开启新对话即可。\n第一步：训练配音。",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "",
+              "images": [
+                "/storyboard-assets/script-storyboard-image-02.png"
+              ],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "请你记住以下AI视频配音真实感的技巧，我觉得我的分镜写的生出来的视频面部表情僵硬，说话没感情，记住了就回复我OK，我稍后给你我的分镜，你来帮我进行优化",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "AI 视频配音真实感三步法",
+              "images": [],
+              "role": "subhead"
+            },
+            {
+              "type": "paragraph",
+              "text": "> 让 AI 配音不再“读稿”，而是“说话”",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "一、语气符号速查表",
+              "images": [],
+              "role": "subhead"
+            },
+            {
+              "type": "table",
+              "rows": [
+                [
+                  "符号",
+                  "作用",
+                  "适合情绪"
+                ],
+                [
+                  "逗号 ，",
+                  "制造自然停顿",
+                  "思考、犹豫、试探、撒娇"
+                ],
+                [
+                  "句号 。",
+                  "语气平稳收住",
+                  "平静、冷淡、克制"
+                ],
+                [
+                  "感叹号 ！",
+                  "情绪加强、重音",
+                  "愤怒、兴奋、警告"
+                ],
+                [
+                  "问号 ？",
+                  "尾音上扬",
+                  "疑问、试探、不确定"
+                ],
+                [
+                  "？！",
+                  "质问 + 爆发",
+                  "愤怒、震惊、情绪爆发"
+                ],
+                [
+                  "省略号 ......",
+                  "情绪卡住、停顿",
+                  "难过、紧张、舍不得"
+                ],
+                [
+                  "波浪号 ～",
+                  "尾音轻快柔软",
+                  "开心、撒娇、温柔"
+                ],
+                [
+                  "破折号 ——",
+                  "情绪转折、断裂",
+                  "迟疑、震惊、强调"
+                ]
+              ],
+              "images": []
+            },
+            {
+              "type": "paragraph",
+              "text": "二、符号具体用法示例",
+              "images": [],
+              "role": "subhead"
+            },
+            {
+              "type": "paragraph",
+              "text": "1. 逗号：制造真实停顿",
+              "images": [],
+              "role": "subhead"
+            },
+            {
+              "type": "paragraph",
+              "text": "**反向案例**：\n> 等一下我想先确认一件事。\n（像一口气念完）",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "**正向案例**：\n> 等一下，我想，先确认一件事。\n（停顿自然，像在思考）",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "2. 句号：语气收住",
+              "images": [],
+              "role": "subhead"
+            },
+            {
+              "type": "paragraph",
+              "text": "> 别碰我的东西，听懂了吗。\n（冷静提醒，不是警告）",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "3. 感叹号：加强情绪",
+              "images": [],
+              "role": "subhead"
+            },
+            {
+              "type": "paragraph",
+              "text": "> 别碰我的东西，听懂了吗！\n（明显加重，像真正警告）",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "4. 问号：疑问与试探",
+              "images": [],
+              "role": "subhead"
+            },
+            {
+              "type": "paragraph",
+              "text": "> 你刚才去哪了？\n> 你刚才......去哪了？\n（加省略号更有怀疑感）",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "5. ？！：质问 + 爆发",
+              "images": [],
+              "role": "subhead"
+            },
+            {
+              "type": "paragraph",
+              "text": "> 你还敢说不是你？！\n> 你还敢说......不是你？！\n（更压迫、更强情绪）",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "6. 省略号：情绪停顿",
+              "images": [],
+              "role": "subhead"
+            },
+            {
+              "type": "paragraph",
+              "text": "**难过**：\n> 没关系......反正我也习惯了。",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "**紧张**：\n> 下一个......是不是就到我了？",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "**舍不得**：\n> 那你......还会回来吗？",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "7. 波浪号：轻快柔软",
+              "images": [],
+              "role": "subhead"
+            },
+            {
+              "type": "paragraph",
+              "text": "**开心**：\n> 太好了～我们终于成功了！",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "**撒娇**：\n> 你是不是，也有一点想我呀～",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "8. 破折号：情绪转折",
+              "images": [],
+              "role": "subhead"
+            },
+            {
+              "type": "paragraph",
+              "text": "> 我只是想知道——你到底有没有骗我。\n（前半句压住，后半句加重）",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "三、常见情绪符号组合",
+              "images": [],
+              "role": "subhead"
+            },
+            {
+              "type": "table",
+              "rows": [
+                [
+                  "情绪",
+                  "示例",
+                  "符号逻辑"
+                ],
+                [
+                  "撒娇",
+                  "你是不是，也有一点想我呀～",
+                  "逗号 + 波浪号"
+                ],
+                [
+                  "警告",
+                  "别碰我的东西，听懂了吗！",
+                  "逗号 + 感叹号"
+                ],
+                [
+                  "思考",
+                  "等一下，我想，先确认一件事。",
+                  "逗号 + 句号"
+                ],
+                [
+                  "愤怒",
+                  "你还敢说......不是你？！",
+                  "省略号 + ？！"
+                ],
+                [
+                  "难过",
+                  "没关系......反正我也习惯了。",
+                  "省略号 + 句号"
+                ],
+                [
+                  "紧张",
+                  "下一个......是不是就到我了？",
+                  "省略号 + 问号"
+                ],
+                [
+                  "怀疑",
+                  "你刚才......去哪了？",
+                  "省略号 + 问号"
+                ],
+                [
+                  "反派",
+                  "你终于......来了。",
+                  "省略号 + 句号"
+                ]
+              ],
+              "images": []
+            },
+            {
+              "type": "paragraph",
+              "text": "四、万能改写公式",
+              "images": [],
+              "role": "subhead"
+            },
+            {
+              "type": "paragraph",
+              "text": "❌ 不要只写情绪名字：\n> 她温柔地说：【没事的，我在这里。】",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "✅ 要写出发声方式：\n> 她声音放轻，语速慢下来，尾音收得很柔地说：【没事的，我在这里。】",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "五、发声方式拆解（AI 更容易理解）",
+              "images": [],
+              "role": "subhead"
+            },
+            {
+              "type": "table",
+              "rows": [
+                [
+                  "维度",
+                  "变化",
+                  "适用情绪"
+                ],
+                [
+                  "声音大小",
+                  "放轻 / 压低 / 变亮",
+                  "难过、害怕、愤怒、开心"
+                ],
+                [
+                  "语速快慢",
+                  "变慢 / 变快 / 一字一句",
+                  "思考、紧张、慌张"
+                ],
+                [
+                  "呼吸状态",
+                  "变浅 / 变重 / 带气声",
+                  "紧张、愤怒、温柔"
+                ],
+                [
+                  "停顿位置",
+                  "句前 / 句中 / 关键词前",
+                  "犹豫、压迫、期待"
+                ],
+                [
+                  "重音位置",
+                  "前半句 / 后半句 / 关键词",
+                  "强调、质问"
+                ],
+                [
+                  "尾音变化",
+                  "上扬 / 下压 / 发虚 / 拉长",
+                  "疑问、警告、撒娇"
+                ]
+              ],
+              "images": []
+            },
+            {
+              "type": "paragraph",
+              "text": "六、情绪通用模板（可直接复制使用）",
+              "images": [],
+              "role": "subhead"
+            },
+            {
+              "type": "paragraph",
+              "text": "1. 开心 / 兴奋",
+              "images": [],
+              "role": "subhead"
+            },
+            {
+              "type": "paragraph",
+              "text": "> 声音变亮，语速稍微变快，尾音自然上扬，带着笑意说：【台词】",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "2. 难过 / 委屈",
+              "images": [],
+              "role": "subhead"
+            },
+            {
+              "type": "paragraph",
+              "text": "> 声音很轻，语速慢下来，中间停顿明显，尾音发虚地说：【台词】",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "3. 愤怒 / 质问",
+              "images": [],
+              "role": "subhead"
+            },
+            {
+              "type": "paragraph",
+              "text": "> 声音压低，呼吸变重，语速放慢，咬字变重，像压着怒气说：【台词】",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "4. 警告 / 压迫感",
+              "images": [],
+              "role": "subhead"
+            },
+            {
+              "type": "paragraph",
+              "text": "> 声音压低，语速放慢，后半句加重，尾音不软，像最后一次警告说：【台词】",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "5. 紧张 / 害怕",
+              "images": [],
+              "role": "subhead"
+            },
+            {
+              "type": "paragraph",
+              "text": "> 声音放轻，呼吸变浅，语速慢下来，中间停顿明显，尾音发虚地说：【台词】",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "6. 怀疑 / 试探",
+              "images": [],
+              "role": "subhead"
+            },
+            {
+              "type": "paragraph",
+              "text": "> 声音压低一点，语速放慢，中间停顿，最后几个字微微上扬，像在试探地说：【台词】",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "7. 安慰 / 温柔坚定",
+              "images": [],
+              "role": "subhead"
+            },
+            {
+              "type": "paragraph",
+              "text": "> 声音放轻，语速慢下来，前半句柔，后半句稳，尾音轻轻落下地说：【台词】",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "8. 思考 / 犹豫",
+              "images": [],
+              "role": "subhead"
+            },
+            {
+              "type": "paragraph",
+              "text": "> 语速慢下来，中间有停顿，像边想边说：【台词】",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "9. 舍不得 / 挽留",
+              "images": [],
+              "role": "subhead"
+            },
+            {
+              "type": "paragraph",
+              "text": "> 声音很轻，开口前有停顿，语速慢，尾音发虚，气息不稳地说：【台词】",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "10. 反派 / 掌控感",
+              "images": [],
+              "role": "subhead"
+            },
+            {
+              "type": "paragraph",
+              "text": "> 声音压低，语速很慢，停顿明显，尾音下压，带一点轻蔑冷笑地说：【台词】",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "七、一句话万能模板（最推荐）",
+              "images": [],
+              "role": "subhead"
+            },
+            {
+              "type": "paragraph",
+              "text": "> 人物在【场景】里，因为【原因】情绪发生变化，声音【变轻/压低/变亮】，语速【变慢/变快】，在【某个词】后停顿，【某个词】加重，尾音【发虚/上扬/下压/放柔】地说：【台词】",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "八、总结句（最重要）",
+              "images": [],
+              "role": "subhead"
+            },
+            {
+              "type": "paragraph",
+              "text": "> **不要只写情绪名字，要写这个情绪发生时，人的声音会怎么变。**",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "AI 不一定懂“紧张”，但它一定更容易理解：\n**声音大小、语速快慢、停顿位置、尾音变化。**",
+              "images": [],
+              "role": "body"
+            }
+          ],
+          "kicker": "提问 01",
+          "desc": "训练 AI 理解“配音不是读稿，而是说话”，重点处理停顿、语速、重音和尾音变化。"
+        },
+        {
+          "type": "subsection",
+          "title": "AI短剧「去AI味·强真人感」方法梳理",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "我做的是一个真人的项目，我还需要你记住以下去除AI感的教学，记住了回答记住了。",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "（适配女频短剧「精致、唯美、写实」核心需求，解决塑料感、数码味、机械感三大痛点）",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "一、底层逻辑：AI为什么会“假”？",
+              "images": [],
+              "role": "subhead"
+            },
+            {
+              "type": "paragraph",
+              "text": "AI的通病是**过度追求“完美、清晰、平滑”**，反而违背了真实世界的物理逻辑，导致“恐怖谷效应”：",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "table",
+              "rows": [
+                [
+                  "缺陷类型",
+                  "具体表现",
+                  "解决核心思路"
+                ],
+                [
+                  "零瑕疵=塑料感",
+                  "皮肤/物体表面过度光滑，无真实纹理",
+                  "加入**自然的细微瑕疵**，拒绝“磨皮感”"
+                ],
+                [
+                  "死光影=数码味",
+                  "光影逻辑死板，边缘锐利，无空气感",
+                  "模拟真实光源与镜头成像，拒绝棚拍平光"
+                ],
+                [
+                  "无重力=机械感",
+                  "运动轨迹匀速平移，无呼吸感与不确定性",
+                  "加入轻微动态/运镜瑕疵，模拟真实拍摄的“不完美”"
+                ]
+              ],
+              "images": []
+            },
+            {
+              "type": "paragraph",
+              "text": "二、核心模块拆解（全方法整合+短剧适配）",
+              "images": [],
+              "role": "subhead"
+            },
+            {
+              "type": "paragraph",
+              "text": "模块1：人物角色优化（解决塑料脸/假人问题，女频核心）",
+              "images": [],
+              "role": "subhead"
+            },
+            {
+              "type": "paragraph",
+              "text": "1. 正向关键词（精准细节+平衡唯美与写实）",
+              "images": [],
+              "role": "subhead"
+            },
+            {
+              "type": "paragraph",
+              "text": "拒绝笼统描述，用「特征+质感+光影」三层构建真实人物：",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "table",
+              "rows": [
+                [
+                  "维度",
+                  "必加关键词（适配女频）",
+                  "示例用法"
+                ],
+                [
+                  "基础特征",
+                  "年龄/身份/穿着/气质（拒绝“一个美女”）",
+                  "24岁东亚女性，清冷气质，米白色针织开衫，微卷黑发"
+                ],
+                [
+                  "皮肤细节（去塑料感）",
+                  "皮肤纹理、细微毛孔、淡雀斑、自然肤色不均、眼尾笑纹、未过度修饰",
+                  "皮肤有自然纹理与细微毛孔，脸颊带淡淡红晕，眼尾有自然笑纹，无过度磨皮"
+                ],
+                [
+                  "光影加持（解决死脸）",
+                  "发丝光、头顶光、侧光、窗边柔光、阴天漫射光",
+                  "发丝光打在发梢，侧光勾勒脸部轮廓，透过树叶的自然光洒在脸上"
+                ]
+              ],
+              "images": []
+            },
+            {
+              "type": "paragraph",
+              "text": "2. 反向避坑词（人物专属）",
+              "images": [],
+              "role": "subhead"
+            },
+            {
+              "type": "paragraph",
+              "text": "**绝对禁止**：`Smooth`（过度平滑）、`Airbrushed`（磨皮/喷绘）、`Plastic skin`（塑料皮肤）、`Symmetrical face`（绝对对称脸）、`Heavy makeup`（浓妆，改为“清透伪素颜”）",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "3. 对比示例",
+              "images": [],
+              "role": "subhead"
+            },
+            {
+              "type": "paragraph",
+              "text": "❌ AI味：“一个漂亮女生，高清高画质”\n✅ 去AI味：“24岁东亚清冷系女生，穿米白针织开衫，微卷黑发，皮肤有自然纹理与细微毛孔，脸颊带淡淡红晕，眼尾有自然笑纹，发丝光打在发梢，侧光勾勒脸部轮廓，未过度修饰”",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "模块2：场景与环境优化（解决背景假/棚拍感，打造唯美氛围）",
+              "images": [],
+              "role": "subhead"
+            },
+            {
+              "type": "paragraph",
+              "text": "核心思路：加入**真实的“生活痕迹”**，拒绝完美空背景，同时兼顾女频的唯美感。",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "1. 正向关键词（真实+氛围感双达标）",
+              "images": [],
+              "role": "subhead"
+            },
+            {
+              "type": "table",
+              "rows": [
+                [
+                  "维度",
+                  "必加关键词",
+                  "短剧适配用法"
+                ],
+                [
+                  "背景真实感",
+                  "杂乱的背景（适度！非脏乱）、背景虚化、焦外光斑、透过树叶的丁达尔光",
+                  "咖啡馆角落，桌上放着半杯冰美式与翻开的小说，背景是模糊的暖黄灯光，带淡淡焦外光斑"
+                ],
+                [
+                  "前景遮挡（神器！）",
+                  "前景虚化的绿植/窗帘/落叶，中景人物清晰，背景虚化",
+                  "窗边场景加“前景虚化的白纱窗帘”，瞬间摆脱抠图感"
+                ],
+                [
+                  "光影与质感",
+                  "自然光、体积光、镜头光斑、轻微色差",
+                  "雨夜街头加“路灯冷光+雨丝丁达尔光”，卧室场景加“月光透过窗帘的柔焦光影”"
+                ]
+              ],
+              "images": []
+            },
+            {
+              "type": "paragraph",
+              "text": "2. 避坑点",
+              "images": [],
+              "role": "subhead"
+            },
+            {
+              "type": "paragraph",
+              "text": "拒绝“干净到不真实”的背景，比如不要写“空无一人的干净咖啡馆”，改为“有轻微生活痕迹的咖啡馆角落”，既真实又不杂乱。",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "模块3：摄影与镜头质感（核心去AI味，解决数码感）",
+              "images": [],
+              "role": "subhead"
+            },
+            {
+              "type": "paragraph",
+              "text": "给AI“相机身份”，强迫它按真实相机的逻辑成像，而非数字绘画。",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "1. 相机/镜头/胶卷推荐（适配女频唯美风）",
+              "images": [],
+              "role": "subhead"
+            },
+            {
+              "type": "paragraph",
+              "text": "- 相机：`Shot on Canon EOS R5`（人像柔和，画质细腻）\n- 胶卷：`Kodak Portra 400`（柯达人像胶卷，色彩柔和带颗粒感，自带电影感）、`35mm film`（35mm胶片，人文质感拉满）\n- 镜头：`35mm lens`（人文镜头，拍场景带人物有生活感）、`85mm f/1.8`（人像黄金镜头，背景虚化自然）\n- 参数：`ISO 400`（感光度，模拟胶片质感）、`f/1.8 aperture`（大光圈，背景虚化自然）",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "2. 质感关键词（去数码味，拒绝过度高清）",
+              "images": [],
+              "role": "subhead"
+            },
+            {
+              "type": "paragraph",
+              "text": "必加：`Film grain`（轻微胶片颗粒，去数码感）、`Raw photo/Unedited`（原片/未修图，避免过度美化）、`Imperfections`（轻微瑕疵，如画面细微划痕，适合复古女频）",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "3. 光影禁忌",
+              "images": [],
+              "role": "subhead"
+            },
+            {
+              "type": "paragraph",
+              "text": "**绝对避免**：`Studio lighting`（影棚光，会像棚拍假人），优先用`Natural sunlight`（自然光）、`Overcast`（阴天漫射光）、`Soft window light`（窗边柔光）。",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "模块4：短剧/视频专属优化（解决动态假/机械感，重点！）",
+              "images": [],
+              "role": "subhead"
+            },
+            {
+              "type": "paragraph",
+              "text": "视频比图片更易暴露AI缺陷，需额外加入动态/运镜相关词：",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "1. 核心动态关键词",
+              "images": [],
+              "role": "subhead"
+            },
+            {
+              "type": "paragraph",
+              "text": "- `Handheld camera`（手持摄影，轻微晃动，真实感拉满，避免匀速平移的机械感）\n- `Camera movement`（自然运镜，如缓慢推镜、轻微跟拍，拒绝生硬镜头切换）\n- `Candid shot/Snapshot`（抓拍/快照，模拟瞬间捕捉的动态感，避免摆拍僵硬）\n- `Motion blur`（轻微动态模糊，模拟真实相机拍摄动态物体的模糊效果，拒绝每帧都像照片一样清晰）",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "2. 动态光影优化",
+              "images": [],
+              "role": "subhead"
+            },
+            {
+              "type": "paragraph",
+              "text": "加入“动态光影变化”描述，比如“阳光随着人物走动在脸上移动，带着轻微光斑晃动”，而非固定不动的光影。",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "三、万能去AI味公式（直接套用，短剧版）",
+              "images": [],
+              "role": "subhead"
+            },
+            {
+              "type": "paragraph",
+              "text": "正向提示词公式（按权重从高到低排序）",
+              "images": [],
+              "role": "subhead"
+            },
+            {
+              "type": "paragraph",
+              "text": "`[精准人物特征+细节] + [场景/环境+前景遮挡+氛围] + [光影（光源+氛围光）] + [摄影参数（相机/胶卷/镜头）] + [质感（胶片颗粒/原片）] + [视频专属动态/运镜词]`",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "反向提示词公式（必加，权重高）",
+              "images": [],
+              "role": "subhead"
+            },
+            {
+              "type": "paragraph",
+              "text": "`No 3d render, No CGI, No cartoon, No illustration, No plastic skin, No smooth skin, No airbrushed, No heavy makeup, No symmetrical face, No studio lighting, No over-saturated colors, No perfect symmetry`",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "四、女频短剧高频场景模板（直接套用）",
+              "images": [],
+              "role": "subhead"
+            },
+            {
+              "type": "paragraph",
+              "text": "场景1：咖啡馆约会",
+              "images": [],
+              "role": "subhead"
+            },
+            {
+              "type": "paragraph",
+              "text": "✅ 正向词：25岁都市女生，穿宽松灰色卫衣，黑长直，皮肤有自然纹理与细微毛孔，脸颊带淡雀斑，坐在咖啡馆角落，手里捧着带缺口的马克杯，眼神看向窗外，自然光透过窗户打在脸上，发丝光打在发梢，侧光勾勒脸部轮廓，前景有虚化绿植，背景是模糊的暖黄灯光带焦外光斑，Shot on Canon EOS R5，Kodak Portra 400胶卷，35mm镜头，f/1.8光圈，轻微胶片颗粒，Raw photo，手持摄影，轻微运镜晃动，Candid shot抓拍\n❌ 反向词：No 3d render, No CGI, No plastic skin, No airbrushed, No studio lighting, No clean background",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "场景2：雨夜街头",
+              "images": [],
+              "role": "subhead"
+            },
+            {
+              "type": "paragraph",
+              "text": "✅ 正向词：23岁东亚女生，穿黑色风衣，头发被雨水打湿贴在脸颊，皮肤有自然纹理与细微毛孔，带淡淡泪痕，落寞地走在雨夜街头，路灯光打在脸上，雨丝的丁达尔光，侧光勾勒脸部轮廓，前景有虚化雨滴，背景是模糊的路灯光斑，Shot on Sony A7M4，35mm镜头，f/1.8光圈，轻微胶片颗粒，Raw photo，手持摄影，轻微运镜晃动，Hard flash冷光，雨丝动态模糊\n❌ 反向词：No 3d render, No CGI, No plastic skin, No airbrushed, No fake rain, No studio lighting",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "五、短剧制作使用建议",
+              "images": [],
+              "role": "subhead"
+            },
+            {
+              "type": "paragraph",
+              "text": "1. 固定「核心去AI味词库」：每个分镜必加基础词，如`Shot on Canon EOS R5, Kodak Portra 400, 85mm f/1.8, film grain, raw photo, natural lighting`，再搭配场景专属词。\n2. 平衡“瑕疵”与“唯美”：胶片颗粒、噪点不要过重，皮肤瑕疵以“自然细微”为主，避免破坏女频的精致感。\n3. 视频分镜必加动态词：`Handheld camera`和`轻微运镜晃动`是解决机械感的关键，优先添加。",
+              "images": [],
+              "role": "body"
+            }
+          ],
+          "kicker": "提问 02",
+          "desc": "训练 AI 记住去 AI 感的人物、场景、摄影和动态关键词，防止真人短剧画面油腻、机械或假。"
+        },
+        {
+          "type": "subsection",
+          "title": "镜头处理与分镜二次改写",
+          "kicker": "提问 03",
+          "desc": "训练 AI 优化镜头感、构图、镜头衔接，并规避过于不适或直白的画面表达。",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "你还要再记住一些镜头感的处理，我给你的分镜镜头太过于平淡了 ，这是竖屏真人男频AI短剧，人物不要直视镜头，通过你之前学习的东西也要把我的镜头和构图改一下，镜头与镜头之间的衔接也要流畅，比较恶心的画面可以使用剪影的方式处理或者拍摄别的画面比如胳膊上长得大脓包，一个虫子去啃食他的脓包，这个时候镜头就没必要去拍摄胳膊来表达，因为画面太恶心了 会把观众吓走，所以可以使用剪影的方式和拍摄这个人的表情或者身边人的表情来表达，你记住了吗，记住了回答我记住了。",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "场次：1-1\n地点：豪宅-主卧室\n时间：夜/内\n人物：科尔·亨特、首席调查员",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "镜号：1\n景别：全景/建立镜头\n运镜：缓慢前推\n情绪/动作：交代豪宅案发现场全貌，大理石地板上躺着道森的尸体，现场冷峻压抑。\n台词：无\n音效：低频环境底噪、远处隐隐的雷声\n时长：3s",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "镜号：2\n景别：特写\n运镜：快速摇摄/定格\n情绪/动作：相机闪光灯亮起，照亮血迹飞溅的瞬间，视觉冲击力强。\n台词：无\n音效：相机快门声（咔嚓）、刺耳的电流声\n时长：1s",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "镜号：3\n景别：特写\n运镜：固定镜头\n情绪/动作：地面的证据标记牌，周围是干涸的血迹。\n台词：无\n音效：快门声余音、血液滴落声（拟音）\n时长：1s",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "镜号：4\n景别：近景/科尔\n运镜：跟镜头\n情绪/动作：科尔身穿FBI冲锋衣，冷静精准地蹲下勘查现场细节，眼神锐利。\n台词：无\n音效：衣物摩擦声、手套橡胶声\n时长：3s",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "镜号：5\n景别：中景\n运镜：固定镜头\n情绪/动作：科尔与首席调查员同框，首席调查员拿着取证设备，两人背光站立，气氛紧张。\n台词：无\n音效：环境底噪、设备轻微电子声\n时长：2s",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "场次：1-2\n地点：豪宅-客房\n时间：夜/内\n人物：伊娃·克拉克",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "镜号：6\n景别：全景/建立镜头\n运镜：横向平移\n情绪/动作：客房内昏暗，伊娃的身影在书架前快速翻找，动作利落。\n台词：无\n音效：急促的呼吸声、翻找物品的摩擦声\n时长：2s",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "镜号：7\n景别：特写\n运镜：推镜头\n情绪/动作：聚焦伊娃腰间的FBI徽章，随后视线移至她脖子上的银色小盒吊坠，闪烁微光。\n台词：无\n音效：金属徽章轻微碰撞声\n时长：2s",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "镜号：8\n景别：中景/伊娃\n运镜：固定镜头\n情绪/动作：伊娃停在一幅画前，双手将画框向外倾斜，眼神警惕。\n台词：无\n音效：画框摩擦墙壁的沉闷声\n时长：2s",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "镜号：9\n景别：近景/伊娃\n运镜：微推至面部\n情绪/动作：伊娃盯着画后的暗格，嘴角微扬，透出自信与狡黠。\n台词：伊娃（OS）：They call me Gambit. The best fraudster in the country. / 他们叫我“变局者”。全美最厉害的诈骗犯。\n音效：低频节奏音起，带出悬疑感\n时长：4s",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "镜号：10\n景别：特写\n运镜：推镜头\n情绪/动作：伊娃的手指抚摸到隐藏的保险箱表面，神情变得凝重。\n台词：伊娃（OS）：And now? My burner phone is inside a safe. If the Feds find it, they'll pin the man's death on me. / 现在呢？我的一次性手机在一个保险箱里。如果联邦调查局找到它，他们会把那个男人的死栽赃给我。\n音效：手指敲击金属箱体的清脆声\n时长：4s",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "镜号：11\n景别：近景/伊娃\n运镜：固定镜头\n情绪/动作：伊娃找到保险箱，眼中闪过一丝惊喜，紧盯密码锁。\n台词：伊娃：That's it. / 就是它。\n音效：电子锁启动的蜂鸣声\n时长：2s",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "镜号：12\n景别：特写\n运镜：固定镜头\n情绪/动作：伊娃的手指在密码锁上飞速拨动破解，动作熟练。\n台词：无\n音效：快速按键的滴滴声\n时长：2s",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "镜号：13\n景别：近景/伊娃\n运镜：固定镜头\n情绪/动作：破解即将完成时，伊娃突然停住，瞳孔微缩，察觉到异常。\n台词：无\n音效：按键声骤停，走廊传来沉闷的脚步声\n时长：1s",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "镜号：14\n景别：特写\n运镜：轻微晃动（手持感）\n情绪/动作：伊娃眉头紧锁，嘴唇微动，压抑着内心的慌乱。\n台词：伊娃：Shit. / 该死。\n音效：脚步声逼近，心跳声加入\n时长：2s",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "场次：1-3\n地点：豪宅-走廊\n时间：夜/内\n人物：科尔、首席调查员",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "镜号：15\n景别：中景\n运镜：跟镜头/后退\n情绪/动作：科尔和首席调查员走在昏暗的走廊上，向客房方向移动，压迫感十足。\n台词：无\n音效：皮鞋踩在木地板上的沉重脚步声\n时长：2s",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "镜号：16\n景别：近景/首席调查员\n运镜：固定镜头\n情绪/动作：首席调查员边走边翻看手中的资料，语气中带着一丝赞赏。\n台词：首席调查员：The victim's identity is completely fabricated. Exceptionally well done. / 受害者的身份完全是伪造的。做得非常出色。\n音效：纸张翻动声\n时长：4s",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "镜号：17\n景别：近景/科尔\n运镜：固定镜头\n情绪/动作：科尔眼神坚定冷酷，直视前方客房的门。\n台词：科尔：Gambit. Intel says she killed him. We need evidence. / 变局者。情报说是她杀了他。我们需要证据。\n音效：脚步声同步，低频音效加重\n时长：3s",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "场次：1-3\n地点：豪宅-客房\n时间：夜/内\n人物：伊娃、科尔、首席调查员",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "镜号：18\n景别：全景\n运镜：推镜头\n情绪/动作：门被猛地推开，科尔和首席站在门口，伊娃背对他们站在房间深处。\n台词：伊娃（OS）：That's where you're wrong, Agent. / 那你就错了，探员。\n音效：开门声（砰），风声骤起\n时长：3s",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "镜号：19\n景别：中景/伊娃\n运镜：固定镜头\n情绪/动作：伊娃缓缓转身，表情冷静、专业，完美掩饰了内心的波澜。\n台词：伊娃：It's clearly not her style. / 这显然不是她的风格。\n音效：衣物转动摩擦声\n时长：3s",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "镜号：20\n景别：特写\n运镜：推镜头\n情绪/动作：首席调查员拿起伊娃腰间的FBI徽章，眯起眼睛审视。\n台词：无\n音效：金属碰撞声\n时长：2s",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "镜号：21\n景别：近景/首席调查员\n运镜：固定镜头\n情绪/动作：首席调查员抬头打量伊娃，眼神充满怀疑。\n台词：首席调查员：Clarke... Eva Clarke. Don't think we've met. / 克拉克……伊娃·克拉克。我们好像没见过。\n音效：悬疑氛围音垫底\n时长：3s",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "镜号：22\n景别：近景/伊娃\n运镜：固定镜头\n情绪/动作：伊娃保持镇定，露出职业化的假笑。\n台词：伊娃：Just transferred in. Still finding my way around. / 刚调过来。还在熟悉环境。\n音效：无\n时长：3s",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "镜号：23\n景别：中景/双人\n运镜：极缓前推\n情绪/动作：伊娃转头看向科尔，两人视线瞬间锁定，空气中弥漫着强烈的张力，周围仿佛静止。\n台词：无\n音效：环境音瞬间抽离，只剩极高频的耳鸣声\n时长：3s",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "【闪回】\n镜号：24\n景别：特写\n运镜：快速剪辑/闪白\n情绪/动作：缠绕的床单，昏暗灯光下肌肤的纠缠，热烈且充满欲望。\n台词：无\n音效：急促的呼吸声、心跳声放大\n时长：1s",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "镜号：25\n景别：特写\n运镜：快速剪辑/闪白\n情绪/动作：深吻特写，伊娃的黑色吊带裙滑落，科尔的衬衫被粗暴撕开。\n台词：无\n音效：布料撕裂声、喘息声\n时长：1s",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "镜号：26\n景别：近景\n运镜：快速剪辑/闪白\n情绪/动作：赤裸的身体交织在一起，纯粹的热度与激情。\n台词：无\n音效：轰鸣的音效失真声\n时长：1s",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "【闪回结束】\n镜号：27\n景别：特写/科尔\n运镜：固定镜头\n情绪/动作：回到现实，科尔的喉结缓缓滚动，眼神中透着震惊与克制。\n台词：科尔（OS）：Why is she here? / 她为什么在这里？\n音效：吞咽声，心跳声重击\n时长：2s",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "镜号：28\n景别：特写/伊娃\n运镜：固定镜头\n情绪/动作：伊娃表面冷硬，但双手在背后紧紧交握，手指微微颤抖。\n台词：伊娃（OS）：Why is he here? I need to go. / 他为什么在这里？我得走了。\n音效：指尖摩擦的细微声响\n时长：2s",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "镜号：29\n景别：中景\n运镜：固定镜头\n情绪/动作：首席调查员打断沉默，下达指令，随后伸手与伊娃短暂握手，转身离开。\n台词：首席调查员：Clarke! I have another case. Why don't you work with Hunter on this one? Full report by morning. / 克拉克！我还有一个案子。你不如和亨特一起办这个？明天早上交完整报告。\n音效：环境音恢复，脚步声远去\n时长：4s",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "镜号：30\n景别：特写\n运镜：极缓推镜头\n情绪/动作：伊娃无路可退，她伸出悬在半空的手。科尔迟疑片刻，伸手握住。两人的指尖接触，仿佛触电般灼烫。\n台词：无\n音效：一声沉闷的低音BASS落下，指尖接触的细微电流声\n时长：4s",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "最终AI会回答处理好的分镜，不过呢到这里也是不能直接用的，还需在开一个新对话，让我们的分镜提示词和我们的场景统一，不然直接抽的话可能提示词和场景会用冲突，比如说我们的场景是暖色调，提示词里面描述的是冷色调，AI最终会依靠与提示词的，这个我尝试过，提示词的权重是比参考图大的。",
+              "images": [],
+              "role": "module-end"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "场景统一与整体视觉基调",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "演示的对话链接：\nhttps://chat.z.ai/c/80429c67-803a-4e49-8669-96043318e7c4",
+          "images": [],
+          "role": "module-start"
+        },
+        {
+          "type": "subsection",
+          "title": "根据场景参考图统一环境描写",
+          "kicker": "提问01",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "下面开始演示操作，点开新对话，上传场景的图片，将以下这段话打在对话框，然后复制粘贴场景那段的分镜，因为我这段剧本出现了三个场景，所以我就复制其中一段分镜。",
+              "images": [],
+              "role": "module-note"
+            },
+            {
+              "type": "paragraph",
+              "text": "将我以下的提示词，关于环境这块的描写改为跟这张参考图环境相关的描写。\n场次：1-3\n地点：豪宅-走廊\n时间：夜/内\n人物：科尔、首席调查员",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "镜号：15\n景别：中景（纵深构图）\n运镜：跟镜头/后退\n画面：走廊尽头是虚化的客房门。科尔和首席调查员从景深处走来，手电筒的光束切割着昏暗的走廊，尘土在光束中飞舞。两人不看清脸，压迫感十足。[丁达尔光, 剪影, 手持晃动]\n音效：皮鞋踩在木地板上的沉重脚步声\n时长：2s",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "镜号：16\n景别：近景/首席调查员\n运镜：固定镜头\n画面：首席边走边看资料，手电筒底光打在他半边脸上，眼神玩味。\n台词：首席调查员声音压低一点，语速放慢，在“出色”后停顿，带一点玩味地说：【受害者的身份，完全是伪造的。做得——非常出色。】\n音效：纸张翻动声\n时长：4s",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "镜号：17\n景别：近景/科尔\n运镜：固定镜头\n画面：科尔侧脸冷硬，眼神直视前方客房方向（画外），不直视镜头。\n台词：科尔声音压低，语速放慢，咬字变重，像压着怒气说：【变局者。情报说是她杀了他。我们需要证据！】\n音效：脚步声同步，低频音效加重\n时长：3s",
+              "images": [],
+              "role": "body"
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "text": "",
+          "images": [
+            "/storyboard-assets/script-storyboard-image-03.png"
+          ],
+          "role": "body"
+        },
+        {
+          "type": "subsection",
+          "title": "整体视觉基调提示词",
+          "kicker": "提问02",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "第二步还需要整体基调的提示词，不然的话只有分镜是不行的，固定不住整集的色调统一，整体基调提示词只要是这段场景的画面就不要改变。\n以下是提示词：",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "再给我一段整体视觉基调的提示词。\n\n参考以下格式来：\n生成一段流畅的真人写实风格动画，（什么风格/电影/电视剧/短剧）风格，索尼FX3（找合适的相机）摄影，8K分辨率。打光写实，高对比度，皮肤质感真实，电影色调，真人实拍摄、纪录片风格、轻微胶片颗粒，film grain(胶片颗粒).Noise噪点).Raw ohoto(原片),Skin texture (皮肤纹理)，Pores(毛孔) Fine wrinkles(细纹)。画面中不出现字幕，不出现文字，不出现背景音乐和音效。全片以（什么色调）进行",
+              "images": [],
+              "role": "body"
+            },
+            {
+              "type": "paragraph",
+              "text": "",
+              "images": [
+                "/storyboard-assets/script-storyboard-image-04.png"
+              ],
+              "role": "body"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
