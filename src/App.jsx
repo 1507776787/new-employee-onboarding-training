@@ -93,6 +93,11 @@ const cleanNavTitle = (title) => title.replace(/^\d+\./, '').replace(/\s+/g, ' '
 const isMicrosoftEdge = () =>
   typeof navigator !== 'undefined' && /\bEdg\//.test(navigator.userAgent);
 
+const ACCESS_CODE_HASH =
+  import.meta.env.VITE_ACCESS_CODE_HASH || 'dfea2868a5a060839c502d91d71a0e802723c39abc460d71f82e6bd27701e852';
+const ACCESS_SESSION_KEY = 'training-access-until';
+const ACCESS_SESSION_DURATION = 12 * 60 * 60 * 1000;
+
 const watermarkTiles = Array.from({ length: 84 }, (_, index) => index);
 
 const formatWatermarkTime = () => {
@@ -102,6 +107,35 @@ const formatWatermarkTime = () => {
   return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(
     now.getMinutes(),
   )}`;
+};
+
+const hasValidAccessSession = () => {
+  if (typeof window === 'undefined') {
+    return false;
+  }
+
+  try {
+    return Number(window.localStorage.getItem(ACCESS_SESSION_KEY)) > Date.now();
+  } catch (error) {
+    return false;
+  }
+};
+
+const saveAccessSession = () => {
+  try {
+    window.localStorage.setItem(ACCESS_SESSION_KEY, String(Date.now() + ACCESS_SESSION_DURATION));
+  } catch (error) {
+    // The current page session can continue even if storage is blocked.
+  }
+};
+
+const hashAccessCode = async (value) => {
+  const bytes = new TextEncoder().encode(value);
+  const digest = await window.crypto.subtle.digest('SHA-256', bytes);
+
+  return Array.from(new Uint8Array(digest))
+    .map((byte) => byte.toString(16).padStart(2, '0'))
+    .join('');
 };
 
 const workflowNavItems = (sections, idPrefix, includeSubsections = true) =>
@@ -297,11 +331,11 @@ const seedanceNotices = [
   },
 ];
 
-function useTrainingMotion(rootRef) {
+function useTrainingMotion(rootRef, isEnabled = true) {
   useEffect(() => {
     const root = rootRef.current;
 
-    if (!root || typeof window === 'undefined') {
+    if (!isEnabled || !root || typeof window === 'undefined') {
       return undefined;
     }
 
@@ -613,13 +647,14 @@ function useTrainingMotion(rootRef) {
       refreshCall?.kill();
       context.revert();
     };
-  }, [rootRef]);
+  }, [rootRef, isEnabled]);
 }
 
 function App() {
   const appShellRef = useRef(null);
   const [isChecklistOpen, setIsChecklistOpen] = useState(false);
   const [isEdgeBrowser] = useState(() => isMicrosoftEdge());
+  const [isAccessGranted, setIsAccessGranted] = useState(() => hasValidAccessSession());
   const [theme, setTheme] = useState(() => {
     if (typeof window === 'undefined') {
       return 'light';
@@ -659,7 +694,11 @@ function App() {
     setTheme((currentTheme) => (currentTheme === 'dark' ? 'light' : 'dark'));
   };
 
-  useTrainingMotion(appShellRef);
+  useTrainingMotion(appShellRef, isAccessGranted);
+
+  if (!isAccessGranted) {
+    return <AccessGate theme={theme} onAccessGranted={() => setIsAccessGranted(true)} />;
+  }
 
   return (
     <main className="app-shell" data-theme={theme} ref={appShellRef}>
@@ -894,6 +933,73 @@ function App() {
       </div>
       <SecurityShield />
       <ChecklistModal isOpen={isChecklistOpen} onClose={() => setIsChecklistOpen(false)} />
+    </main>
+  );
+}
+
+function AccessGate({ theme, onAccessGranted }) {
+  const [accessCode, setAccessCode] = useState('');
+  const [error, setError] = useState('');
+  const [isChecking, setIsChecking] = useState(false);
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
+    if (!accessCode.trim()) {
+      setError('请输入访问密码');
+      return;
+    }
+
+    setIsChecking(true);
+    setError('');
+
+    try {
+      const hashedCode = await hashAccessCode(accessCode.trim());
+
+      if (hashedCode === ACCESS_CODE_HASH) {
+        saveAccessSession();
+        onAccessGranted();
+        return;
+      }
+
+      setError('访问密码不正确，请重新输入');
+      setAccessCode('');
+    } catch (checkError) {
+      setError('当前浏览器不支持安全校验，请换用新版浏览器');
+    } finally {
+      setIsChecking(false);
+    }
+  };
+
+  return (
+    <main className="access-gate" data-theme={theme}>
+      <section className="access-card" aria-labelledby="access-title">
+        <div className="access-card-mark">
+          <Clapperboard size={26} />
+        </div>
+        <p className="eyebrow">内部培训资料</p>
+        <h1 id="access-title">AI 短剧制作入职培训</h1>
+        <p className="access-desc">请输入访问密码，通过后才能查看工作流内容。</p>
+        <form className="access-form" onSubmit={handleSubmit}>
+          <label htmlFor="access-code">访问密码</label>
+          <input
+            id="access-code"
+            type="password"
+            value={accessCode}
+            onChange={(event) => {
+              setAccessCode(event.target.value);
+              setError('');
+            }}
+            autoComplete="current-password"
+            autoFocus
+          />
+          {error ? <p className="access-error">{error}</p> : null}
+          <button className="access-submit" type="submit" disabled={isChecking}>
+            {isChecking ? '校验中...' : '进入培训页面'}
+          </button>
+        </form>
+        <p className="access-footnote">中文在线版权所有，未经授权禁止外传。</p>
+      </section>
     </main>
   );
 }

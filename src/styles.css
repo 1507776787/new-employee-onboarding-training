@@ -89,6 +89,116 @@ body.security-protected a {
   pointer-events: none;
 }
 
+.access-gate {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 48px;
+  background:
+    radial-gradient(circle at 18% 18%, rgba(87, 201, 221, 0.22), transparent 32%),
+    radial-gradient(circle at 82% 78%, rgba(121, 178, 37, 0.2), transparent 34%),
+    linear-gradient(135deg, #f5f7fb, #eef8f7 54%, #f4f7ed);
+}
+
+.access-card {
+  width: min(460px, calc(100vw - 48px));
+  padding: 34px;
+  border: 1px solid rgba(23, 124, 114, 0.18);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow:
+    0 24px 70px rgba(25, 45, 70, 0.16),
+    inset 0 1px 0 rgba(255, 255, 255, 0.82);
+}
+
+.access-card-mark {
+  width: 52px;
+  height: 52px;
+  display: grid;
+  place-items: center;
+  margin-bottom: 18px;
+  border-radius: 8px;
+  color: #fff;
+  background: linear-gradient(135deg, #177c72, #32b8c7);
+  box-shadow: 0 14px 30px rgba(23, 124, 114, 0.22);
+}
+
+.access-card h1 {
+  margin: 8px 0 10px;
+  color: #17243a;
+  font-size: 28px;
+  line-height: 1.18;
+  letter-spacing: 0;
+}
+
+.access-desc,
+.access-footnote {
+  margin: 0;
+  color: #5c6978;
+  line-height: 1.7;
+}
+
+.access-form {
+  display: grid;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.access-form label {
+  color: #203146;
+  font-size: 14px;
+  font-weight: 850;
+}
+
+.access-form input {
+  width: 100%;
+  height: 48px;
+  padding: 0 14px;
+  border: 1px solid rgba(30, 45, 66, 0.16);
+  border-radius: 8px;
+  outline: 0;
+  background: #fff;
+  color: #17243a;
+  font: inherit;
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.access-form input:focus {
+  border-color: rgba(23, 124, 114, 0.62);
+  box-shadow: 0 0 0 4px rgba(23, 124, 114, 0.12);
+}
+
+.access-error {
+  margin: -2px 0 0;
+  color: #b42318;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.access-submit {
+  height: 48px;
+  margin-top: 4px;
+  border: 0;
+  border-radius: 8px;
+  color: #fff;
+  background: linear-gradient(135deg, #177c72, #1fc8bd);
+  cursor: pointer;
+  font-weight: 900;
+  box-shadow: 0 14px 30px rgba(23, 124, 114, 0.22);
+}
+
+.access-submit:disabled {
+  cursor: wait;
+  opacity: 0.7;
+}
+
+.access-footnote {
+  margin-top: 18px;
+  font-size: 13px;
+}
+
 .opening-sequence {
   position: relative;
   z-index: 1;
@@ -1615,6 +1725,37 @@ body.security-protected a {
   background:
     radial-gradient(circle at 12% 18%, rgba(87, 201, 221, 0.16), transparent 32%),
     linear-gradient(140deg, #0d1420 0%, #111b2a 46%, #172217 100%);
+}
+
+:root[data-theme="dark"] .access-gate {
+  background:
+    radial-gradient(circle at 18% 18%, rgba(87, 201, 221, 0.16), transparent 32%),
+    radial-gradient(circle at 82% 78%, rgba(121, 178, 37, 0.14), transparent 34%),
+    linear-gradient(135deg, #0f1722, #111f2f 54%, #101f1c);
+}
+
+:root[data-theme="dark"] .access-card {
+  border-color: rgba(130, 224, 216, 0.16);
+  background: rgba(15, 24, 38, 0.94);
+  box-shadow:
+    0 26px 76px rgba(0, 0, 0, 0.34),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+:root[data-theme="dark"] .access-card h1,
+:root[data-theme="dark"] .access-form label {
+  color: #f0f7ff;
+}
+
+:root[data-theme="dark"] .access-desc,
+:root[data-theme="dark"] .access-footnote {
+  color: #b8c8d8;
+}
+
+:root[data-theme="dark"] .access-form input {
+  border-color: rgba(180, 208, 232, 0.16);
+  background: rgba(8, 14, 24, 0.82);
+  color: #f0f7ff;
 }
 
 :root[data-theme="dark"] .content-area h2,
