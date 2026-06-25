@@ -2166,3 +2166,441 @@ body.security-protected a {
     grid-column: auto;
   }
 }
+
+@media (max-width: 900px) {
+  html,
+  body {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  body {
+    min-width: 0;
+  }
+
+  .access-gate {
+    min-height: 100svh;
+    padding: 20px;
+  }
+
+  .access-card {
+    width: 100%;
+    padding: 24px;
+  }
+
+  .access-card h1 {
+    font-size: 24px;
+  }
+
+  .security-watermark {
+    inset: -10vh -42vw;
+    grid-template-columns: repeat(4, minmax(180px, 1fr));
+    gap: 36px 42px;
+    opacity: 0.14;
+  }
+
+  .security-watermark span {
+    font-size: 12px;
+  }
+
+  .security-toast {
+    right: 14px;
+    top: 76px;
+    max-width: calc(100vw - 28px);
+  }
+
+  .opening-sequence {
+    display: none;
+  }
+
+  .page-aurora-background {
+    height: 42vh;
+    min-height: 280px;
+    opacity: 0.46;
+  }
+
+  .top-bar {
+    position: sticky;
+  }
+
+  .top-inner {
+    width: min(720px, calc(100% - 24px));
+    min-height: 60px;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 12px;
+  }
+
+  .brand-mark {
+    min-width: 0;
+    font-size: 15px;
+  }
+
+  .brand-mark span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .top-actions {
+    grid-column: 2;
+    gap: 8px;
+  }
+
+  .ghost-button,
+  .primary-button,
+  .theme-toggle-button {
+    width: 40px;
+    min-width: 40px;
+    height: 40px;
+    justify-content: center;
+    padding: 0;
+  }
+
+  .top-action-label {
+    display: none;
+  }
+
+  .workspace {
+    width: min(720px, calc(100% - 24px));
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+    padding: 16px 0 34px;
+  }
+
+  .side-panel {
+    position: static;
+    max-height: none;
+  }
+
+  .side-panel-glow,
+  .side-panel-glow .border-glow-inner {
+    max-height: none;
+  }
+
+  .side-panel-glow .border-glow-inner {
+    padding: 12px;
+  }
+
+  .project-card {
+    grid-template-columns: 42px minmax(0, 1fr);
+    gap: 10px;
+    padding-bottom: 12px;
+  }
+
+  .project-icon {
+    width: 42px;
+    height: 42px;
+  }
+
+  .project-card h1 {
+    font-size: 18px;
+  }
+
+  .phase-nav {
+    gap: 8px;
+    margin-top: 12px;
+  }
+
+  .phase-link {
+    min-height: 58px;
+    grid-template-columns: 38px minmax(0, 1fr) 18px 16px;
+    gap: 9px;
+    padding: 10px;
+  }
+
+  .phase-index {
+    width: 36px;
+    height: 36px;
+  }
+
+  .phase-link strong {
+    font-size: 15px;
+  }
+
+  .phase-link small {
+    font-size: 12px;
+  }
+
+  .phase-subnav {
+    max-height: 260px;
+    overflow-y: auto;
+    padding: 0 0 4px 14px;
+  }
+
+  .phase-child-sublist {
+    margin-left: 8px;
+    padding-left: 8px;
+  }
+
+  .content-area {
+    min-width: 0;
+  }
+
+  .border-glow-card,
+  .content-module-glow,
+  .content-module-glow > .border-glow-inner,
+  .overview-copy,
+  .task-panel,
+  .workflow-methods,
+  .doc-section-card,
+  .doc-block,
+  .doc-subsection,
+  .storyboard-shell,
+  .storyboard-reference-panel,
+  .notice-panel {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .border-glow-card > .edge-light {
+    display: none;
+  }
+
+  .overview-band,
+  .section-block {
+    padding: 18px;
+    scroll-margin-top: 74px;
+  }
+
+  .overview-copy {
+    padding: 0;
+  }
+
+  .overview-copy h2,
+  .section-title h2 {
+    font-size: 23px;
+    overflow-wrap: anywhere;
+  }
+
+  .overview-points {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .overview-points span {
+    min-height: 0;
+    padding: 12px 12px 12px 30px;
+  }
+
+  .overview-points span::before {
+    left: 12px;
+    top: 18px;
+  }
+
+  .section-title {
+    grid-template-columns: 42px minmax(0, 1fr);
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .section-icon {
+    width: 42px;
+    height: 42px;
+  }
+
+  .task-panel,
+  .workflow-methods,
+  .doc-section-card,
+  .doc-block,
+  .doc-subsection,
+  .notice-panel,
+  .storyboard-document {
+    padding: 14px;
+  }
+
+  .production-grid,
+  .quality-strip,
+  .notice-grid,
+  .storyboard-meta-grid,
+  .shot-fields,
+  .doc-image-grid,
+  .doc-image-grid.image-count-1,
+  .doc-image-grid.image-count-2 {
+    grid-template-columns: 1fr;
+  }
+
+  .placeholder-panel {
+    grid-template-columns: 1fr;
+  }
+
+  .placeholder-visual {
+    min-height: 120px;
+  }
+
+  .workflow-methods-head,
+  .notice-title,
+  .storyboard-head {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .notice-badge,
+  .storyboard-format-pill {
+    width: 100%;
+    max-width: none;
+    justify-content: center;
+    white-space: normal;
+  }
+
+  .doc-section-head {
+    grid-template-columns: 38px minmax(0, 1fr);
+    gap: 10px;
+  }
+
+  .doc-section-head span {
+    width: 36px;
+    height: 36px;
+  }
+
+  .doc-section-head h3,
+  .workflow-methods-head h3,
+  .script-placeholder h3,
+  .notice-title h3 {
+    font-size: 20px;
+  }
+
+  .doc-block p,
+  .doc-table td,
+  .notice-card li,
+  .shot-field p,
+  .storyboard-intro,
+  .phase-child-link,
+  .overview-points span,
+  .section-title p:last-child {
+    font-size: 14px;
+    line-height: 1.7;
+    overflow-wrap: anywhere;
+  }
+
+  .doc-table {
+    min-width: 620px;
+  }
+
+  .doc-table-wrap {
+    margin-inline: -2px;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .doc-image-trigger img {
+    max-height: 420px;
+  }
+
+  .storyboard-reference-panel {
+    grid-template-columns: 1fr;
+  }
+
+  .reference-copy {
+    position: static;
+  }
+
+  .storyboard-reference-figure {
+    padding: 10px;
+  }
+
+  .image-zoom-label {
+    right: 10px;
+    bottom: 10px;
+    min-height: 32px;
+    padding: 0 10px;
+    font-size: 12px;
+  }
+
+  .checklist-backdrop,
+  .image-preview-backdrop {
+    padding: 12px;
+  }
+
+  .checklist-dialog {
+    width: 100%;
+    max-height: calc(100svh - 24px);
+  }
+
+  .image-preview-dialog {
+    width: calc(100vw - 24px);
+    height: calc(100svh - 24px);
+    padding: 10px;
+    grid-template-rows: 38px minmax(0, 1fr);
+    gap: 8px;
+  }
+
+  .image-preview-close {
+    width: 38px;
+    height: 38px;
+  }
+
+  .image-preview-dialog img {
+    max-width: 100%;
+    max-height: 100%;
+  }
+
+  .shot-card,
+  .quality-card,
+  .notice-card {
+    min-height: 0;
+  }
+
+  .notice-card:last-child {
+    grid-column: auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .top-inner,
+  .workspace {
+    width: min(420px, calc(100% - 18px));
+  }
+
+  .brand-mark {
+    font-size: 14px;
+  }
+
+  .brand-mark svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .overview-band,
+  .section-block {
+    padding: 14px;
+  }
+
+  .overview-copy h2,
+  .section-title h2 {
+    font-size: 21px;
+  }
+
+  .section-title {
+    grid-template-columns: 38px minmax(0, 1fr);
+  }
+
+  .section-icon {
+    width: 38px;
+    height: 38px;
+  }
+
+  .task-panel,
+  .workflow-methods,
+  .doc-section-card,
+  .doc-block,
+  .doc-subsection,
+  .notice-panel,
+  .storyboard-document {
+    padding: 12px;
+  }
+
+  .phase-link {
+    grid-template-columns: 34px minmax(0, 1fr) 16px 14px;
+  }
+
+  .phase-index {
+    width: 32px;
+    height: 32px;
+    font-size: 13px;
+  }
+
+  .security-watermark {
+    grid-template-columns: repeat(3, minmax(160px, 1fr));
+  }
+}

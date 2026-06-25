@@ -340,8 +340,9 @@ function useTrainingMotion(rootRef, isEnabled = true) {
     }
 
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const isCompactViewport = window.matchMedia('(max-width: 900px)').matches;
 
-    if (reducedMotion) {
+    if (reducedMotion || isCompactViewport) {
       root.querySelector('.opening-sequence')?.setAttribute('data-motion-hidden', 'true');
       return undefined;
     }
@@ -1143,11 +1144,11 @@ function TopBar({ onOpenChecklist, onToggleTheme, theme }) {
           </button>
           <a className="ghost-button" href="/script-assets/Trap_of_Love-1.pdf" target="_blank" rel="noreferrer">
             <FileText size={18} />
-            剧本
+            <span className="top-action-label">剧本</span>
           </a>
           <button className="primary-button" type="button" onClick={onOpenChecklist}>
             <ClipboardCheck size={18} />
-            审核清单
+            <span className="top-action-label">审核清单</span>
           </button>
         </div>
       </div>
