@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import {
+  ArrowUp,
   AlertTriangle,
   BookOpenText,
   Camera,
@@ -20,6 +21,7 @@ import {
   PencilRuler,
   PlaySquare,
   Route,
+  Search,
   Sun,
   UserRoundCog,
   UsersRound,
@@ -55,7 +57,7 @@ const phases = [
     title: '人设、场景和道具',
     desc: '按编导拆分描述制作三版，审核通过后留稿。',
     icon: UserRoundCog,
-    status: '待补方法',
+    status: '制作方法',
   },
   {
     number: '03',
@@ -66,17 +68,10 @@ const phases = [
   },
   {
     number: '04',
-    title: '操作方法',
-    desc: '集中查看关键词优化、分镜提示词排版和图片教学示例。',
+    title: '操作指南&注意事项',
+    desc: '集中查看关键词优化、分镜提示词、素材衔接、常见问题和配音处理注意事项。',
     icon: WandSparkles,
-    status: '操作示例',
-  },
-  {
-    number: '05',
-    title: '注意事项',
-    desc: '集中查看生成、衔接、成片审核和配音处理注意事项。',
-    icon: ClipboardCheck,
-    status: '制作避坑',
+    status: '指南&避坑',
   },
 ];
 
@@ -84,11 +79,16 @@ const assetMethodSections = sd2Workflow.sections.filter((section) =>
   ['1.人物换装', '2.写实场景', '3.道具（系统）'].includes(section.title),
 );
 const keywordOptimizationSection = sd2Workflow.sections.find((section) =>
-  section.title.startsWith('5.实际操作'),
+  section.title.includes('剧集制作关键词优化'),
 );
 const voiceIssueSection = sd2Workflow.sections.find((section) => section.title.startsWith('6.配音错乱'));
 
-const cleanNavTitle = (title) => title.replace(/^\d+\./, '').replace(/\s+/g, ' ').trim();
+const cleanNavTitle = (title) =>
+  title
+    .replace(/^\d+\./, '')
+    .replace(/^实际操作[—-]+/, '')
+    .replace(/\s+/g, ' ')
+    .trim();
 
 const isMicrosoftEdge = () =>
   typeof navigator !== 'undefined' && /\bEdg\//.test(navigator.userAgent);
@@ -163,6 +163,86 @@ const workflowNavItems = (sections, idPrefix, includeSubsections = true) =>
     };
   });
 
+const normalizeSearchText = (value) =>
+  String(value || '')
+    .toLowerCase()
+    .replace(/\s+/g, '');
+
+const fuzzyIncludes = (text, query) => {
+  let cursor = 0;
+
+  for (const char of query) {
+    cursor = text.indexOf(char, cursor);
+
+    if (cursor === -1) {
+      return false;
+    }
+
+    cursor += 1;
+  }
+
+  return true;
+};
+
+const getSearchScore = (item, query) => {
+  const normalizedQuery = normalizeSearchText(query);
+
+  if (!normalizedQuery) {
+    return null;
+  }
+
+  const title = normalizeSearchText(item.title);
+  const path = normalizeSearchText(item.path);
+  const content = normalizeSearchText(item.content);
+
+  if (title.includes(normalizedQuery)) {
+    return title.indexOf(normalizedQuery);
+  }
+
+  if (path.includes(normalizedQuery)) {
+    return 30 + path.indexOf(normalizedQuery);
+  }
+
+  if (content.includes(normalizedQuery)) {
+    return 80 + content.indexOf(normalizedQuery);
+  }
+
+  if (fuzzyIncludes(title, normalizedQuery)) {
+    return 140;
+  }
+
+  if (fuzzyIncludes(path, normalizedQuery) || fuzzyIncludes(content, normalizedQuery)) {
+    return 220;
+  }
+
+  return null;
+};
+
+const collectNavSearchItems = (items, parentTitle = '') =>
+  items.flatMap((item) => {
+    const path = [parentTitle, item.title].filter(Boolean).join(' / ');
+    const current = {
+      content: item.desc || item.status || '',
+      id: item.id || `phase-${item.number}`,
+      path,
+      title: item.title,
+    };
+
+    return [current, ...collectNavSearchItems(item.children || [], path)];
+  });
+
+const scrollToAnchor = (anchorId) => {
+  if (typeof document === 'undefined') {
+    return;
+  }
+
+  const target = document.getElementById(anchorId) || document.querySelector('.app-shell');
+
+  if (target) {
+    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+};
+
 const phaseNavItems = [
   {
     ...phases[0],
@@ -187,14 +267,14 @@ const phaseNavItems = [
       ...workflowNavItems(keywordOptimizationSection ? [keywordOptimizationSection] : [], 'phase-04-keywords'),
       { id: 'phase-04-storyboard-format', title: '分镜表样式' },
       { id: 'phase-04-reference', title: '图片教学参考' },
-    ],
-  },
-  {
-    ...phases[4],
-    children: [
-      { id: 'phase-05-quality', title: '成片质量检查' },
-      { id: 'phase-05-notices', title: 'Seedance 制作注意事项' },
-      ...workflowNavItems(voiceIssueSection ? [voiceIssueSection] : [], 'phase-05-voice'),
+      { id: 'phase-04-cinematography-guide', title: '摄影参数与画面风格' },
+      { id: 'phase-04-lighting-guide', title: 'AI 视频打光提示词' },
+      { id: 'phase-04-reconstruction-guide', title: '低清图片高清重构' },
+      { id: 'phase-04-arrow-camera', title: '箭头引导线运镜' },
+      { id: 'phase-04-continuity-guide', title: '片段衔接修复' },
+      { id: 'phase-04-background-unity', title: '背景统一方法' },
+      { id: 'phase-04-notices', title: '常见问题' },
+      ...workflowNavItems(voiceIssueSection ? [voiceIssueSection] : [], 'phase-04-voice'),
     ],
   },
 ];
@@ -263,6 +343,357 @@ const storyboardExample = {
       duration: '2s',
     },
   ],
+};
+
+const arrowCameraMethod = {
+  source: '参考来源：抖音作者“小绿”，用于内部学习参考。',
+  intro:
+    '通过在参考图上绘制红色箭头引导线，可以更精准地控制 AI 视频的镜头运动路径。它不只适合风景航拍，也可以用于多人物展示、建筑穿梭、微观视角推进等需要明确镜头路线的画面。',
+  steps: [
+    '准备一张构图清晰的参考图，先确定镜头从哪里进入、经过哪里、最后停在哪里。',
+    '在图上画出醒目的红色路线或箭头，尽量保持连续，明确起点、转弯点和终点。',
+    '把标注后的图片作为参考图上传给模型，并在提示词中说明镜头必须严格跟随红色轨迹运动。',
+    '提示词里一定补充：红线只作为运镜参考，最终成片必须删除所有红色引导线和手绘标记。',
+    '如果路线很复杂，不要一次塞进一个视频，可以拆成 2-3 段分别生成，再用剪辑衔接。',
+  ],
+  useCases: [
+    {
+      title: '城市/风景航拍',
+      effect: '控制低空掠过、抬升、俯冲、穿越、环绕等镜头路径，让航拍不再随机漂移。',
+    },
+    {
+      title: '建筑穿梭/FPV',
+      effect: '让镜头按指定路线穿过门洞、桥梁、楼宇缝隙或街道，适合一镜到底式视觉冲击。',
+    },
+    {
+      title: '多人物展示',
+      effect: '用路线规定镜头先看角色 A，再转向角色 B、角色 C，避免模型随意切换主体。',
+    },
+    {
+      title: '微观视角展示',
+      effect: '适合从物体表面、植物、机械结构或特效粒子间推进，增强探索感和空间纵深。',
+    },
+  ],
+  promptBlocks: [
+    {
+      title: '基础运镜提示词',
+      text:
+        '第一人称 FPV 穿越航拍镜头，电影级极速一镜到底，镜头严格跟随画面中的红色轨迹飞行，完整走完路线，不缩短、不改动轨迹方向。\n\n硬性强制要求：最终成片必须彻底删除画面内所有红色引导线条、手绘标记，画面完全还原原图风景。红线全程不可出现在成品视频里，红线仅作为 AI 运镜参考，渲染时自动抹除。',
+    },
+    {
+      title: '飞行顺序示例',
+      text:
+        '飞行顺序：从江面船舶低空掠水起飞，沿江岸楼宇缝隙穿行，抬升高度钻过城市地标与高楼群，飞越 CBD 天际线，镜头惯性冲向画面右侧远处城区收尾。',
+    },
+    {
+      title: '质感补充提示词',
+      text:
+        '画面氛围：保留原图黄昏落日暖黄色光效，江面有金色反光，远处有薄雾，建筑、船只、树木造型写实无扭曲变形，自然动态运动模糊，超写实城市航拍质感，4K，60fps，无水印，无多余线条。',
+    },
+  ],
+  tips: [
+    '红色路线不要画得太乱，线条越明确，模型越容易理解镜头方向。',
+    '连续曲线比多个断开的箭头更稳定，复杂路线可以分段生成。',
+    '这套方法主要解决镜头路线问题，不负责解决人物脸部一致性，人物一致性仍要靠人设图和垫图。',
+    '用于多人画面时，可以把路线设计成“先经过谁、再推向谁、最后停在谁”的顺序。',
+  ],
+  images: [
+    '/operation-assets/arrow-camera-01.webp',
+    '/operation-assets/arrow-camera-02.webp',
+    '/operation-assets/arrow-camera-03.webp',
+    '/operation-assets/arrow-camera-04.webp',
+    '/operation-assets/arrow-camera-05.webp',
+  ],
+};
+
+const cinematographyGuide = {
+  intro:
+    '这组参考图把摄影参数、镜头语言和画面风格拆成可直接写进 AI 视频提示词的关键词。写提示词时不要只说“电影感”，要明确光圈、焦段、距离、构图、机位、快门、光线和色调，这些信息会直接影响景深、空间压缩、人物气势、动作速度和整体质感。',
+  rules: [
+    '想突出人物情绪，用大光圈、长焦、近距离、浅景深；想交代世界观，用小光圈、广角、远距离、大景深。',
+    '镜头语言要和剧情功能匹配：低机位表现压迫与权威，高机位表现俯视和渺小，中机位保持客观叙事。',
+    '风格词不要堆太多，一次选 1 个主风格，再补 1-2 个辅助质感，例如真人写实 + 冷暖对比色 + 伦勃朗光。',
+    '动作镜头需要写快门/运动模糊，静态情绪镜头需要写光线方向、焦段和景深。',
+  ],
+  items: [
+    {
+      title: '01 光圈控制景深',
+      image: '/operation-assets/cinematography-guide-01.jpg',
+      summary:
+        'f/16 背景和人物都清楚，适合交代场景；f/5.6 开始分离主体；f/1.2 背景大幅虚化，适合情绪特写和人物高光。',
+      prompt: '85mm 中长焦，f/1.8 大光圈，浅景深，人物面部清晰，背景城墙和旗帜柔和虚化，电影级人物特写',
+    },
+    {
+      title: '02 焦段决定空间关系',
+      image: '/operation-assets/cinematography-guide-02.jpg',
+      summary:
+        '14mm/24mm 适合宏大场景和空间冲击；50mm 更自然；85mm/200mm 会压缩背景、突出人物，适合权谋、凝视和压迫感。',
+      prompt: '24mm 广角史诗全景，城墙、军阵和远山同时进入画面；切换 85mm 中长焦人物半身，背景压缩虚化，主体气场强',
+    },
+    {
+      title: '03 拍摄距离决定景别',
+      image: '/operation-assets/cinematography-guide-03.jpg',
+      summary:
+        '0.5m 是极近特写，适合眼神和伤痕；1-2m 适合头肩和半身；5-15m 适合全身、环境和战争氛围。',
+      prompt: '镜头距离人物 1 米，正面头肩近景，眼神锐利；随后拉到 5 米全身镜头，荒凉战场和山脉完整出现',
+    },
+    {
+      title: '04 黄金点构图',
+      image: '/operation-assets/cinematography-guide-04.jpg',
+      summary:
+        '把人物或关键道具放在左上、右上、左下、右下黄金点，可以让画面更稳定，也能给远景、天空、建筑或动作方向留空间。',
+      prompt: '三分法构图，人物站在左上黄金点，右侧留出云海和远山空间，画面空灵辽阔，人物剪影突出',
+    },
+    {
+      title: '05 电影摄影风格比较',
+      image: '/operation-assets/cinematography-guide-05.jpg',
+      summary:
+        '冷色科幻适合异象、压迫和未知；现实主义悬疑适合战争废墟和阴谋；经典叙事光影适合史诗感、希望感和情绪收束。',
+      prompt: '维伦纽瓦式沉浸冷色调科幻风格，低饱和青蓝色，远处巨龙压迫感，超宽画幅，人物背影凝视城市',
+    },
+    {
+      title: '06 对称、暴力复古与手绘幻想',
+      image: '/operation-assets/cinematography-guide-06.jpg',
+      summary:
+        '韦斯安德森式对称适合秩序感和荒诞感；昆汀式复古适合暴力、血迹和强戏剧；宫崎骏/吉卜力式适合温暖幻想和手绘质感。',
+      prompt: '昆汀式暴力美学与复古风格，低角度近景，墙面血迹、暖黄硬光、人物表情狠厉，画面粗粝有张力',
+    },
+    {
+      title: '07 高、中、低机位',
+      image: '/operation-assets/cinematography-guide-07.jpg',
+      summary:
+        '高机位让人物显得被局势包围；中机位稳定客观；低机位会放大人物气势，适合君主、反派、觉醒和胜利瞬间。',
+      prompt: '低机位仰拍，人物站在城墙前，肩甲和面部形成强压迫感，天空占据大面积背景，史诗英雄登场',
+    },
+    {
+      title: '08 朋克风格方向',
+      image: '/operation-assets/cinematography-guide-08.jpg',
+      summary:
+        '赛博朋克强调霓虹、雨夜和未来都市；原子朋克偏复古未来和明亮科技；蒸汽朋克适合齿轮、飞艇、铜管、工业烟雾。',
+      prompt: '赛博朋克夜景，蓝紫霓虹灯牌、雨后湿润街道、全息广告牌，古代将军穿科技盔甲，冷色高反差电影质感',
+    },
+    {
+      title: '09 写实、CG、3D 与 2D 动漫',
+      image: '/operation-assets/cinematography-guide-09.jpg',
+      summary:
+        '真人写实更适合短剧成片；CG 风格更干净、广告感强；3D 动漫偏游戏宣传片；2D 动漫更扁平，适合漫画化表达。',
+      prompt: '真人写实风格，真实皮肤纹理、盔甲金属磨损、自然风吹头发，电影镜头光影，不要 3D 动漫感，不要二次元线条',
+    },
+    {
+      title: '10 快门与运动模糊',
+      image: '/operation-assets/cinematography-guide-10.jpg',
+      summary:
+        '1/1000s 能冻结动作；1/125s 有自然速度感；1/60s 以下会形成明显拖影，适合冲刺、战斗、马匹奔袭和混乱感。',
+      prompt: '骑马冲锋动作镜头，1/125s 快门速度，自然运动模糊，泥土飞溅，披风高速飘动，镜头横向跟拍',
+    },
+    {
+      title: '11 光线方向与人物气质',
+      image: '/operation-assets/cinematography-guide-11.jpg',
+      summary:
+        '点光会集中强调面部；顺光清楚但较平；逆光制造轮廓和神秘感；伦勃朗光适合权谋、暗场、复杂内心和高级人物肖像。',
+      prompt: '伦勃朗光，人物一侧脸被暖光照亮，另一侧保留深阴影，背景战火虚化，人物眼神冷静压迫，暗调电影质感',
+    },
+    {
+      title: '12 色调控制情绪',
+      image: '/operation-assets/cinematography-guide-12.jpg',
+      summary:
+        '冷色调偏孤独、危险、理性；暖色调偏希望、史诗和回忆；冷暖对比可以同时保留宏大光感和人物冷峻情绪。',
+      prompt: '冷暖对比色，远处天空暖金色夕阳，人物盔甲和城墙保持冷青色阴影，画面有史诗感和压迫感',
+    },
+  ],
+  examplePrompt:
+    '真人写实古装战争短剧，24mm 广角建立城墙和军阵，随后切 85mm 中长焦人物半身特写，f/2.0 浅景深，低机位仰拍，人物位于左上黄金点，伦勃朗光，冷暖对比色，盔甲金属磨损真实，背景旗帜轻微虚化，1/125s 自然运动模糊，电影级质感。',
+};
+
+const imageReconstructionGuide = {
+  intro:
+    '这套方法不是直接把低清图放大，而是先把原图拆成线稿、色稿和反推提示词，再用三者共同约束高清重构。线稿负责结构，色稿负责颜色，反推提示词负责材质、风格、光影和氛围。适用于不清晰、低分辨率、压缩失真、细节涂抹、边缘不清或需要二次修复的图片，不局限于道具、盔甲、建筑纹样。',
+  steps: [
+    {
+      title: '01 提取线稿图',
+      image: '/operation-assets/reconstruction-guide-01.jpg',
+      summary:
+        '先让 AI 把原图转成专业黑白线稿，提取主体轮廓、内部结构和主要花纹。这个步骤解决的是“边缘糊、结构乱、花纹缺失”的问题。',
+      prompt:
+        '把原图转化为专业级黑白线稿图。要求用清晰、流畅、闭合的黑色线条准确提取主体轮廓、内部结构和主要花纹，修复模糊、缺失和不合理的细节，确保整体结构完整、层次清楚。背景纯白，去除颜色、灰度、阴影、纹理和杂色，只保留干净明确的线稿关系。高清图像，最佳品质。',
+    },
+    {
+      title: '02 提取色稿图',
+      image: '/operation-assets/reconstruction-guide-02.jpg',
+      summary:
+        '再从原图里提取标准色稿，只保留主色、副色、点缀色和色彩分区。这个步骤用于锁定颜色逻辑，避免后续高清重构时颜色跑偏。',
+      prompt:
+        '把原图转化为标准色稿图。要求保留主体结构和主要区域关系，用清晰、均匀的扁平色块准确提取主色、副色和点缀色，明确画面的色彩分区。去除复杂光影、渐变、纹理和杂色，只保留干净、易读的色彩关系。高清图像，最佳品质。',
+    },
+    {
+      title: '03 反推图片提示词',
+      image: '/operation-assets/reconstruction-guide-03.jpg',
+      summary:
+        '让 AI 对原图进行逆向视觉解构，输出一段可以直接用于图像生成的中文提示词。这里重点是主体、构图、材质、细节、光影、背景、色彩和氛围都要写完整。',
+      prompt:
+        '请对原图进行逆向视觉解构，分析其主体、构图、风格、材质、细节、光影、背景、色彩和氛围，并输出一段可直接用于图像生成的专业中文提示词。要求提示词完整、准确、可复用，能够尽可能还原原图的视觉效果与风格特征。直接输出最终提示词，不要解释。',
+      example:
+        '示例方向：高清中国古代盔甲局部特写，特写视角聚焦于肩部护具。盔甲主体由富丽的橙黄色或金色织物制成，表面有复杂银色刺绣、盘扣和镂空银质饰片。肩部顶端镶嵌立体银质兽首，兽首嘴部和两侧垂挂白色珍珠流苏。下方是多层暗青铜色做旧金属鳞甲片，边缘锋利整齐。背景为干净纯白色，光影柔和均匀，突出银、织物、青铜、珍珠等材质对比。',
+    },
+    {
+      title: '04 线稿 + 色稿 + 提示词高清重构',
+      image: '/operation-assets/reconstruction-guide-04.jpg',
+      summary:
+        '最终把第 1 步线稿、第 2 步色稿和第 3 步反推提示词一起输入。线稿管结构，色稿管颜色，反推提示词管质感和氛围。',
+      prompt:
+        '请以图1的线稿结构为准，以图2的色稿颜色为准，对原图进行高清重构。要求保留原有主体构图、色彩逻辑和整体风格，在此基础上强化轮廓、内部结构、主要花纹、材质质感和细节层次，修复模糊、涂抹、边缘不清和细节缺失等问题，提升整体清晰度、完成度和真实感。背景保持简洁干净，不添加无关元素。输出高清、锐利、细节完整的高质量图像，最佳品质。\n\n图片提示词：\n【这里粘贴第 03 步反推出来的完整提示词】',
+    },
+    {
+      title: '05 备忘录：线稿与色稿提示词',
+      image: '/operation-assets/reconstruction-guide-05.jpg',
+      summary:
+        '把线稿提示词和色稿提示词固定存到备忘录里，后续遇到低清、不清晰、细节缺失或需要保留结构和颜色的图片，可以直接复用。先线稿、后色稿，不要跳过前两步直接高清化。',
+      prompt:
+        '固定顺序：\n1. 先提取线稿提示词，得到结构清晰的黑白线稿。\n2. 再提取色稿提示词，得到干净、易读、分区明确的扁平色稿。\n\n注意：线稿不要保留颜色和阴影；色稿不要保留复杂光影、渐变、纹理和杂色。',
+    },
+    {
+      title: '06 备忘录：反推与重构提示词',
+      image: '/operation-assets/reconstruction-guide-06.jpg',
+      summary:
+        '把图片反推提示词和高清重构提示词也固定存好。真正生成时，先让 AI 反推出原图提示词，再把这段反推结果粘贴到高清重构提示词结尾。',
+      prompt:
+        '固定顺序：\n1. 用图片反推提示词得到原图的主体、构图、材质、光影、色彩和氛围描述。\n2. 用高清重构提示词合并图1线稿、图2色稿和反推提示词。\n3. 在“图片提示词：”后面粘贴第 1 步反推出来的完整结果。\n\n注意：最终重构时要强调保留主体构图、色彩逻辑和整体风格，不添加无关元素。',
+    },
+  ],
+};
+
+const lightingPromptGuide = {
+  title: 'AI 视频打光提示词',
+  icon: Sun,
+  intro:
+    '在写 AI 视频提示词时，不要只描述人物、服装、场景和动作，还要明确写出光线。光线不是单纯把画面照亮，而是用来决定观众先看哪里、人物和背景是否分离、画面有没有电影感，以及当前镜头要传递什么情绪。',
+  points: [
+    '提示词不要只写“高清、电影感、氛围感”，要明确光线方向、强弱、明暗关系和情绪效果。',
+    '光线描述可以放在“整体视觉基调”或“镜头画面”后面，和景别、运镜、人物情绪一起写。',
+  ],
+  guides: [
+    {
+      title: '01 侧逆光',
+      suit: '古风短剧、漫剧、氛围感强的情绪镜头。',
+      effect: '让人物和背景分开，在头发、肩膀、身体边缘形成轮廓光，增强画面电影感和层次感。',
+      prompt:
+        '侧逆光，人物头发和肩膀边缘有柔和轮廓光，人物与背景明显分离，画面具有电影感和氛围感',
+    },
+    {
+      title: '02 轮廓光',
+      suit: '暗色背景、人物登场、神秘感、压迫感镜头。',
+      effect: '强调人物边缘线条，让人物从暗背景中跳出来，增强高级感和视觉识别度。',
+      prompt:
+        '人物边缘有明显轮廓光，暗色背景，身体外沿被光线勾勒，人物主体突出，画面层次清晰',
+    },
+    {
+      title: '03 侧光',
+      suit: '情绪对峙、人物内心变化、悬疑感镜头。',
+      effect: '塑造脸部明暗对比，增加戏剧张力，让人物表情更有层次。',
+      prompt:
+        '侧光照明，人物脸部一侧被照亮，另一侧保持阴影，明暗对比明显，情绪张力强',
+    },
+    {
+      title: '04 硬光',
+      suit: '商业广告、品牌感镜头、强视觉冲击画面。',
+      effect: '光影边缘清晰，画面更利落、更有质感，适合表现高级、冷峻、强风格化视觉。',
+      prompt:
+        '硬光照明，光影边缘清晰，人物面部和场景形成明确明暗块面，画面干净利落，商业广告质感',
+    },
+    {
+      title: '05 低角度光',
+      suit: '恐怖、奇幻、人物觉醒、反派压迫感镜头。',
+      effect:
+        '光线从人物下方向上照，制造不安、神秘、强压迫感；但光源不能太亮，否则容易变成“手电筒照脸”的廉价效果。',
+      prompt:
+        '低角度光从人物下方向上照射，制造神秘感和压迫感，光线克制不过曝，避免手电筒照脸效果',
+    },
+  ],
+  usageTips: [
+    '每个分镜提示词里，可以在“整体视觉基调”或“镜头画面”后面补充光线描述。',
+    '不要只写“高清、电影感、氛围感”，而是要具体写出光线方向、强弱、明暗关系和情绪效果。',
+    '同一场戏的光线要尽量统一，除非剧情进入闪回、反转、压迫或觉醒等特殊情绪段落。',
+  ],
+  examplePrompt:
+    '夜晚室内，侧逆光从人物后方打来，头发和肩膀形成柔和轮廓光，脸部保留轻微阴影，人物与背景分离，画面有电影感和悬疑氛围。',
+};
+
+const clipContinuityGuide = {
+  source: '整理自 Seedance 2.0 素材衔接口播方法，适合处理两段 15 秒视频之间的跳变、穿帮和动作断层。',
+  intro:
+    '前后片段衔接不顺时，不要只靠反复抽卡。先判断问题是首尾帧不连贯、细节对不上、动作节奏断掉，还是提示词没有承接上一段，再选择对应处理方式。',
+  methods: [
+    {
+      title: '01 首尾帧锁定',
+      scene: '两段素材主体、背景或动作方向基本正确，但中间缺少自然过渡。',
+      action:
+        '截取第一段视频最后一帧，再截取第二段视频第一帧，把两张图作为参考，单独生成一个约 5 秒的衔接短片。',
+      effect:
+        '让 AI 在两张固定画面之间计算运动轨迹，用较低成本补出过渡段，避免反复重抽 15 秒长视频。',
+      prompt:
+        '以图1作为开头画面，以图2作为结尾画面，生成一段 5 秒自然过渡视频。人物、服饰、场景和光影保持一致，镜头运动平滑，动作连贯，不出现跳变和穿帮。',
+    },
+    {
+      title: '02 动态障眼法',
+      scene: '两段素材细节对不上，静态硬接会明显露馅。',
+      action:
+        '不要使用平移或静态衔接，在提示词中强制加入大幅度镜头运动，例如急速推进、甩镜、角色大幅转身。',
+      effect:
+        '高速运动会降低观众对细节偏差的感知，让衔接处的小位移、小穿帮不那么明显。',
+      prompt:
+        '衔接处使用大幅度镜头运动，急速推进后接甩镜转场，人物顺势转身进入下一动作，运动模糊自然，节奏利落，遮盖画面细节跳变。',
+    },
+    {
+      title: '03 重叠叠化法',
+      scene: '需要把两段视频剪成更长片段，但动作节奏容易断。',
+      action:
+        '生成第二段时，把起始点往前挪 2 秒左右，从第一段末尾动作开始同步生成；剪辑时把这 2 秒重叠部分做叠化或交叉溶解。',
+      effect:
+        '用重叠素材抵消 AI 随机变化，让动作和画面在视觉上更顺滑。',
+      prompt:
+        '第二段开头延续上一段最后 2 秒的动作和站位，保持人物方向、服饰、光影和环境一致，再自然进入新动作。',
+    },
+    {
+      title: '04 提示词承接法',
+      scene: '第二段一上来就变成新动作，导致人物状态和动作逻辑断掉。',
+      action:
+        '第二段提示词开头不要直接写新动作，先写上一段末尾动作的延续，再逐渐转入下一动作。',
+      effect:
+        '给模型一个动作惯性，减少前后片段之间的逻辑断层。',
+      prompt:
+        '开头延续上一段末尾动作：人物保持跑步惯性并逐渐减速，身体重心自然前移，随后抬头看向前方并进入新的表情和动作。',
+    },
+  ],
+  reminder: {
+    title: '额外提醒：音乐后期统一加',
+    points: [
+      '写 Seedance 2.0 提示词时，可以明确要求生成配音和环境音效，但要强调不要生成音乐。',
+      '每段 15 秒视频的音乐都是单独生成的，即使提示词写同一段音乐，后期也很难完全对齐。',
+      '只要配音和环境音效是对的，即使局部画面失败，也可以在剪辑里删掉问题画面，保留可用声音。',
+      '背景音乐建议放到剪辑软件里统一添加，整体节奏和情绪会更稳定。',
+    ],
+  },
+};
+
+const backgroundUnityGuide = {
+  image: '/operation-assets/background-unification-method.jpg',
+  intro:
+    '当前后视频需要保持同一空间、同一背景、同一人物站位关系时，可以先抽取上一段视频中最有代表性的关键帧，把它处理成“白膜站位参考图”，再作为下一段生成的空间关系参考。',
+  steps: [
+    '从上一段视频中截取一张最有代表性的关键帧，优先选择能看清两人位置关系、空间方向和背景环境的画面。',
+    '把关键帧交给 Banana 模型或同类图像模型处理，明确要求：将画面中的人物转成白膜，背景保持不变。',
+    '把处理后的白膜图作为站位关系参考图放入视频生成模型，用来锁定人物之间的位置、镜头方向和背景空间。',
+    '在提示词里明确写清楚：该图仅作为站位关系参考，不要出现在最终画面中，视频中不要出现白膜、白色模型或脏污质感。',
+    '后续镜头提示词里不要再给与参考图完全相同的景别、视角描述，避免模型直接复刻白膜参考画面。',
+  ],
+  promptRules: [
+    '地点要绑定背景参考图，例如：地点：豪宅-客房 图3。',
+    '站位参考图要写清用途，例如：图4 仅做站位关系参考，视频中并不出现。',
+    '画面限制建议固定写入：画面中不出现字幕、不出现文字、不出现背景音乐和音效。',
+    '如果剧本文字时长和平台输出时长冲突，生成时以网页/平台视频输出设置为准，可在提示词里写：请忽略剧本里的时长设定。',
+  ],
+  prompt:
+    '图3作为背景环境参考，保持豪宅客房的空间结构、光影和色调不变。图4仅作为人物站位关系参考，视频中不要出现图4的白膜、白色模型或参考图痕迹。请根据人物人设图生成真实人物，保持人物位置关系、镜头方向和背景统一，画面干净真实，不出现字幕、文字、背景音乐和音效。',
 };
 
 const seedanceNotices = [
@@ -507,7 +938,7 @@ function useTrainingMotion(rootRef, isEnabled = true) {
             const title = section.querySelector('.section-title h2');
             const desc = section.querySelector('.section-title p:last-child');
             const cards = section.querySelectorAll(
-              ':scope > .task-panel, :scope > .production-grid > *, :scope > .workflow-methods, :scope > .storyboard-shell, :scope > .storyboard-reference-panel, :scope > .quality-strip > *, :scope > .notice-panel, :scope > .border-glow-inner > .task-panel, :scope > .border-glow-inner > .production-grid > *, :scope > .border-glow-inner > .workflow-methods, :scope > .border-glow-inner > .storyboard-shell, :scope > .border-glow-inner > .storyboard-reference-panel, :scope > .border-glow-inner > .quality-strip > *, :scope > .border-glow-inner > .notice-panel',
+              ':scope > .task-panel, :scope > .production-grid > *, :scope > .workflow-methods, :scope > .storyboard-shell, :scope > .storyboard-reference-panel, :scope > .arrow-camera-method, :scope > .quality-strip > *, :scope > .notice-panel, :scope > .border-glow-inner > .task-panel, :scope > .border-glow-inner > .production-grid > *, :scope > .border-glow-inner > .workflow-methods, :scope > .border-glow-inner > .storyboard-shell, :scope > .border-glow-inner > .storyboard-reference-panel, :scope > .border-glow-inner > .arrow-camera-method, :scope > .border-glow-inner > .quality-strip > *, :scope > .border-glow-inner > .notice-panel',
             );
 
             const timeline = gsap.timeline({
@@ -594,7 +1025,7 @@ function useTrainingMotion(rootRef, isEnabled = true) {
               );
           });
 
-          gsap.utils.toArray(select('.doc-image-frame, .storyboard-reference-figure')).forEach((frame) => {
+          gsap.utils.toArray(select('.doc-image-frame, .storyboard-reference-figure, .arrow-camera-figure')).forEach((frame) => {
             const image = frame.querySelector('img');
 
             gsap
@@ -656,6 +1087,7 @@ function App() {
   const [isChecklistOpen, setIsChecklistOpen] = useState(false);
   const [isEdgeBrowser] = useState(() => isMicrosoftEdge());
   const [isAccessGranted, setIsAccessGranted] = useState(() => hasValidAccessSession());
+  const [searchItems, setSearchItems] = useState(() => collectNavSearchItems(phaseNavItems));
   const [theme, setTheme] = useState(() => {
     if (typeof window === 'undefined') {
       return 'light';
@@ -691,6 +1123,41 @@ function App() {
     }
   }, [isEdgeBrowser]);
 
+  useEffect(() => {
+    if (!isAccessGranted || typeof document === 'undefined') {
+      return undefined;
+    }
+
+    const refreshSearchItems = () => {
+      const itemsById = new Map(collectNavSearchItems(phaseNavItems).map((item) => [item.id, item]));
+
+      document.querySelectorAll('.content-area [id]').forEach((element) => {
+        const id = element.id;
+        const heading = element.querySelector('h2, h3, h4, h5')?.textContent?.trim();
+        const existing = itemsById.get(id);
+        const title = existing?.title || heading;
+        const content = element.textContent?.replace(/\s+/g, ' ').trim();
+
+        if (!title || !content) {
+          return;
+        }
+
+        itemsById.set(id, {
+          content: [existing?.content, content.slice(0, 900)].filter(Boolean).join(' '),
+          id,
+          path: existing?.path || title,
+          title,
+        });
+      });
+
+      setSearchItems(Array.from(itemsById.values()).filter((item) => item.id && item.title));
+    };
+
+    const searchIndexTimer = window.setTimeout(refreshSearchItems, 500);
+
+    return () => window.clearTimeout(searchIndexTimer);
+  }, [isAccessGranted]);
+
   const toggleTheme = () => {
     setTheme((currentTheme) => (currentTheme === 'dark' ? 'light' : 'dark'));
   };
@@ -713,7 +1180,13 @@ function App() {
           />
         )}
       </div>
-      <TopBar onOpenChecklist={() => setIsChecklistOpen(true)} onToggleTheme={toggleTheme} theme={theme} />
+      <TopBar
+        onNavigate={scrollToAnchor}
+        onOpenChecklist={() => setIsChecklistOpen(true)}
+        onToggleTheme={toggleTheme}
+        searchItems={searchItems}
+        theme={theme}
+      />
       <div className="workspace">
         <aside className="side-panel">
           <BorderGlow
@@ -826,14 +1299,15 @@ function App() {
             <SectionTitle
               icon={WandSparkles}
               kicker="第四步"
-              title="操作方法"
-              desc="这里集中放置剧集制作关键词优化、分镜提示词排版和图片教学示例，方便动画师按步骤参考。"
+              title="操作指南&注意事项"
+              desc="这里集中放置关键词优化、分镜提示词排版、摄影参数、素材衔接、常见问题和配音处理方法。"
             />
             <WorkflowSectionGroup
               title="剧集制作关键词优化"
               desc="将真人写实质感、分镜图、多人物站位和背景补救方法放在分镜与提示词阶段使用。"
               sections={keywordOptimizationSection ? [keywordOptimizationSection] : []}
               idPrefix="phase-04-keywords"
+              hideSectionTitles
               showSectionIndex={false}
             />
 
@@ -877,43 +1351,39 @@ function App() {
             </div>
 
             <StoryboardReferencePanel id="phase-04-reference" />
-          </ContentModule>
+            <CinematographyGuide id="phase-04-cinematography-guide" />
+            <LightingPromptGuide id="phase-04-lighting-guide" />
+            <ImageReconstructionGuide id="phase-04-reconstruction-guide" />
+            <ArrowCameraMethod id="phase-04-arrow-camera" />
+            <ClipContinuityGuide id="phase-04-continuity-guide" />
+            <BackgroundUnityGuide id="phase-04-background-unity" />
 
-          <ContentModule as="section" id="phase-05" className="section-block" theme={theme}>
-            <SectionTitle
-              icon={ClipboardCheck}
-              kicker="第五步"
-              title="注意事项"
-              desc="这里集中放置生成、衔接、成片检查和配音错乱处理相关注意事项。"
-            />
-            <div id="phase-05-quality" className="quality-strip">
-              <QualityCard
-                icon={Camera}
-                title="镜头不平淡"
-                text="用景别、机位、动作和环境信息组织画面，避免每一镜都是人物正面对镜头。"
-              />
-              <QualityCard
-                icon={CircleDotDashed}
-                title="衔接要顺"
-                text="用视线、动作、道具、空间方向或音画信息连接下一镜，减少生硬跳切。"
-              />
-              <QualityCard
-                icon={MessageSquareText}
-                title="提示词可复用"
-                text="把角色、场景、镜头语言、动作、情绪和画面限制拆开，形成稳定模板。"
-              />
-            </div>
-
-            <div id="phase-05-notices" className="notice-panel">
+            <div id="phase-04-notices" className="notice-panel">
               <div className="notice-title">
                 <div>
-                  <p className="eyebrow">Word 文档整理</p>
-                  <h3>Seedance 制作注意事项</h3>
+                  <h3>常见问题</h3>
                 </div>
                 <div className="notice-badge">
                   <AlertTriangle size={18} />
                   生成前必查
                 </div>
+              </div>
+              <div className="quality-strip">
+                <QualityCard
+                  icon={Camera}
+                  title="镜头不平淡"
+                  text="用景别、机位、动作和环境信息组织画面，避免每一镜都是人物正面对镜头。"
+                />
+                <QualityCard
+                  icon={CircleDotDashed}
+                  title="衔接要顺"
+                  text="用视线、动作、道具、空间方向或音画信息连接下一镜，减少生硬跳切。"
+                />
+                <QualityCard
+                  icon={MessageSquareText}
+                  title="提示词可复用"
+                  text="把角色、场景、镜头语言、动作、情绪和画面限制拆开，形成稳定模板。"
+                />
               </div>
               <div className="notice-grid">
                 {seedanceNotices.map((notice) => (
@@ -924,15 +1394,16 @@ function App() {
 
             <WorkflowSectionGroup
               title="配音错乱处理"
-              desc="配音问题放在注意事项阶段，便于动画师按角色、人设图、音频顺序复核。"
+              desc="配音问题放在操作指南与注意事项阶段，便于动画师按角色、人设图、音频顺序复核。"
               sections={voiceIssueSection ? [voiceIssueSection] : []}
-              idPrefix="phase-05-voice"
+              idPrefix="phase-04-voice"
               showSectionIndex={false}
             />
           </ContentModule>
         </section>
       </div>
       <SecurityShield />
+      <BackToTopButton />
       <ChecklistModal isOpen={isChecklistOpen} onClose={() => setIsChecklistOpen(false)} />
     </main>
   );
@@ -1121,7 +1592,34 @@ function OpeningSequence() {
   );
 }
 
-function TopBar({ onOpenChecklist, onToggleTheme, theme }) {
+function BackToTopButton() {
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsVisible(window.scrollY > 520);
+    };
+
+    handleScroll();
+    window.addEventListener('scroll', handleScroll, { passive: true });
+
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  return (
+    <button
+      className={`back-to-top ${isVisible ? 'is-visible' : ''}`}
+      type="button"
+      onClick={() => window.scrollTo({ behavior: 'smooth', top: 0 })}
+      aria-label="返回顶部"
+      title="返回顶部"
+    >
+      <ArrowUp size={20} />
+    </button>
+  );
+}
+
+function TopBar({ onNavigate, onOpenChecklist, onToggleTheme, searchItems, theme }) {
   const isDark = theme === 'dark';
 
   return (
@@ -1131,7 +1629,10 @@ function TopBar({ onOpenChecklist, onToggleTheme, theme }) {
           <Clapperboard size={22} />
           <span>AI 短剧制作流程</span>
         </div>
-        <OpeningSequence />
+        <div className="top-center">
+          <TopSearch items={searchItems} onNavigate={onNavigate} />
+          <OpeningSequence />
+        </div>
         <div className="top-actions">
           <button
             className="theme-toggle-button"
@@ -1153,6 +1654,74 @@ function TopBar({ onOpenChecklist, onToggleTheme, theme }) {
         </div>
       </div>
     </header>
+  );
+}
+
+function TopSearch({ items, onNavigate }) {
+  const [query, setQuery] = useState('');
+  const [isOpen, setIsOpen] = useState(false);
+  const searchRef = useRef(null);
+  const trimmedQuery = query.trim();
+  const results = trimmedQuery
+    ? items
+        .map((item) => ({ item, score: getSearchScore(item, trimmedQuery) }))
+        .filter((result) => result.score !== null)
+        .sort((first, second) => first.score - second.score || first.item.title.length - second.item.title.length)
+        .slice(0, 8)
+    : [];
+
+  useEffect(() => {
+    const handlePointerDown = (event) => {
+      if (!searchRef.current?.contains(event.target)) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener('pointerdown', handlePointerDown);
+
+    return () => document.removeEventListener('pointerdown', handlePointerDown);
+  }, []);
+
+  const handleResultClick = (anchorId) => {
+    setQuery('');
+    setIsOpen(false);
+    onNavigate(anchorId);
+  };
+
+  return (
+    <div className="top-search" ref={searchRef}>
+      <Search size={17} />
+      <input
+        aria-label="搜索页面内容"
+        placeholder="搜索制作方法、提示词、注意事项..."
+        type="search"
+        value={query}
+        onChange={(event) => {
+          setQuery(event.target.value);
+          setIsOpen(true);
+        }}
+        onFocus={() => setIsOpen(true)}
+      />
+      {trimmedQuery ? (
+        <button className="top-search-clear" type="button" onClick={() => setQuery('')} aria-label="清空搜索">
+          <X size={15} />
+        </button>
+      ) : null}
+      {isOpen && trimmedQuery ? (
+        <div className="top-search-results" role="listbox">
+          {results.length ? (
+            results.map(({ item }) => (
+              <button className="top-search-result" type="button" key={item.id} onClick={() => handleResultClick(item.id)}>
+                <strong>{item.title}</strong>
+                <span>{item.path}</span>
+              </button>
+            ))
+          ) : (
+            <div className="top-search-empty">没有找到相关内容</div>
+          )}
+        </div>
+      ) : null}
+    </div>
   );
 }
 
@@ -1338,6 +1907,320 @@ function StoryboardReferencePanel({ id }) {
   );
 }
 
+function ArrowCameraMethod({ id }) {
+  return (
+    <div className="arrow-camera-method" id={id}>
+      <div className="arrow-camera-head">
+        <div>
+          <p className="eyebrow">运镜控制方法</p>
+          <h3>箭头引导线控制镜头运动</h3>
+          <p>{arrowCameraMethod.intro}</p>
+        </div>
+        <div className="arrow-camera-source">{arrowCameraMethod.source}</div>
+      </div>
+
+      <div className="arrow-camera-body">
+        <section className="arrow-camera-panel">
+          <h4>操作步骤</h4>
+          <ol className="arrow-step-list">
+            {arrowCameraMethod.steps.map((step) => (
+              <li key={step}>{step}</li>
+            ))}
+          </ol>
+        </section>
+
+        <section className="arrow-camera-panel">
+          <h4>适合的镜头和作用</h4>
+          <div className="arrow-use-grid">
+            {arrowCameraMethod.useCases.map((useCase) => (
+              <article className="arrow-use-card" key={useCase.title}>
+                <strong>{useCase.title}</strong>
+                <p>{useCase.effect}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section className="arrow-camera-panel">
+          <h4>可用提示词</h4>
+          <div className="arrow-prompt-grid">
+            {arrowCameraMethod.promptBlocks.map((block) => (
+              <article className="arrow-prompt-card" key={block.title}>
+                <span>{block.title}</span>
+                <code>{block.text}</code>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section className="arrow-camera-panel">
+          <h4>使用建议</h4>
+          <ul className="arrow-tip-list">
+            {arrowCameraMethod.tips.map((tip) => (
+              <li key={tip}>{tip}</li>
+            ))}
+          </ul>
+        </section>
+
+        <section className="arrow-camera-panel arrow-camera-gallery-panel">
+          <h4>参考图</h4>
+          <p>点击图片可放大查看红色路线、箭头方向和最终效果参考。</p>
+          <div className="arrow-camera-gallery">
+            {arrowCameraMethod.images.map((src, imageIndex) => (
+              <figure className="arrow-camera-figure" key={src}>
+                <PreviewableImage
+                  src={src}
+                  alt={`箭头引导线运镜参考图 ${imageIndex + 1}`}
+                  previewAlt={`箭头引导线运镜参考图 ${imageIndex + 1}`}
+                  triggerClassName="arrow-camera-image-trigger"
+                />
+              </figure>
+            ))}
+          </div>
+        </section>
+      </div>
+    </div>
+  );
+}
+
+function ClipContinuityGuide({ id }) {
+  return (
+    <div className="arrow-camera-method clip-continuity-guide" id={id}>
+      <div className="arrow-camera-head">
+        <div>
+          <p className="eyebrow">素材衔接处理</p>
+          <h3>片段衔接修复</h3>
+          <p>{clipContinuityGuide.intro}</p>
+        </div>
+        <div className="arrow-camera-source">{clipContinuityGuide.source}</div>
+      </div>
+
+      <div className="arrow-camera-body">
+        <section className="arrow-camera-panel">
+          <h4>四个处理方法</h4>
+          <div className="clip-method-grid">
+            {clipContinuityGuide.methods.map((method) => (
+              <article className="clip-method-card" key={method.title}>
+                <div className="clip-method-head">
+                  <span>{method.title.split(' ')[0]}</span>
+                  <h5>{method.title.replace(/^\d+\s*/, '')}</h5>
+                </div>
+                <p>
+                  <strong>适用：</strong>
+                  {method.scene}
+                </p>
+                <p>
+                  <strong>做法：</strong>
+                  {method.action}
+                </p>
+                <p>
+                  <strong>作用：</strong>
+                  {method.effect}
+                </p>
+                <div className="cinema-guide-prompt">
+                  <strong>可用提示词</strong>
+                  <code>{method.prompt}</code>
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section className="arrow-camera-panel clip-reminder-panel">
+          <h4>{clipContinuityGuide.reminder.title}</h4>
+          <ul className="arrow-tip-list">
+            {clipContinuityGuide.reminder.points.map((point) => (
+              <li key={point}>{point}</li>
+            ))}
+          </ul>
+        </section>
+      </div>
+    </div>
+  );
+}
+
+function BackgroundUnityGuide({ id }) {
+  return (
+    <div className="arrow-camera-method background-unity-guide" id={id}>
+      <div className="arrow-camera-head">
+        <div>
+          <p className="eyebrow">背景一致性</p>
+          <h3>背景统一方法</h3>
+          <p>{backgroundUnityGuide.intro}</p>
+        </div>
+        <div className="arrow-camera-source">适合处理前后片段背景跳变、人物站位不稳、空间关系不连续的问题。</div>
+      </div>
+
+      <div className="arrow-camera-body">
+        <section className="arrow-camera-panel">
+          <h4>操作步骤</h4>
+          <ol className="arrow-step-list">
+            {backgroundUnityGuide.steps.map((step) => (
+              <li key={step}>{step}</li>
+            ))}
+          </ol>
+        </section>
+
+        <section className="arrow-camera-panel">
+          <h4>提示词规则</h4>
+          <ul className="arrow-tip-list">
+            {backgroundUnityGuide.promptRules.map((rule) => (
+              <li key={rule}>{rule}</li>
+            ))}
+          </ul>
+          <div className="cinema-guide-prompt background-unity-prompt">
+            <strong>可用提示词</strong>
+            <code>{backgroundUnityGuide.prompt}</code>
+          </div>
+        </section>
+
+        <section className="arrow-camera-panel arrow-camera-gallery-panel">
+          <h4>参考截图</h4>
+          <p>文字整理自截图中的红色标注，点击图片可放大查看原始说明和参考位置。</p>
+          <figure className="arrow-camera-figure background-unity-figure">
+            <PreviewableImage
+              src={backgroundUnityGuide.image}
+              alt="背景统一方法参考截图"
+              previewAlt="背景统一方法参考截图"
+              triggerClassName="arrow-camera-image-trigger background-unity-image-trigger"
+            />
+          </figure>
+        </section>
+      </div>
+    </div>
+  );
+}
+
+function CinematographyGuide({ id }) {
+  return (
+    <div className="arrow-camera-method cinematography-guide" id={id}>
+      <div className="arrow-camera-head">
+        <div>
+          <p className="eyebrow">摄影语言拆解</p>
+          <h3>摄影参数与画面风格指南</h3>
+          <p>{cinematographyGuide.intro}</p>
+        </div>
+        <div className="arrow-camera-source">适合写入分镜提示词、整体视觉基调和单镜头画面要求。</div>
+      </div>
+
+      <div className="arrow-camera-body">
+        <section className="arrow-camera-panel">
+          <h4>核心使用原则</h4>
+          <ul className="arrow-tip-list">
+            {cinematographyGuide.rules.map((rule) => (
+              <li key={rule}>{rule}</li>
+            ))}
+          </ul>
+        </section>
+
+        <section className="arrow-camera-panel">
+          <h4>图文总结</h4>
+          <div className="cinema-guide-grid">
+            {cinematographyGuide.items.map((item, itemIndex) => (
+              <article className="cinema-guide-card" key={item.title}>
+                <figure className="arrow-camera-figure cinema-guide-figure">
+                  <PreviewableImage
+                    src={item.image}
+                    alt={`${item.title} 参考图`}
+                    previewAlt={`${item.title} 参考图`}
+                    triggerClassName="arrow-camera-image-trigger cinema-guide-image-trigger"
+                  />
+                </figure>
+                <div className="cinema-guide-copy">
+                  <span>{String(itemIndex + 1).padStart(2, '0')}</span>
+                  <h5>{item.title}</h5>
+                  <p>{item.summary}</p>
+                  <div className="cinema-guide-prompt">
+                    <strong>提示词写法</strong>
+                    <code>{item.prompt}</code>
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section className="arrow-camera-panel">
+          <h4>组合示例</h4>
+          <div className="arrow-prompt-card cinema-guide-example">
+            <span>可直接套用</span>
+            <code>{cinematographyGuide.examplePrompt}</code>
+          </div>
+        </section>
+      </div>
+    </div>
+  );
+}
+
+function ImageReconstructionGuide({ id }) {
+  return (
+    <div className="arrow-camera-method image-reconstruction-guide" id={id}>
+      <div className="arrow-camera-head">
+        <div>
+          <p className="eyebrow">低清素材处理</p>
+          <h3>低清图片高清重构方法</h3>
+          <p>{imageReconstructionGuide.intro}</p>
+        </div>
+        <div className="arrow-camera-source">适用于低清、模糊、压缩失真、细节涂抹、边缘不清的图片二次修复。</div>
+      </div>
+
+      <div className="arrow-camera-body">
+        <section className="arrow-camera-panel">
+          <h4>操作步骤</h4>
+          <div className="cinema-guide-grid reconstruction-guide-grid">
+            {imageReconstructionGuide.steps.map((step, stepIndex) => (
+              <article className="cinema-guide-card reconstruction-guide-card" key={step.title}>
+                <figure className="arrow-camera-figure cinema-guide-figure">
+                  <PreviewableImage
+                    src={step.image}
+                    alt={`${step.title} 教学截图`}
+                    previewAlt={`${step.title} 教学截图`}
+                    triggerClassName="arrow-camera-image-trigger cinema-guide-image-trigger reconstruction-guide-image-trigger"
+                  />
+                </figure>
+                <div className="cinema-guide-copy">
+                  <span>{String(stepIndex + 1).padStart(2, '0')}</span>
+                  <h5>{step.title}</h5>
+                  <p>{step.summary}</p>
+                  <div className="cinema-guide-prompt">
+                    <strong>可用提示词</strong>
+                    <code>{step.prompt}</code>
+                  </div>
+                  {step.example ? (
+                    <div className="cinema-guide-prompt">
+                      <strong>反推示例</strong>
+                      <code>{step.example}</code>
+                    </div>
+                  ) : null}
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+      </div>
+    </div>
+  );
+}
+
+function LightingPromptGuide({ id }) {
+  return (
+    <div className="arrow-camera-method lighting-prompt-guide" id={id}>
+      <div className="arrow-camera-head">
+        <div>
+          <p className="eyebrow">光线提示词</p>
+          <h3>AI 视频打光提示词</h3>
+          <p>把光线方向、强弱、明暗关系和情绪效果写进分镜提示词，避免只用“高清、电影感、氛围感”这类泛词。</p>
+        </div>
+        <div className="arrow-camera-source">建议放在“整体视觉基调”或“镜头画面”后，和景别、运镜、人物情绪一起使用。</div>
+      </div>
+
+      <div className="arrow-camera-body">
+        <NoticeCard {...lightingPromptGuide} />
+      </div>
+    </div>
+  );
+}
+
 const preventImageSaveMenu = (event) => {
   event.preventDefault();
 };
@@ -1449,7 +2332,15 @@ function QualityCard({ icon: Icon, title, text }) {
   );
 }
 
-function WorkflowSectionGroup({ title, desc, sections, showSectionIndex = true, hideHeader = false, idPrefix }) {
+function WorkflowSectionGroup({
+  title,
+  desc,
+  sections,
+  showSectionIndex = true,
+  hideHeader = false,
+  hideSectionTitles = false,
+  idPrefix,
+}) {
   if (!sections.length) {
     return null;
   }
@@ -1459,7 +2350,7 @@ function WorkflowSectionGroup({ title, desc, sections, showSectionIndex = true, 
       {!hideHeader ? (
         <div className="workflow-methods-head">
           <div>
-            <p className="eyebrow">操作方法</p>
+            <p className="eyebrow">操作指南</p>
             <h3>{title}</h3>
             {desc ? <p>{desc}</p> : null}
           </div>
@@ -1471,11 +2362,13 @@ function WorkflowSectionGroup({ title, desc, sections, showSectionIndex = true, 
           const sectionId = idPrefix ? `${idPrefix}-section-${sectionIndex + 1}` : undefined;
 
           return (
-            <article className="doc-section-card" id={sectionId} key={section.title}>
-              <div className={showSectionIndex ? 'doc-section-head' : 'doc-section-head doc-section-head-no-index'}>
-                {showSectionIndex ? <span>{String(sectionIndex + 1).padStart(2, '0')}</span> : null}
-                <h3>{displayTitle}</h3>
-              </div>
+            <article className={`doc-section-card${hideSectionTitles ? ' is-titleless' : ''}`} id={sectionId} key={section.title}>
+              {!hideSectionTitles ? (
+                <div className={showSectionIndex ? 'doc-section-head' : 'doc-section-head doc-section-head-no-index'}>
+                  {showSectionIndex ? <span>{String(sectionIndex + 1).padStart(2, '0')}</span> : null}
+                  <h3>{displayTitle}</h3>
+                </div>
+              ) : null}
               <div className="doc-block-list">
                 {section.blocks.map((block, blockIndex) => {
                   const blockAnchorId =
@@ -1600,18 +2493,60 @@ function DocumentImages({ images = [], sectionTitle, blockIndex }) {
   );
 }
 
-function NoticeCard({ icon: Icon, title, points }) {
+function NoticeCard({ icon: Icon, title, points = [], intro, guides = [], usageTips = [], examplePrompt }) {
+  const isDetailed = guides.length > 0 || usageTips.length > 0 || Boolean(examplePrompt);
+
   return (
-    <article className="notice-card">
+    <article className={`notice-card${isDetailed ? ' is-detailed' : ''}`}>
       <div className="notice-card-head">
         <Icon size={22} />
         <h4>{title}</h4>
       </div>
-      <ul>
-        {points.map((point) => (
-          <li key={point}>{point}</li>
-        ))}
-      </ul>
+      {intro ? <p className="notice-card-intro">{intro}</p> : null}
+      {points.length ? (
+        <ul>
+          {points.map((point) => (
+            <li key={point}>{point}</li>
+          ))}
+        </ul>
+      ) : null}
+      {guides.length ? (
+        <div className="notice-guide-grid">
+          {guides.map((guide) => (
+            <section className="notice-guide" key={guide.title}>
+              <h5>{guide.title}</h5>
+              <p>
+                <strong>适合：</strong>
+                {guide.suit}
+              </p>
+              <p>
+                <strong>作用：</strong>
+                {guide.effect}
+              </p>
+              <div className="notice-prompt">
+                <span>可用提示词</span>
+                <code>{guide.prompt}</code>
+              </div>
+            </section>
+          ))}
+        </div>
+      ) : null}
+      {usageTips.length ? (
+        <div className="notice-usage">
+          <h5>使用建议</h5>
+          <ul>
+            {usageTips.map((tip) => (
+              <li key={tip}>{tip}</li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
+      {examplePrompt ? (
+        <div className="notice-prompt notice-example">
+          <span>完整示例</span>
+          <code>{examplePrompt}</code>
+        </div>
+      ) : null}
     </article>
   );
 }

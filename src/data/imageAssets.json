@@ -304,5 +304,165 @@
     "optimizedHeight": 1211,
     "originalBytes": 210736,
     "optimizedBytes": 124280
+  },
+  "/operation-assets/arrow-camera-01.webp": {
+    "src": "/operation-assets/arrow-camera-01.webp",
+    "width": 2560,
+    "height": 1440,
+    "optimizedWidth": 2560,
+    "optimizedHeight": 1440,
+    "originalBytes": 264264,
+    "optimizedBytes": 264264
+  },
+  "/operation-assets/arrow-camera-02.webp": {
+    "src": "/operation-assets/arrow-camera-02.webp",
+    "width": 1280,
+    "height": 720,
+    "optimizedWidth": 1280,
+    "optimizedHeight": 720,
+    "originalBytes": 35416,
+    "optimizedBytes": 35416
+  },
+  "/operation-assets/arrow-camera-03.webp": {
+    "src": "/operation-assets/arrow-camera-03.webp",
+    "width": 944,
+    "height": 282,
+    "optimizedWidth": 944,
+    "optimizedHeight": 282,
+    "originalBytes": 28798,
+    "optimizedBytes": 28798
+  },
+  "/operation-assets/arrow-camera-04.webp": {
+    "src": "/operation-assets/arrow-camera-04.webp",
+    "width": 2730,
+    "height": 1536,
+    "optimizedWidth": 2730,
+    "optimizedHeight": 1536,
+    "originalBytes": 366900,
+    "optimizedBytes": 366900
+  },
+  "/operation-assets/arrow-camera-05.webp": {
+    "src": "/operation-assets/arrow-camera-05.webp",
+    "width": 1280,
+    "height": 720,
+    "optimizedWidth": 1280,
+    "optimizedHeight": 720,
+    "originalBytes": 25138,
+    "optimizedBytes": 25138
+  },
+  "/operation-assets/cinematography-guide-01.jpg": {
+    "width": 1050,
+    "height": 1418,
+    "originalBytes": 204820,
+    "optimizedBytes": 204820
+  },
+  "/operation-assets/cinematography-guide-02.jpg": {
+    "width": 1050,
+    "height": 1421,
+    "originalBytes": 205341,
+    "optimizedBytes": 205341
+  },
+  "/operation-assets/cinematography-guide-03.jpg": {
+    "width": 1050,
+    "height": 1417,
+    "originalBytes": 186093,
+    "optimizedBytes": 186093
+  },
+  "/operation-assets/cinematography-guide-04.jpg": {
+    "width": 1050,
+    "height": 1420,
+    "originalBytes": 205977,
+    "optimizedBytes": 205977
+  },
+  "/operation-assets/cinematography-guide-05.jpg": {
+    "width": 1050,
+    "height": 1398,
+    "originalBytes": 193260,
+    "optimizedBytes": 193260
+  },
+  "/operation-assets/cinematography-guide-06.jpg": {
+    "width": 1050,
+    "height": 1428,
+    "originalBytes": 233033,
+    "optimizedBytes": 233033
+  },
+  "/operation-assets/cinematography-guide-07.jpg": {
+    "width": 1050,
+    "height": 1415,
+    "originalBytes": 145472,
+    "optimizedBytes": 145472
+  },
+  "/operation-assets/cinematography-guide-08.jpg": {
+    "width": 1050,
+    "height": 1418,
+    "originalBytes": 321004,
+    "optimizedBytes": 321004
+  },
+  "/operation-assets/cinematography-guide-09.jpg": {
+    "width": 1050,
+    "height": 1421,
+    "originalBytes": 210612,
+    "optimizedBytes": 210612
+  },
+  "/operation-assets/cinematography-guide-10.jpg": {
+    "width": 1050,
+    "height": 1420,
+    "originalBytes": 273134,
+    "optimizedBytes": 273134
+  },
+  "/operation-assets/cinematography-guide-11.jpg": {
+    "width": 1050,
+    "height": 1421,
+    "originalBytes": 151999,
+    "optimizedBytes": 151999
+  },
+  "/operation-assets/cinematography-guide-12.jpg": {
+    "width": 1050,
+    "height": 1421,
+    "originalBytes": 198910,
+    "optimizedBytes": 198910
+  },
+  "/operation-assets/reconstruction-guide-01.jpg": {
+    "width": 1050,
+    "height": 1235,
+    "originalBytes": 168583,
+    "optimizedBytes": 168583
+  },
+  "/operation-assets/reconstruction-guide-02.jpg": {
+    "width": 1050,
+    "height": 1190,
+    "originalBytes": 92458,
+    "optimizedBytes": 92458
+  },
+  "/operation-assets/reconstruction-guide-03.jpg": {
+    "width": 1050,
+    "height": 1329,
+    "originalBytes": 174321,
+    "optimizedBytes": 174321
+  },
+  "/operation-assets/reconstruction-guide-04.jpg": {
+    "width": 1050,
+    "height": 1288,
+    "originalBytes": 154771,
+    "optimizedBytes": 154771
+  },
+  "/operation-assets/reconstruction-guide-05.jpg": {
+    "width": 1050,
+    "height": 1083,
+    "originalBytes": 142662,
+    "optimizedBytes": 142662
+  },
+  "/operation-assets/reconstruction-guide-06.jpg": {
+    "width": 1050,
+    "height": 1359,
+    "originalBytes": 179769,
+    "optimizedBytes": 179769
+  },
+  "/operation-assets/background-unification-method.jpg": {
+    "src": "/operation-assets/background-unification-method.webp",
+    "width": 2200,
+    "height": 1011,
+    "originalBytes": 287382,
+    "optimizedBytes": 167894
   }
 }
