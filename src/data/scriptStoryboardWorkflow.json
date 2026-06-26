@@ -298,6 +298,14 @@
         },
         {
           "type": "paragraph",
+          "text": "",
+          "images": [
+            "/storyboard-assets/script-storyboard-image-02.png"
+          ],
+          "role": "body"
+        },
+        {
+          "type": "paragraph",
           "text": "当然它以上的回答也是可以直接用的 但是生出来的效果就会非常的差 人物直视镜头 镜头与镜头之间的衔接不流畅...等等一系列问题 没有丝毫训练的痕迹 直出的提示词 可能10次会有一次完美的分镜词吧 但是我们还是要对分镜词进行一个优化 毕竟谁也不想重做 甘愿在前期多花点功夫也不想被批评重新制作",
           "images": [],
           "role": "module-end"
@@ -317,14 +325,6 @@
           "type": "subsection",
           "title": "直接开启新对话即可。\n第一步：训练配音。",
           "blocks": [
-            {
-              "type": "paragraph",
-              "text": "",
-              "images": [
-                "/storyboard-assets/script-storyboard-image-02.png"
-              ],
-              "role": "body"
-            },
             {
               "type": "paragraph",
               "text": "请你记住以下AI视频配音真实感的技巧，我觉得我的分镜写的生出来的视频面部表情僵硬，说话没感情，记住了就回复我OK，我稍后给你我的分镜，你来帮我进行优化",
