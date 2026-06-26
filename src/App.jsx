@@ -94,8 +94,8 @@ const isMicrosoftEdge = () =>
   typeof navigator !== 'undefined' && /\bEdg\//.test(navigator.userAgent);
 
 const ACCESS_CODE_HASH =
-  import.meta.env.VITE_ACCESS_CODE_HASH || 'dfea2868a5a060839c502d91d71a0e802723c39abc460d71f82e6bd27701e852';
-const ACCESS_SESSION_KEY = 'training-access-until';
+  import.meta.env.VITE_ACCESS_CODE_HASH || 'a64f5f68f63914036d6a381914882c2a8a15aeb020ac7c35eff884afb28f7166';
+const ACCESS_SESSION_KEY = `training-access-until-${ACCESS_CODE_HASH.slice(0, 12)}`;
 const ACCESS_SESSION_DURATION = 4 * 60 * 60 * 1000;
 
 const watermarkTiles = Array.from({ length: 360 }, (_, index) => index);
