@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useRef, useState } from 'react';
+import { Fragment, createContext, useContext, useEffect, useId, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -50,11 +50,11 @@ const phases = [
     title: '剧本精读',
     desc: '先理清本集人设、场景、道具和上下集衔接。',
     icon: BookOpenText,
-    status: '当前准备',
+    status: '前期准备',
   },
   {
     number: '02',
-    title: '人设、场景和道具',
+    title: '资产制作',
     desc: '按编导拆分描述制作三版，审核通过后留稿。',
     icon: UserRoundCog,
     status: '制作方法',
@@ -68,10 +68,10 @@ const phases = [
   },
   {
     number: '04',
-    title: '操作指南&注意事项',
+    title: '制作指南与问题处理',
     desc: '集中查看关键词优化、分镜提示词、素材衔接、常见问题和配音处理注意事项。',
     icon: WandSparkles,
-    status: '指南&避坑',
+    status: '实用指南',
   },
 ];
 
@@ -90,6 +90,24 @@ const cleanNavTitle = (title) =>
     .replace(/\s+/g, ' ')
     .trim();
 
+const navTitleOverrides = new Map([
+  ['phase-02-methods-section-3', '道具制作'],
+  ['phase-03-workflow-section-1', '流程总览'],
+  ['phase-03-workflow-section-1-block-1', '导入剧本规范'],
+  ['phase-03-workflow-section-1-block-2', '分镜格式示例'],
+  ['phase-03-workflow-section-2', '二次优化训练'],
+  ['phase-03-workflow-section-2-block-1', '提问 01：配音训练'],
+  ['phase-03-workflow-section-2-block-2', '提问 02：去 AI 味与真人感'],
+  ['phase-03-workflow-section-2-block-3', '提问 03：镜头与分镜改写'],
+  ['phase-03-workflow-section-3', '视觉基调统一'],
+  ['phase-03-workflow-section-3-block-1', '提问 01：统一环境描写'],
+  ['phase-03-workflow-section-3-block-2', '提问 02：整体视觉基调'],
+  ['phase-04-keywords-section-1', '关键词优化'],
+  ['phase-04-voice-section-1', '配音错乱处理'],
+]);
+
+const getNavTitle = (id, title) => navTitleOverrides.get(id) || cleanNavTitle(title);
+
 const isMicrosoftEdge = () =>
   typeof navigator !== 'undefined' && /\bEdg\//.test(navigator.userAgent);
 
@@ -99,6 +117,12 @@ const ACCESS_SESSION_KEY = `training-access-until-${ACCESS_CODE_HASH.slice(0, 12
 const ACCESS_SESSION_DURATION = 4 * 60 * 60 * 1000;
 
 const watermarkTiles = Array.from({ length: 360 }, (_, index) => index);
+
+const CollapseContext = createContext({
+  allExpanded: false,
+  collapseVersion: 0,
+  toggleAllPanels: () => {},
+});
 
 const formatWatermarkTime = () => {
   const now = new Date();
@@ -150,7 +174,7 @@ const workflowNavItems = (sections, idPrefix, includeSubsections = true) =>
 
             return {
               id: `${sectionId}-block-${blockIndex + 1}`,
-              title: cleanNavTitle([block.kicker, block.title].filter(Boolean).join(' ')),
+              title: getNavTitle(`${sectionId}-block-${blockIndex + 1}`, [block.kicker, block.title].filter(Boolean).join(' ')),
             };
           })
           .filter(Boolean)
@@ -158,7 +182,7 @@ const workflowNavItems = (sections, idPrefix, includeSubsections = true) =>
 
     return {
       id: sectionId,
-      title: cleanNavTitle(section.title),
+      title: getNavTitle(sectionId, section.title),
       children,
     };
   });
@@ -167,6 +191,11 @@ const normalizeSearchText = (value) =>
   String(value || '')
     .toLowerCase()
     .replace(/\s+/g, '');
+
+const compactSearchText = (value) =>
+  String(value || '')
+    .replace(/\s+/g, ' ')
+    .trim();
 
 const fuzzyIncludes = (text, query) => {
   let cursor = 0;
@@ -218,6 +247,36 @@ const getSearchScore = (item, query) => {
   return null;
 };
 
+const getSearchSnippet = (item, query) => {
+  const content = compactSearchText(item.content);
+
+  if (!content) {
+    return item.path || '';
+  }
+
+  const cleanQuery = compactSearchText(query);
+  const directIndex = cleanQuery ? content.toLowerCase().indexOf(cleanQuery.toLowerCase()) : -1;
+  const start = directIndex >= 0 ? Math.max(0, directIndex - 42) : 0;
+  const end = directIndex >= 0 ? Math.min(content.length, directIndex + cleanQuery.length + 110) : Math.min(content.length, 138);
+  const prefix = start > 0 ? '...' : '';
+  const suffix = end < content.length ? '...' : '';
+
+  return `${prefix}${content.slice(start, end)}${suffix}`;
+};
+
+const getSearchMatch = (item, query) => {
+  const score = getSearchScore(item, query);
+
+  if (score === null) {
+    return null;
+  }
+
+  return {
+    score,
+    snippet: getSearchSnippet(item, query),
+  };
+};
+
 const collectNavSearchItems = (items, parentTitle = '') =>
   items.flatMap((item) => {
     const path = [parentTitle, item.title].filter(Boolean).join(' / ');
@@ -236,18 +295,22 @@ const scrollToAnchor = (anchorId) => {
     return;
   }
 
-  const target = document.getElementById(anchorId) || document.querySelector('.app-shell');
+  document.dispatchEvent(new CustomEvent('open-collapsible-panel', { detail: { anchorId } }));
 
-  if (target) {
-    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }
+  window.setTimeout(() => {
+    const target = document.getElementById(anchorId) || document.querySelector('.app-shell');
+
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }, 80);
 };
 
 const phaseNavItems = [
   {
     ...phases[0],
     children: [
-      { id: 'phase-01-checklist', title: '动画制作前核对记录' },
+      { id: 'phase-01-checklist', title: '开工前检查' },
       { id: 'phase-01-alert', title: '审核提醒' },
     ],
   },
@@ -265,14 +328,14 @@ const phaseNavItems = [
     ...phases[3],
     children: [
       ...workflowNavItems(keywordOptimizationSection ? [keywordOptimizationSection] : [], 'phase-04-keywords'),
-      { id: 'phase-04-storyboard-format', title: '分镜表样式' },
-      { id: 'phase-04-reference', title: '图片教学参考' },
-      { id: 'phase-04-cinematography-guide', title: '摄影参数与画面风格' },
-      { id: 'phase-04-lighting-guide', title: 'AI 视频打光提示词' },
-      { id: 'phase-04-reconstruction-guide', title: '低清图片高清重构' },
-      { id: 'phase-04-arrow-camera', title: '箭头引导线运镜' },
-      { id: 'phase-04-continuity-guide', title: '片段衔接修复' },
-      { id: 'phase-04-background-unity', title: '背景统一方法' },
+      { id: 'phase-04-storyboard-format', title: '分镜表规范' },
+      { id: 'phase-04-reference', title: '图片参考' },
+      { id: 'phase-04-cinematography-guide', title: '摄影参数' },
+      { id: 'phase-04-lighting-guide', title: 'AI 打光' },
+      { id: 'phase-04-reconstruction-guide', title: '低清图重构' },
+      { id: 'phase-04-arrow-camera', title: '箭头运镜' },
+      { id: 'phase-04-continuity-guide', title: '片段衔接' },
+      { id: 'phase-04-background-unity', title: '背景统一' },
       { id: 'phase-04-notices', title: '常见问题' },
       ...workflowNavItems(voiceIssueSection ? [voiceIssueSection] : [], 'phase-04-voice'),
     ],
@@ -781,7 +844,7 @@ function useTrainingMotion(rootRef, isEnabled = true) {
     let openingFrame = 0;
     let refreshCall;
     const isEdge = isMicrosoftEdge();
-    const allowImageParallax = !isEdge && window.matchMedia('(min-width: 900px)').matches;
+    const allowImageParallax = false;
 
     const context = gsap.context(() => {
         const select = gsap.utils.selector(root);
@@ -977,11 +1040,11 @@ function useTrainingMotion(rootRef, isEnabled = true) {
               .fromTo(desc, { autoAlpha: 0, y: 38 }, { autoAlpha: 1, duration: 0.8, y: 0 }, 0.34)
               .fromTo(
                 cards,
-                { autoAlpha: 0, filter: 'blur(10px)', rotateX: -7, scale: 0.94, y: 96 },
+                { filter: 'blur(10px)', opacity: 0, rotateX: -7, scale: 0.94, y: 96 },
                 {
-                  autoAlpha: 1,
                   duration: 1.02,
                   filter: 'blur(0px)',
+                  opacity: 1,
                   rotateX: 0,
                   scale: 1,
                   stagger: 0.13,
@@ -994,7 +1057,7 @@ function useTrainingMotion(rootRef, isEnabled = true) {
           gsap.utils.toArray(select('.doc-section-card')).forEach((card) => {
             const head = card.querySelector('.doc-section-head');
             const contentBlocks = card.querySelectorAll(
-              '.doc-block, .doc-subsection, .storyboard-meta-item, .shot-card, .notice-card',
+              '.doc-block, .storyboard-meta-item',
             );
 
             gsap
@@ -1007,26 +1070,30 @@ function useTrainingMotion(rootRef, isEnabled = true) {
               })
               .fromTo(
                 card,
-                { autoAlpha: 0, filter: 'blur(8px)', scale: 0.96, y: 74 },
-                { autoAlpha: 1, duration: 0.9, filter: 'blur(0px)', scale: 1, y: 0 },
+                { filter: 'blur(8px)', opacity: 0, scale: 0.96, y: 74 },
+                { duration: 0.9, filter: 'blur(0px)', opacity: 1, scale: 1, y: 0 },
                 0,
               )
               .fromTo(
                 head,
-                { clipPath: 'inset(0% 100% 0% 0%)', y: 28 },
-                { clipPath: 'inset(0% 0% 0% 0%)', duration: 0.86, y: 0 },
+                { opacity: 0, y: 28 },
+                { clearProps: 'clipPath', duration: 0.66, opacity: 1, y: 0 },
                 0.1,
               )
               .fromTo(
                 contentBlocks,
-                { autoAlpha: 0, scale: 0.97, y: 54 },
-                { autoAlpha: 1, duration: 0.78, scale: 1, stagger: 0.08, y: 0 },
+                { opacity: 0, scale: 0.97, y: 54 },
+                { duration: 0.78, opacity: 1, scale: 1, stagger: 0.08, y: 0 },
                 0.32,
               );
           });
 
           gsap.utils.toArray(select('.doc-image-frame, .storyboard-reference-figure, .arrow-camera-figure')).forEach((frame) => {
             const image = frame.querySelector('img');
+
+            if (!image || frame.offsetParent === null) {
+              return;
+            }
 
             gsap
               .timeline({
@@ -1087,6 +1154,7 @@ function App() {
   const [isChecklistOpen, setIsChecklistOpen] = useState(false);
   const [isEdgeBrowser] = useState(() => isMicrosoftEdge());
   const [isAccessGranted, setIsAccessGranted] = useState(() => hasValidAccessSession());
+  const [collapseControl, setCollapseControl] = useState({ allExpanded: false, version: 0 });
   const [searchItems, setSearchItems] = useState(() => collectNavSearchItems(phaseNavItems));
   const [theme, setTheme] = useState(() => {
     if (typeof window === 'undefined') {
@@ -1136,14 +1204,20 @@ function App() {
         const heading = element.querySelector('h2, h3, h4, h5')?.textContent?.trim();
         const existing = itemsById.get(id);
         const title = existing?.title || heading;
-        const content = element.textContent?.replace(/\s+/g, ' ').trim();
+        const elementClone = element.cloneNode(true);
+
+        elementClone.querySelectorAll('[id]').forEach((nestedElement) => nestedElement.remove());
+
+        const ownContent = compactSearchText(elementClone.textContent);
+        const fallbackContent = compactSearchText(element.textContent);
+        const content = ownContent || fallbackContent;
 
         if (!title || !content) {
           return;
         }
 
         itemsById.set(id, {
-          content: [existing?.content, content.slice(0, 900)].filter(Boolean).join(' '),
+          content: [existing?.content, content.slice(0, 1400)].filter(Boolean).join(' '),
           id,
           path: existing?.path || title,
           title,
@@ -1162,6 +1236,13 @@ function App() {
     setTheme((currentTheme) => (currentTheme === 'dark' ? 'light' : 'dark'));
   };
 
+  const toggleAllPanels = () => {
+    setCollapseControl((current) => ({
+      allExpanded: !current.allExpanded,
+      version: current.version + 1,
+    }));
+  };
+
   useTrainingMotion(appShellRef, isAccessGranted);
 
   if (!isAccessGranted) {
@@ -1169,6 +1250,13 @@ function App() {
   }
 
   return (
+    <CollapseContext.Provider
+      value={{
+        allExpanded: collapseControl.allExpanded,
+        collapseVersion: collapseControl.version,
+        toggleAllPanels,
+      }}
+    >
     <main className="app-shell" data-theme={theme} ref={appShellRef}>
       <div className="page-aurora-background" aria-hidden="true">
         {isEdgeBrowser ? null : (
@@ -1227,8 +1315,12 @@ function App() {
               title="拿到剧本后先做资产核对"
               desc="这一阶段面向动画师，目标是理清本集需要的人设、场景、道具和前后集衔接要求，确认素材表是否齐全，再进入动画制作。"
             />
-            <div id="phase-01-checklist" className="task-panel">
-              <h3>动画制作前核对记录</h3>
+            <CollapsiblePanel
+              className="task-panel"
+              headingClassName="task-panel-head"
+              id="phase-01-checklist"
+              title="动画制作前核对记录"
+            >
               <ul className="check-list">
                 <li>理清本集需要的人设、场景、道具、宠物、系统等制作资产。</li>
                 <li>在表格中核对资产是否齐全，如不齐全，需要及时和编导说明。</li>
@@ -1242,7 +1334,7 @@ function App() {
                   新的人设、场景、道具或换装方案需要提交编导老师审核，确认通过后再继续制作。
                 </p>
               </div>
-            </div>
+            </CollapsiblePanel>
           </ContentModule>
 
           <ContentModule as="section" id="phase-02" className="section-block" theme={theme}>
@@ -1299,7 +1391,7 @@ function App() {
             <SectionTitle
               icon={WandSparkles}
               kicker="第四步"
-              title="操作指南&注意事项"
+              title="制作指南与问题处理"
               desc="这里集中放置关键词优化、分镜提示词排版、摄影参数、素材衔接、常见问题和配音处理方法。"
             />
             <WorkflowSectionGroup
@@ -1311,15 +1403,15 @@ function App() {
               showSectionIndex={false}
             />
 
-            <div id="phase-04-storyboard-format" className="storyboard-shell">
-              <div className="storyboard-head">
-                <div>
-                  <p className="eyebrow">分镜表样式</p>
-                  <h3>整体视觉基调 + 地点/时间/人物 + 镜头拆分</h3>
-                </div>
-                <div className="storyboard-format-pill">镜号 / 景别 / 运镜 / 情绪动作 / 台词 / 音效 / 时长</div>
-              </div>
-              <div className="storyboard-document">
+            <CollapsiblePanel
+              bodyClassName="storyboard-document"
+              className="storyboard-shell"
+              headingClassName="storyboard-head"
+              id="phase-04-storyboard-format"
+              kicker="分镜表规范"
+              meta={<div className="storyboard-format-pill">镜号 / 景别 / 运镜 / 情绪动作 / 台词 / 音效 / 时长</div>}
+              title="整体视觉基调 + 地点/时间/人物 + 镜头拆分"
+            >
                 <p className="storyboard-intro">{storyboardExample.intro}</p>
                 <div className="storyboard-meta-grid">
                   {storyboardExample.meta.map((item) => (
@@ -1331,24 +1423,26 @@ function App() {
                 </div>
                 <div className="shot-list" aria-label="分镜示例">
                   {storyboardExample.shots.map((shot) => (
-                    <article className="shot-card" key={shot.number}>
-                      <div className="shot-card-head">
-                        <span>镜号：{shot.number}</span>
-                        <span>{shot.duration}</span>
-                      </div>
-                      <div className="shot-fields">
+                    <CollapsiblePanel
+                      as="article"
+                      bodyClassName="shot-fields"
+                      className="shot-card"
+                      headingClassName="shot-card-head"
+                      key={shot.number}
+                      meta={<span className="shot-duration">{shot.duration}</span>}
+                      title={`镜号：${shot.number}`}
+                      titleLevel="h4"
+                    >
                         <StoryboardField label="景别" value={shot.framing} />
                         <StoryboardField label="运镜" value={shot.camera} />
                         <StoryboardField label="情绪/动作" value={shot.action} wide />
                         <StoryboardField label="台词" value={shot.dialogue} wide />
                         <StoryboardField label="音效" value={shot.sound} />
                         <StoryboardField label="时长" value={shot.duration} />
-                      </div>
-                    </article>
+                    </CollapsiblePanel>
                   ))}
                 </div>
-              </div>
-            </div>
+            </CollapsiblePanel>
 
             <StoryboardReferencePanel id="phase-04-reference" />
             <CinematographyGuide id="phase-04-cinematography-guide" />
@@ -1358,16 +1452,19 @@ function App() {
             <ClipContinuityGuide id="phase-04-continuity-guide" />
             <BackgroundUnityGuide id="phase-04-background-unity" />
 
-            <div id="phase-04-notices" className="notice-panel">
-              <div className="notice-title">
-                <div>
-                  <h3>常见问题</h3>
-                </div>
+            <CollapsiblePanel
+              bodyClassName="notice-panel-body"
+              className="notice-panel"
+              headingClassName="notice-title"
+              id="phase-04-notices"
+              meta={
                 <div className="notice-badge">
                   <AlertTriangle size={18} />
                   生成前必查
                 </div>
-              </div>
+              }
+              title="常见问题"
+            >
               <div className="quality-strip">
                 <QualityCard
                   icon={Camera}
@@ -1390,7 +1487,7 @@ function App() {
                   <NoticeCard key={notice.title} {...notice} />
                 ))}
               </div>
-            </div>
+            </CollapsiblePanel>
 
             <WorkflowSectionGroup
               title="配音错乱处理"
@@ -1403,9 +1500,10 @@ function App() {
         </section>
       </div>
       <SecurityShield />
-      <BackToTopButton />
+      <FloatingActionButtons allExpanded={collapseControl.allExpanded} onToggleAllPanels={toggleAllPanels} />
       <ChecklistModal isOpen={isChecklistOpen} onClose={() => setIsChecklistOpen(false)} />
     </main>
+    </CollapseContext.Provider>
   );
 }
 
@@ -1592,7 +1690,7 @@ function OpeningSequence() {
   );
 }
 
-function BackToTopButton() {
+function FloatingActionButtons({ allExpanded, onToggleAllPanels }) {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
@@ -1607,15 +1705,201 @@ function BackToTopButton() {
   }, []);
 
   return (
-    <button
-      className={`back-to-top ${isVisible ? 'is-visible' : ''}`}
-      type="button"
-      onClick={() => window.scrollTo({ behavior: 'smooth', top: 0 })}
-      aria-label="返回顶部"
-      title="返回顶部"
+    <div className={`floating-actions ${isVisible ? 'is-visible' : ''}`}>
+      <button
+        className="floating-action-button"
+        type="button"
+        onClick={onToggleAllPanels}
+        aria-label={allExpanded ? '一键关闭全部内容' : '一键展开全部内容'}
+        title={allExpanded ? '一键关闭' : '一键展开'}
+      >
+        <ChevronDown className={allExpanded ? 'is-open' : ''} size={20} />
+      </button>
+      <button
+        className="floating-action-button"
+        type="button"
+        onClick={() => window.scrollTo({ behavior: 'smooth', top: 0 })}
+        aria-label="返回顶部"
+        title="返回顶部"
+      >
+        <ArrowUp size={20} />
+      </button>
+    </div>
+  );
+}
+
+function CollapsiblePanel({
+  as: Component = 'div',
+  bodyClassName = '',
+  children,
+  className = '',
+  defaultExpanded = false,
+  desc,
+  headingClassName = '',
+  id,
+  kicker,
+  meta,
+  prefix,
+  title,
+  titleLevel: TitleTag = 'h3',
+}) {
+  const { allExpanded, collapseVersion } = useContext(CollapseContext);
+  const generatedId = useId().replace(/:/g, '');
+  const buttonRef = useRef(null);
+  const didMountRef = useRef(false);
+  const lastToggleTimeRef = useRef(0);
+  const [isExpanded, setIsExpanded] = useState(defaultExpanded);
+  const bodyId = `${id || generatedId}-body`;
+
+  const refreshLayout = () => {
+    if (typeof window === 'undefined') {
+      return;
+    }
+
+    window.requestAnimationFrame(() => {
+      window.requestAnimationFrame(() => ScrollTrigger.refresh());
+    });
+  };
+
+  const toggleExpanded = () => {
+    setIsExpanded((current) => !current);
+  };
+
+  const requestToggle = (event) => {
+    if (event.type === 'keydown' && !['Enter', ' '].includes(event.key)) {
+      return;
+    }
+
+    if ((event.type === 'pointerdown' || event.type === 'mousedown') && event.button !== undefined && event.button !== 0) {
+      return;
+    }
+
+    if (event.type === 'mousedown' && window.PointerEvent) {
+      return;
+    }
+
+    if (event.type === 'touchstart' && window.PointerEvent) {
+      return;
+    }
+
+    event.preventDefault();
+    event.stopPropagation();
+    event.stopImmediatePropagation?.();
+
+    const now = window.performance?.now?.() || Date.now();
+
+    if (now - lastToggleTimeRef.current < 360) {
+      return;
+    }
+
+    lastToggleTimeRef.current = now;
+    toggleExpanded();
+  };
+
+  useEffect(() => {
+    if (!didMountRef.current) {
+      didMountRef.current = true;
+      return;
+    }
+
+    refreshLayout();
+  }, [isExpanded]);
+
+  useEffect(() => {
+    if (collapseVersion > 0) {
+      setIsExpanded(allExpanded);
+    }
+  }, [allExpanded, collapseVersion]);
+
+  useEffect(() => {
+    const handleOpenRequest = (event) => {
+      const anchorId = event.detail?.anchorId;
+
+      if (!anchorId) {
+        return;
+      }
+
+      const panel = id ? document.getElementById(id) : document.getElementById(bodyId)?.closest('.collapsible-panel');
+      const target = document.getElementById(anchorId);
+
+      if (panel && (panel.id === anchorId || panel.contains(target))) {
+        setIsExpanded(true);
+      }
+    };
+
+    document.addEventListener('open-collapsible-panel', handleOpenRequest);
+
+    return () => document.removeEventListener('open-collapsible-panel', handleOpenRequest);
+  }, [bodyId, id]);
+
+  useEffect(() => {
+    const button = buttonRef.current;
+
+    if (!button) {
+      return undefined;
+    }
+
+    const listenerOptions = { capture: true, passive: false };
+    const eventNames = ['pointerdown', 'mousedown', 'touchstart', 'click', 'keydown'];
+
+    eventNames.forEach((eventName) => {
+      button.addEventListener(eventName, requestToggle, listenerOptions);
+    });
+
+    return () => {
+      eventNames.forEach((eventName) => {
+        button.removeEventListener(eventName, requestToggle, listenerOptions);
+      });
+    };
+  });
+
+  return (
+    <Component
+      className={`${className} collapsible-panel ${isExpanded ? 'is-open' : 'is-closed'}`.trim()}
+      id={id}
     >
-      <ArrowUp size={20} />
-    </button>
+      <div className={`${headingClassName} collapsible-head`.trim()}>
+        {prefix}
+        <div className="collapsible-title-copy">
+          {kicker ? <p className="eyebrow">{kicker}</p> : null}
+          <TitleTag>{title}</TitleTag>
+          {desc ? <p>{desc}</p> : null}
+        </div>
+        {meta}
+        <button
+          className="collapsible-toggle"
+          type="button"
+          ref={buttonRef}
+          onClick={(event) => {
+            event.preventDefault();
+            event.stopPropagation();
+          }}
+          aria-expanded={isExpanded}
+          aria-controls={bodyId}
+          data-collapsible-toggle="true"
+        >
+          <span>{isExpanded ? '收起' : '展开'}</span>
+          <ChevronDown className={isExpanded ? 'is-open' : ''} size={16} />
+        </button>
+      </div>
+      <div className={`${bodyClassName} collapsible-body`.trim()} hidden={!isExpanded} id={bodyId}>
+        {children}
+      </div>
+    </Component>
+  );
+}
+
+function GuideSubPanel({ children, className = '', title }) {
+  return (
+    <CollapsiblePanel
+      as="section"
+      className={`arrow-camera-panel ${className}`.trim()}
+      headingClassName="arrow-camera-panel-head"
+      title={title}
+      titleLevel="h4"
+    >
+      {children}
+    </CollapsiblePanel>
   );
 }
 
@@ -1657,6 +1941,46 @@ function TopBar({ onNavigate, onOpenChecklist, onToggleTheme, searchItems, theme
   );
 }
 
+function HighlightSearchText({ text, query }) {
+  const sourceText = String(text || '');
+  const cleanQuery = compactSearchText(query);
+
+  if (!sourceText || !cleanQuery) {
+    return sourceText;
+  }
+
+  const parts = [];
+  const lowerText = sourceText.toLowerCase();
+  const lowerQuery = cleanQuery.toLowerCase();
+  let cursor = 0;
+  let matchIndex = lowerText.indexOf(lowerQuery, cursor);
+
+  if (matchIndex === -1) {
+    return sourceText;
+  }
+
+  while (matchIndex !== -1) {
+    if (matchIndex > cursor) {
+      parts.push(sourceText.slice(cursor, matchIndex));
+    }
+
+    parts.push(
+      <mark className="top-search-highlight" key={`${matchIndex}-${parts.length}`}>
+        {sourceText.slice(matchIndex, matchIndex + cleanQuery.length)}
+      </mark>,
+    );
+
+    cursor = matchIndex + cleanQuery.length;
+    matchIndex = lowerText.indexOf(lowerQuery, cursor);
+  }
+
+  if (cursor < sourceText.length) {
+    parts.push(sourceText.slice(cursor));
+  }
+
+  return parts.map((part, index) => (typeof part === 'string' ? <Fragment key={`text-${index}`}>{part}</Fragment> : part));
+}
+
 function TopSearch({ items, onNavigate }) {
   const [query, setQuery] = useState('');
   const [isOpen, setIsOpen] = useState(false);
@@ -1664,9 +1988,9 @@ function TopSearch({ items, onNavigate }) {
   const trimmedQuery = query.trim();
   const results = trimmedQuery
     ? items
-        .map((item) => ({ item, score: getSearchScore(item, trimmedQuery) }))
-        .filter((result) => result.score !== null)
-        .sort((first, second) => first.score - second.score || first.item.title.length - second.item.title.length)
+        .map((item) => ({ item, match: getSearchMatch(item, trimmedQuery) }))
+        .filter((result) => result.match !== null)
+        .sort((first, second) => first.match.score - second.match.score || first.item.title.length - second.item.title.length)
         .slice(0, 8)
     : [];
 
@@ -1710,10 +2034,26 @@ function TopSearch({ items, onNavigate }) {
       {isOpen && trimmedQuery ? (
         <div className="top-search-results" role="listbox">
           {results.length ? (
-            results.map(({ item }) => (
-              <button className="top-search-result" type="button" key={item.id} onClick={() => handleResultClick(item.id)}>
-                <strong>{item.title}</strong>
-                <span>{item.path}</span>
+            results.map(({ item, match }) => (
+              <button
+                className="top-search-result"
+                type="button"
+                role="option"
+                key={item.id}
+                onClick={() => handleResultClick(item.id)}
+              >
+                <span className="top-search-result-head">
+                  <strong>
+                    <HighlightSearchText text={item.title} query={trimmedQuery} />
+                  </strong>
+                  <span className="top-search-action">定位</span>
+                </span>
+                <span className="top-search-path">{item.path}</span>
+                {match.snippet ? (
+                  <span className="top-search-snippet">
+                    <HighlightSearchText text={match.snippet} query={trimmedQuery} />
+                  </span>
+                ) : null}
               </button>
             ))
           ) : (
@@ -1726,28 +2066,29 @@ function TopSearch({ items, onNavigate }) {
 }
 
 function WorkflowNavPanel() {
-  const [expandedPhaseNumbers, setExpandedPhaseNumbers] = useState(['03']);
+  const [expandedPhaseNumbers, setExpandedPhaseNumbers] = useState([]);
   const [activeAnchor, setActiveAnchor] = useState('phase-03');
 
   const navigateToAnchor = (anchorId) => {
-    const target = document.getElementById(anchorId);
+    document.dispatchEvent(new CustomEvent('open-collapsible-panel', { detail: { anchorId } }));
 
-    if (target) {
-      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      window.history.replaceState(null, '', `#${anchorId}`);
-      setActiveAnchor(anchorId);
-    }
+    window.setTimeout(() => {
+      const target = document.getElementById(anchorId);
+
+      if (target) {
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        window.history.replaceState(null, '', `#${anchorId}`);
+        setActiveAnchor(anchorId);
+      }
+    }, 80);
   };
 
-  const handlePhaseClick = (phaseNumber) => {
-    const phaseId = `phase-${phaseNumber}`;
-
+  const togglePhase = (phaseNumber) => {
     setExpandedPhaseNumbers((current) =>
       current.includes(phaseNumber)
         ? current.filter((number) => number !== phaseNumber)
         : [...current, phaseNumber],
     );
-    navigateToAnchor(phaseId);
   };
 
   return (
@@ -1768,21 +2109,30 @@ function WorkflowNavPanel() {
 
           return (
             <div className="phase-nav-item" key={phase.number}>
-              <button
-                className="phase-link"
-                type="button"
-                onClick={() => handlePhaseClick(phase.number)}
-                aria-expanded={isExpanded}
-                aria-controls={`phase-subnav-${phase.number}`}
-              >
-                <span className="phase-index">{phase.number}</span>
-                <span>
-                  <strong>{phase.title}</strong>
-                  <small>{phase.status}</small>
-                </span>
-                <Icon className="phase-symbol" size={18} />
-                <ChevronDown className={`phase-chevron ${isExpanded ? 'is-open' : ''}`} size={16} />
-              </button>
+              <div className="phase-link">
+                <button
+                  className="phase-main-button"
+                  type="button"
+                  onClick={() => navigateToAnchor(`phase-${phase.number}`)}
+                >
+                  <span className="phase-index">{phase.number}</span>
+                  <span>
+                    <strong>{phase.title}</strong>
+                    <small>{phase.status}</small>
+                  </span>
+                </button>
+                <button
+                  className="phase-toggle-button"
+                  type="button"
+                  onClick={() => togglePhase(phase.number)}
+                  aria-expanded={isExpanded}
+                  aria-controls={`phase-subnav-${phase.number}`}
+                  aria-label={`${isExpanded ? '收起' : '展开'}${phase.title}目录`}
+                >
+                  <Icon className="phase-symbol" size={18} />
+                  <ChevronDown className={`phase-chevron ${isExpanded ? 'is-open' : ''}`} size={16} />
+                </button>
+              </div>
               {isExpanded ? (
                 <div className="phase-subnav" id={`phase-subnav-${phase.number}`}>
                   {phase.children.map((child) => (
@@ -1889,10 +2239,16 @@ function StoryboardReferencePanel({ id }) {
   const imageSrc = '/sd2-assets/storyboard-reference.png';
 
   return (
-    <div className="storyboard-reference-panel" id={id}>
+    <CollapsiblePanel
+      bodyClassName="storyboard-reference-body"
+      className="storyboard-reference-panel"
+      desc="展示完整分镜提示词的组织方式，点击图片可放大查看细节。"
+      headingClassName="storyboard-reference-head"
+      id={id}
+      kicker="图片参考"
+      title="分镜提示词排版示例"
+    >
       <div className="reference-copy">
-        <p className="eyebrow">图片教学参考</p>
-        <h3>分镜提示词排版示例</h3>
         <p>参考图展示了完整分镜提示词的组织方式：先写全片视觉基调和资产引用，再按镜号拆分镜头信息。点击图片可放大查看细节。</p>
       </div>
       <figure className="storyboard-reference-figure">
@@ -1903,34 +2259,31 @@ function StoryboardReferencePanel({ id }) {
           triggerClassName="storyboard-reference-trigger"
         />
       </figure>
-    </div>
+    </CollapsiblePanel>
   );
 }
 
 function ArrowCameraMethod({ id }) {
   return (
-    <div className="arrow-camera-method" id={id}>
-      <div className="arrow-camera-head">
-        <div>
-          <p className="eyebrow">运镜控制方法</p>
-          <h3>箭头引导线控制镜头运动</h3>
-          <p>{arrowCameraMethod.intro}</p>
-        </div>
-        <div className="arrow-camera-source">{arrowCameraMethod.source}</div>
-      </div>
-
-      <div className="arrow-camera-body">
-        <section className="arrow-camera-panel">
-          <h4>操作步骤</h4>
+    <CollapsiblePanel
+      bodyClassName="arrow-camera-body"
+      className="arrow-camera-method"
+      desc={arrowCameraMethod.intro}
+      headingClassName="arrow-camera-head"
+      id={id}
+      kicker="运镜控制方法"
+      meta={<div className="arrow-camera-source">{arrowCameraMethod.source}</div>}
+      title="箭头引导线控制镜头运动"
+    >
+        <GuideSubPanel title="操作步骤">
           <ol className="arrow-step-list">
             {arrowCameraMethod.steps.map((step) => (
               <li key={step}>{step}</li>
             ))}
           </ol>
-        </section>
+        </GuideSubPanel>
 
-        <section className="arrow-camera-panel">
-          <h4>适合的镜头和作用</h4>
+        <GuideSubPanel title="适合的镜头和作用">
           <div className="arrow-use-grid">
             {arrowCameraMethod.useCases.map((useCase) => (
               <article className="arrow-use-card" key={useCase.title}>
@@ -1939,10 +2292,9 @@ function ArrowCameraMethod({ id }) {
               </article>
             ))}
           </div>
-        </section>
+        </GuideSubPanel>
 
-        <section className="arrow-camera-panel">
-          <h4>可用提示词</h4>
+        <GuideSubPanel title="可用提示词">
           <div className="arrow-prompt-grid">
             {arrowCameraMethod.promptBlocks.map((block) => (
               <article className="arrow-prompt-card" key={block.title}>
@@ -1951,19 +2303,17 @@ function ArrowCameraMethod({ id }) {
               </article>
             ))}
           </div>
-        </section>
+        </GuideSubPanel>
 
-        <section className="arrow-camera-panel">
-          <h4>使用建议</h4>
+        <GuideSubPanel title="使用建议">
           <ul className="arrow-tip-list">
             {arrowCameraMethod.tips.map((tip) => (
               <li key={tip}>{tip}</li>
             ))}
           </ul>
-        </section>
+        </GuideSubPanel>
 
-        <section className="arrow-camera-panel arrow-camera-gallery-panel">
-          <h4>参考图</h4>
+        <GuideSubPanel className="arrow-camera-gallery-panel" title="参考图">
           <p>点击图片可放大查看红色路线、箭头方向和最终效果参考。</p>
           <div className="arrow-camera-gallery">
             {arrowCameraMethod.images.map((src, imageIndex) => (
@@ -1977,27 +2327,24 @@ function ArrowCameraMethod({ id }) {
               </figure>
             ))}
           </div>
-        </section>
-      </div>
-    </div>
+        </GuideSubPanel>
+    </CollapsiblePanel>
   );
 }
 
 function ClipContinuityGuide({ id }) {
   return (
-    <div className="arrow-camera-method clip-continuity-guide" id={id}>
-      <div className="arrow-camera-head">
-        <div>
-          <p className="eyebrow">素材衔接处理</p>
-          <h3>片段衔接修复</h3>
-          <p>{clipContinuityGuide.intro}</p>
-        </div>
-        <div className="arrow-camera-source">{clipContinuityGuide.source}</div>
-      </div>
-
-      <div className="arrow-camera-body">
-        <section className="arrow-camera-panel">
-          <h4>四个处理方法</h4>
+    <CollapsiblePanel
+      bodyClassName="arrow-camera-body"
+      className="arrow-camera-method clip-continuity-guide"
+      desc={clipContinuityGuide.intro}
+      headingClassName="arrow-camera-head"
+      id={id}
+      kicker="素材衔接处理"
+      meta={<div className="arrow-camera-source">{clipContinuityGuide.source}</div>}
+      title="片段衔接修复"
+    >
+        <GuideSubPanel title="四个处理方法">
           <div className="clip-method-grid">
             {clipContinuityGuide.methods.map((method) => (
               <article className="clip-method-card" key={method.title}>
@@ -2024,45 +2371,40 @@ function ClipContinuityGuide({ id }) {
               </article>
             ))}
           </div>
-        </section>
+        </GuideSubPanel>
 
-        <section className="arrow-camera-panel clip-reminder-panel">
-          <h4>{clipContinuityGuide.reminder.title}</h4>
+        <GuideSubPanel className="clip-reminder-panel" title={clipContinuityGuide.reminder.title}>
           <ul className="arrow-tip-list">
             {clipContinuityGuide.reminder.points.map((point) => (
               <li key={point}>{point}</li>
             ))}
           </ul>
-        </section>
-      </div>
-    </div>
+        </GuideSubPanel>
+    </CollapsiblePanel>
   );
 }
 
 function BackgroundUnityGuide({ id }) {
   return (
-    <div className="arrow-camera-method background-unity-guide" id={id}>
-      <div className="arrow-camera-head">
-        <div>
-          <p className="eyebrow">背景一致性</p>
-          <h3>背景统一方法</h3>
-          <p>{backgroundUnityGuide.intro}</p>
-        </div>
-        <div className="arrow-camera-source">适合处理前后片段背景跳变、人物站位不稳、空间关系不连续的问题。</div>
-      </div>
-
-      <div className="arrow-camera-body">
-        <section className="arrow-camera-panel">
-          <h4>操作步骤</h4>
+    <CollapsiblePanel
+      bodyClassName="arrow-camera-body"
+      className="arrow-camera-method background-unity-guide"
+      desc={backgroundUnityGuide.intro}
+      headingClassName="arrow-camera-head"
+      id={id}
+      kicker="背景一致性"
+      meta={<div className="arrow-camera-source">适合处理前后片段背景跳变、人物站位不稳、空间关系不连续的问题。</div>}
+      title="背景统一方法"
+    >
+        <GuideSubPanel title="操作步骤">
           <ol className="arrow-step-list">
             {backgroundUnityGuide.steps.map((step) => (
               <li key={step}>{step}</li>
             ))}
           </ol>
-        </section>
+        </GuideSubPanel>
 
-        <section className="arrow-camera-panel">
-          <h4>提示词规则</h4>
+        <GuideSubPanel title="提示词规则">
           <ul className="arrow-tip-list">
             {backgroundUnityGuide.promptRules.map((rule) => (
               <li key={rule}>{rule}</li>
@@ -2072,10 +2414,9 @@ function BackgroundUnityGuide({ id }) {
             <strong>可用提示词</strong>
             <code>{backgroundUnityGuide.prompt}</code>
           </div>
-        </section>
+        </GuideSubPanel>
 
-        <section className="arrow-camera-panel arrow-camera-gallery-panel">
-          <h4>参考截图</h4>
+        <GuideSubPanel className="arrow-camera-gallery-panel" title="参考截图">
           <p>文字整理自截图中的红色标注，点击图片可放大查看原始说明和参考位置。</p>
           <figure className="arrow-camera-figure background-unity-figure">
             <PreviewableImage
@@ -2085,36 +2426,32 @@ function BackgroundUnityGuide({ id }) {
               triggerClassName="arrow-camera-image-trigger background-unity-image-trigger"
             />
           </figure>
-        </section>
-      </div>
-    </div>
+        </GuideSubPanel>
+    </CollapsiblePanel>
   );
 }
 
 function CinematographyGuide({ id }) {
   return (
-    <div className="arrow-camera-method cinematography-guide" id={id}>
-      <div className="arrow-camera-head">
-        <div>
-          <p className="eyebrow">摄影语言拆解</p>
-          <h3>摄影参数与画面风格指南</h3>
-          <p>{cinematographyGuide.intro}</p>
-        </div>
-        <div className="arrow-camera-source">适合写入分镜提示词、整体视觉基调和单镜头画面要求。</div>
-      </div>
-
-      <div className="arrow-camera-body">
-        <section className="arrow-camera-panel">
-          <h4>核心使用原则</h4>
+    <CollapsiblePanel
+      bodyClassName="arrow-camera-body"
+      className="arrow-camera-method cinematography-guide"
+      desc={cinematographyGuide.intro}
+      headingClassName="arrow-camera-head"
+      id={id}
+      kicker="摄影语言拆解"
+      meta={<div className="arrow-camera-source">适合写入分镜提示词、整体视觉基调和单镜头画面要求。</div>}
+      title="摄影参数与画面风格指南"
+    >
+        <GuideSubPanel title="核心使用原则">
           <ul className="arrow-tip-list">
             {cinematographyGuide.rules.map((rule) => (
               <li key={rule}>{rule}</li>
             ))}
           </ul>
-        </section>
+        </GuideSubPanel>
 
-        <section className="arrow-camera-panel">
-          <h4>图文总结</h4>
+        <GuideSubPanel title="图文总结">
           <div className="cinema-guide-grid">
             {cinematographyGuide.items.map((item, itemIndex) => (
               <article className="cinema-guide-card" key={item.title}>
@@ -2138,35 +2475,31 @@ function CinematographyGuide({ id }) {
               </article>
             ))}
           </div>
-        </section>
+        </GuideSubPanel>
 
-        <section className="arrow-camera-panel">
-          <h4>组合示例</h4>
+        <GuideSubPanel title="组合示例">
           <div className="arrow-prompt-card cinema-guide-example">
             <span>可直接套用</span>
             <code>{cinematographyGuide.examplePrompt}</code>
           </div>
-        </section>
-      </div>
-    </div>
+        </GuideSubPanel>
+    </CollapsiblePanel>
   );
 }
 
 function ImageReconstructionGuide({ id }) {
   return (
-    <div className="arrow-camera-method image-reconstruction-guide" id={id}>
-      <div className="arrow-camera-head">
-        <div>
-          <p className="eyebrow">低清素材处理</p>
-          <h3>低清图片高清重构方法</h3>
-          <p>{imageReconstructionGuide.intro}</p>
-        </div>
-        <div className="arrow-camera-source">适用于低清、模糊、压缩失真、细节涂抹、边缘不清的图片二次修复。</div>
-      </div>
-
-      <div className="arrow-camera-body">
-        <section className="arrow-camera-panel">
-          <h4>操作步骤</h4>
+    <CollapsiblePanel
+      bodyClassName="arrow-camera-body"
+      className="arrow-camera-method image-reconstruction-guide"
+      desc={imageReconstructionGuide.intro}
+      headingClassName="arrow-camera-head"
+      id={id}
+      kicker="低清素材处理"
+      meta={<div className="arrow-camera-source">适用于低清、模糊、压缩失真、细节涂抹、边缘不清的图片二次修复。</div>}
+      title="低清图片高清重构方法"
+    >
+        <GuideSubPanel title="操作步骤">
           <div className="cinema-guide-grid reconstruction-guide-grid">
             {imageReconstructionGuide.steps.map((step, stepIndex) => (
               <article className="cinema-guide-card reconstruction-guide-card" key={step.title}>
@@ -2196,28 +2529,25 @@ function ImageReconstructionGuide({ id }) {
               </article>
             ))}
           </div>
-        </section>
-      </div>
-    </div>
+        </GuideSubPanel>
+    </CollapsiblePanel>
   );
 }
 
 function LightingPromptGuide({ id }) {
   return (
-    <div className="arrow-camera-method lighting-prompt-guide" id={id}>
-      <div className="arrow-camera-head">
-        <div>
-          <p className="eyebrow">光线提示词</p>
-          <h3>AI 视频打光提示词</h3>
-          <p>把光线方向、强弱、明暗关系和情绪效果写进分镜提示词，避免只用“高清、电影感、氛围感”这类泛词。</p>
-        </div>
-        <div className="arrow-camera-source">建议放在“整体视觉基调”或“镜头画面”后，和景别、运镜、人物情绪一起使用。</div>
-      </div>
-
-      <div className="arrow-camera-body">
+    <CollapsiblePanel
+      bodyClassName="arrow-camera-body"
+      className="arrow-camera-method lighting-prompt-guide"
+      desc="把光线方向、强弱、明暗关系和情绪效果写进分镜提示词，避免只用“高清、电影感、氛围感”这类泛词。"
+      headingClassName="arrow-camera-head"
+      id={id}
+      kicker="光线提示词"
+      meta={<div className="arrow-camera-source">建议放在“整体视觉基调”或“镜头画面”后，和景别、运镜、人物情绪一起使用。</div>}
+      title="AI 视频打光提示词"
+    >
         <NoticeCard {...lightingPromptGuide} />
-      </div>
-    </div>
+    </CollapsiblePanel>
   );
 }
 
@@ -2345,78 +2675,106 @@ function WorkflowSectionGroup({
     return null;
   }
 
-  return (
-    <div className={`workflow-methods ${hideHeader ? 'is-headless' : ''}`}>
-      {!hideHeader ? (
-        <div className="workflow-methods-head">
-          <div>
-            <p className="eyebrow">操作指南</p>
-            <h3>{title}</h3>
-            {desc ? <p>{desc}</p> : null}
-          </div>
-        </div>
-      ) : null}
-      <div className="doc-section-list">
-        {sections.map((section, sectionIndex) => {
-          const displayTitle = showSectionIndex ? section.title : section.title.replace(/^\d+\./, '');
-          const sectionId = idPrefix ? `${idPrefix}-section-${sectionIndex + 1}` : undefined;
-
-          return (
-            <article className={`doc-section-card${hideSectionTitles ? ' is-titleless' : ''}`} id={sectionId} key={section.title}>
-              {!hideSectionTitles ? (
-                <div className={showSectionIndex ? 'doc-section-head' : 'doc-section-head doc-section-head-no-index'}>
-                  {showSectionIndex ? <span>{String(sectionIndex + 1).padStart(2, '0')}</span> : null}
-                  <h3>{displayTitle}</h3>
-                </div>
-              ) : null}
-              <div className="doc-block-list">
-                {section.blocks.map((block, blockIndex) => {
-                  const blockAnchorId =
-                    sectionId && block.type === 'subsection' && !block.hideTitle
-                      ? `${sectionId}-block-${blockIndex + 1}`
-                      : undefined;
-
-                  return (
-                    <DocumentBlock
-                      anchorId={blockAnchorId}
-                      block={block}
-                      blockIndex={blockIndex}
-                      key={`${section.title}-${blockIndex}`}
-                      sectionTitle={displayTitle}
-                    />
-                  );
-                })}
-              </div>
-            </article>
-          );
-        })}
-      </div>
+  const groupAnchorId = hideSectionTitles && sections.length === 1 && idPrefix ? `${idPrefix}-section-1` : undefined;
+  const sectionList = hideSectionTitles ? (
+    <div className="doc-section-list">
+      {sections.flatMap((section) =>
+        section.blocks.map((block, blockIndex) => (
+          <DocumentBlock
+            anchorId={
+              groupAnchorId && block.type === 'subsection' && !block.hideTitle
+                ? `${groupAnchorId}-block-${blockIndex + 1}`
+                : undefined
+            }
+            block={block}
+            blockIndex={blockIndex}
+            key={`${section.title}-${blockIndex}`}
+            sectionTitle={section.title.replace(/^\d+\./, '')}
+          />
+        )),
+      )}
     </div>
+  ) : (
+    <div className="doc-section-list">
+      {sections.map((section, sectionIndex) => {
+        const displayTitle = showSectionIndex ? section.title : section.title.replace(/^\d+\./, '');
+        const sectionId = idPrefix ? `${idPrefix}-section-${sectionIndex + 1}` : undefined;
+
+        return (
+          <CollapsiblePanel
+            as="article"
+            bodyClassName="doc-block-list"
+            className="doc-section-card"
+            headingClassName={showSectionIndex ? 'doc-section-head' : 'doc-section-head doc-section-head-no-index'}
+            id={sectionId}
+            key={section.title}
+            prefix={showSectionIndex ? <span className="doc-section-index">{String(sectionIndex + 1).padStart(2, '0')}</span> : null}
+            title={displayTitle}
+          >
+            {section.blocks.map((block, blockIndex) => {
+              const blockAnchorId =
+                sectionId && block.type === 'subsection' && !block.hideTitle
+                  ? `${sectionId}-block-${blockIndex + 1}`
+                  : undefined;
+
+              return (
+                <DocumentBlock
+                  anchorId={blockAnchorId}
+                  block={block}
+                  blockIndex={blockIndex}
+                  key={`${section.title}-${blockIndex}`}
+                  sectionTitle={displayTitle}
+                />
+              );
+            })}
+          </CollapsiblePanel>
+        );
+      })}
+    </div>
+  );
+
+  if (hideHeader) {
+    return <div className="workflow-methods is-headless">{sectionList}</div>;
+  }
+
+  return (
+    <CollapsiblePanel
+      bodyClassName="workflow-methods-body"
+      className="workflow-methods"
+      desc={desc}
+      headingClassName="workflow-methods-head"
+      id={groupAnchorId}
+      kicker="操作指南"
+      title={title}
+    >
+      {sectionList}
+    </CollapsiblePanel>
   );
 }
 
 function DocumentBlock({ block, blockIndex, sectionTitle, anchorId }) {
   if (block.type === 'subsection') {
     return (
-      <section className={`doc-subsection ${block.hideTitle ? 'is-titleless' : ''}`} id={anchorId}>
-        {!block.hideTitle ? (
-          <div className="doc-subsection-head">
-            {block.kicker ? <span className="doc-subsection-kicker">{block.kicker}</span> : null}
-            <h4>{block.title}</h4>
-            {block.desc ? <p>{block.desc}</p> : null}
-          </div>
-        ) : null}
-        <div className="doc-sub-block-list">
-          {block.blocks.map((childBlock, childIndex) => (
-            <DocumentBlock
-              block={childBlock}
-              blockIndex={`${blockIndex}-${childIndex}`}
-              key={`${block.title}-${childIndex}`}
-              sectionTitle={`${sectionTitle} ${block.title}`}
-            />
-          ))}
-        </div>
-      </section>
+      <CollapsiblePanel
+        as="section"
+        bodyClassName="doc-sub-block-list"
+        className={`doc-subsection ${block.hideTitle ? 'is-titleless' : ''}`}
+        desc={block.desc}
+        headingClassName="doc-subsection-head"
+        id={anchorId}
+        kicker={block.kicker}
+        title={block.title}
+        titleLevel="h4"
+      >
+        {block.blocks.map((childBlock, childIndex) => (
+          <DocumentBlock
+            block={childBlock}
+            blockIndex={`${blockIndex}-${childIndex}`}
+            key={`${block.title}-${childIndex}`}
+            sectionTitle={`${sectionTitle} ${block.title}`}
+          />
+        ))}
+      </CollapsiblePanel>
     );
   }
 
@@ -2497,11 +2855,14 @@ function NoticeCard({ icon: Icon, title, points = [], intro, guides = [], usageT
   const isDetailed = guides.length > 0 || usageTips.length > 0 || Boolean(examplePrompt);
 
   return (
-    <article className={`notice-card${isDetailed ? ' is-detailed' : ''}`}>
-      <div className="notice-card-head">
-        <Icon size={22} />
-        <h4>{title}</h4>
-      </div>
+    <CollapsiblePanel
+      as="article"
+      className={`notice-card${isDetailed ? ' is-detailed' : ''}`}
+      headingClassName="notice-card-head"
+      prefix={<Icon size={22} />}
+      title={title}
+      titleLevel="h4"
+    >
       {intro ? <p className="notice-card-intro">{intro}</p> : null}
       {points.length ? (
         <ul>
@@ -2547,7 +2908,7 @@ function NoticeCard({ icon: Icon, title, points = [], intro, guides = [], usageT
           <code>{examplePrompt}</code>
         </div>
       ) : null}
-    </article>
+    </CollapsiblePanel>
   );
 }
 

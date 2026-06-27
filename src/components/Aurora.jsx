@@ -126,6 +126,7 @@ export default function Aurora(props) {
     const container = containerRef.current;
     if (!container) return undefined;
 
+    try {
     const isEdge = /\bEdg\//.test(window.navigator.userAgent);
     const effectiveMaxDpr = isEdge ? Math.min(maxDpr, 1) : maxDpr;
     const effectiveFps = isEdge ? Math.min(fps, 24) : fps;
@@ -258,6 +259,10 @@ export default function Aurora(props) {
         container.removeChild(gl.canvas);
       }
     };
+    } catch (error) {
+      console.warn('Aurora background disabled because WebGL failed to initialize.', error);
+      return undefined;
+    }
   }, []);
 
   return <div ref={containerRef} className="aurora-container" />;
