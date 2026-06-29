@@ -2435,6 +2435,20 @@ body.security-protected a {
     linear-gradient(135deg, rgba(34, 41, 54, 0.96), rgba(49, 38, 50, 0.88));
 }
 
+.lens-language-guide .arrow-camera-head {
+  background:
+    radial-gradient(circle at 12% 0%, rgba(87, 201, 221, 0.22), transparent 34%),
+    radial-gradient(circle at 88% 14%, rgba(245, 158, 11, 0.16), transparent 30%),
+    linear-gradient(135deg, rgba(26, 39, 54, 0.96), rgba(43, 39, 56, 0.9));
+}
+
+.spell-prompt-guide .arrow-camera-head {
+  background:
+    radial-gradient(circle at 12% 0%, rgba(245, 158, 11, 0.24), transparent 34%),
+    radial-gradient(circle at 86% 12%, rgba(87, 201, 221, 0.18), transparent 30%),
+    linear-gradient(135deg, rgba(40, 31, 34, 0.96), rgba(30, 41, 58, 0.9));
+}
+
 .image-reconstruction-guide .arrow-camera-head {
   background:
     radial-gradient(circle at 14% 0%, rgba(245, 158, 11, 0.2), transparent 34%),
@@ -2629,6 +2643,115 @@ body.security-protected a {
   line-height: 1.7;
 }
 
+.lens-language-panel > .collapsible-body {
+  display: grid;
+  gap: 14px;
+}
+
+.lens-language-summary {
+  margin: 0;
+  color: #c8d6e6;
+  line-height: 1.75;
+}
+
+.lens-language-point-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.lens-language-point {
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid rgba(87, 201, 221, 0.14);
+  border-radius: 8px;
+  background: rgba(6, 12, 20, 0.32);
+}
+
+.lens-language-point strong {
+  display: block;
+  margin-bottom: 6px;
+  color: #9de7df;
+  font-size: 14px;
+}
+
+.lens-language-point p {
+  margin: 0;
+  color: #b8c8d9;
+  line-height: 1.65;
+}
+
+.lens-language-figure {
+  margin-top: 2px;
+}
+
+.lens-language-image-trigger img {
+  max-height: 760px;
+  object-position: top center;
+}
+
+.spell-prompt-panel > .collapsible-body {
+  display: grid;
+  gap: 14px;
+}
+
+.spell-prompt-summary {
+  margin: 0;
+  color: #c8d6e6;
+  line-height: 1.75;
+}
+
+.spell-prompt-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.spell-prompt-card {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr);
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid rgba(245, 158, 11, 0.16);
+  border-radius: 8px;
+  background: rgba(6, 12, 20, 0.32);
+}
+
+.spell-prompt-card > span {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  color: #ffe5b7;
+  background: rgba(245, 158, 11, 0.16);
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.spell-prompt-card strong {
+  display: block;
+  margin-bottom: 6px;
+  color: #f7c56a;
+  font-size: 15px;
+}
+
+.spell-prompt-card p {
+  margin: 0;
+  color: #b8c8d9;
+  line-height: 1.68;
+}
+
+.spell-prompt-figure {
+  margin-top: 2px;
+}
+
+.spell-prompt-image-trigger img {
+  max-height: 760px;
+  object-position: top center;
+}
+
 .cinema-guide-prompt {
   display: grid;
   gap: 8px;
@@ -2667,6 +2790,8 @@ body.security-protected a {
 
 :root:not([data-theme="dark"]) .arrow-camera-head,
 :root:not([data-theme="dark"]) .cinematography-guide .arrow-camera-head,
+:root:not([data-theme="dark"]) .lens-language-guide .arrow-camera-head,
+:root:not([data-theme="dark"]) .spell-prompt-guide .arrow-camera-head,
 :root:not([data-theme="dark"]) .image-reconstruction-guide .arrow-camera-head,
 :root:not([data-theme="dark"]) .lighting-prompt-guide .arrow-camera-head,
 :root:not([data-theme="dark"]) .clip-continuity-guide .arrow-camera-head,
@@ -2684,6 +2809,8 @@ body.security-protected a {
 :root:not([data-theme="dark"]) .arrow-camera-head h3,
 :root:not([data-theme="dark"]) .arrow-camera-panel h4,
 :root:not([data-theme="dark"]) .cinema-guide-copy h5,
+:root:not([data-theme="dark"]) .lens-language-point strong,
+:root:not([data-theme="dark"]) .spell-prompt-card strong,
 :root:not([data-theme="dark"]) .clip-method-head h5,
 :root:not([data-theme="dark"]) .lighting-prompt-guide .notice-card h4,
 :root:not([data-theme="dark"]) .lighting-prompt-guide .notice-guide h5,
@@ -2697,6 +2824,10 @@ body.security-protected a {
 :root:not([data-theme="dark"]) .arrow-use-card p,
 :root:not([data-theme="dark"]) .arrow-camera-gallery-panel p,
 :root:not([data-theme="dark"]) .cinema-guide-copy p,
+:root:not([data-theme="dark"]) .lens-language-summary,
+:root:not([data-theme="dark"]) .lens-language-point p,
+:root:not([data-theme="dark"]) .spell-prompt-summary,
+:root:not([data-theme="dark"]) .spell-prompt-card p,
 :root:not([data-theme="dark"]) .clip-method-card p,
 :root:not([data-theme="dark"]) .lighting-prompt-guide .notice-card li,
 :root:not([data-theme="dark"]) .lighting-prompt-guide .notice-card-intro,
@@ -2723,6 +2854,8 @@ body.security-protected a {
 
 :root:not([data-theme="dark"]) .arrow-use-card,
 :root:not([data-theme="dark"]) .cinema-guide-card,
+:root:not([data-theme="dark"]) .lens-language-point,
+:root:not([data-theme="dark"]) .spell-prompt-card,
 :root:not([data-theme="dark"]) .reconstruction-guide-card,
 :root:not([data-theme="dark"]) .clip-method-card,
 :root:not([data-theme="dark"]) .lighting-prompt-guide .notice-card,
@@ -2739,6 +2872,7 @@ body.security-protected a {
 
 :root:not([data-theme="dark"]) .arrow-prompt-card span,
 :root:not([data-theme="dark"]) .cinema-guide-copy > span,
+:root:not([data-theme="dark"]) .spell-prompt-card > span,
 :root:not([data-theme="dark"]) .clip-method-head span {
   color: #0f5f58;
   background: rgba(23, 124, 114, 0.1);
@@ -3481,6 +3615,8 @@ body.security-protected a {
   .arrow-prompt-grid,
   .arrow-camera-gallery,
   .cinema-guide-grid,
+  .lens-language-point-grid,
+  .spell-prompt-grid,
   .clip-method-grid,
   .notice-guide-grid {
     grid-template-columns: 1fr;
@@ -3773,6 +3909,8 @@ body.security-protected a {
 
   .production-grid,
   .quality-strip,
+  .lens-language-point-grid,
+  .spell-prompt-grid,
   .clip-method-grid,
   .notice-grid,
   .storyboard-meta-grid,
@@ -3836,6 +3974,10 @@ body.security-protected a {
   .arrow-use-card p,
   .arrow-camera-gallery-panel p,
   .cinema-guide-copy p,
+  .lens-language-summary,
+  .lens-language-point p,
+  .spell-prompt-summary,
+  .spell-prompt-card p,
   .clip-method-card p,
   .cinema-guide-prompt code,
   .cinema-guide-example code,

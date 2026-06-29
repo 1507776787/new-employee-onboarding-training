@@ -331,6 +331,8 @@ const phaseNavItems = [
       { id: 'phase-04-storyboard-format', title: '分镜表规范' },
       { id: 'phase-04-reference', title: '图片参考' },
       { id: 'phase-04-cinematography-guide', title: '摄影参数' },
+      { id: 'phase-04-lens-language-guide', title: '镜头语言速查' },
+      { id: 'phase-04-spell-prompt-guide', title: '法术提示词' },
       { id: 'phase-04-lighting-guide', title: 'AI 打光' },
       { id: 'phase-04-reconstruction-guide', title: '低清图重构' },
       { id: 'phase-04-arrow-camera', title: '箭头运镜' },
@@ -566,6 +568,200 @@ const cinematographyGuide = {
   ],
   examplePrompt:
     '真人写实古装战争短剧，24mm 广角建立城墙和军阵，随后切 85mm 中长焦人物半身特写，f/2.0 浅景深，低机位仰拍，人物位于左上黄金点，伦勃朗光，冷暖对比色，盔甲金属磨损真实，背景旗帜轻微虚化，1/125s 自然运动模糊，电影级质感。',
+};
+
+const lensLanguageGuide = {
+  intro:
+    '把焦段、特殊镜头和拍摄视角拆成可直接写进分镜提示词的镜头语言。先用焦段控制画面远近和景深，再用创意镜头制造辨识度，最后用视角塑造人物气场与情绪。',
+  sections: [
+    {
+      title: '01 焦段选择：控制画面远近与构图',
+      image: '/operation-assets/lens-language-guide-01.jpg',
+      summary:
+        '焦段决定取景范围、人物比例、背景虚化和叙事质感。新手可以先熟记 16mm、35mm、50mm、85mm、135mm 五类焦段，再根据剧情功能选择画面远近。',
+      points: [
+        {
+          term: '16mm 超广角',
+          text: '适合大场景、全景、环境氛围镜头，画面开阔，空间感强。',
+        },
+        {
+          term: '35mm 人文纪实焦段',
+          text: '视角自然舒适，能兼顾人物与环境，适合日常剧情和生活化叙事。',
+        },
+        {
+          term: '50mm 标准人像焦段',
+          text: '畸变少，人物比例真实，属于百搭不出错的通用焦段。',
+        },
+        {
+          term: '85mm 经典人像焦段',
+          text: '背景压缩柔和，人物五官更突出，适合女主特写和人物高级感镜头。',
+        },
+        {
+          term: '135mm 超长焦特写',
+          text: '背景虚化更强，能精准聚焦人物神情，适合情绪特写和氛围感镜头。',
+        },
+      ],
+    },
+    {
+      title: '02 创意镜头：跳出普通拍摄风格',
+      image: '/operation-assets/lens-language-guide-02.jpg',
+      summary:
+        '当画面需要更强记忆点时，可以加入广角透视、鱼眼、移轴、微距或前景透视镜头，让短剧画面从常规拍摄里跳出来。',
+      points: [
+        {
+          term: '广角透视镜头',
+          text: '适合表现空间纵深、人物关系和环境压迫感。',
+        },
+        {
+          term: '鱼眼镜头',
+          text: '画面夸张、有变形感，适合惊讶、梦境、错乱或喜剧化效果。',
+        },
+        {
+          term: '移轴微缩镜头',
+          text: '让场景呈现微缩模型感，适合梦幻、童话、回忆或特殊风格画面。',
+        },
+        {
+          term: '微距特写镜头',
+          text: '聚焦眼神、手部、道具细节，适合情绪推进和关键物件强调。',
+        },
+        {
+          term: '透视前景镜头',
+          text: '利用花草、门框、玻璃等前景遮挡，增强层次感和窥视感。',
+        },
+      ],
+    },
+    {
+      title: '03 拍摄视角：塑造人物气质与情绪氛围',
+      image: '/operation-assets/lens-language-guide-03.jpg',
+      summary:
+        '视角会直接影响人物气场和观众对角色的感受。短剧生成时可以根据人物关系、情绪强弱和剧情功能选择不同角度。',
+      points: [
+        {
+          term: '平视视角',
+          text: '自然、稳定，适合普通对话、人物介绍和日常剧情。',
+        },
+        {
+          term: '低角度仰拍',
+          text: '增强人物气场，适合强势、压迫、登场和反击类镜头。',
+        },
+        {
+          term: '轻柔俯拍',
+          text: '人物更柔和脆弱，适合失落、思考和内心戏。',
+        },
+        {
+          term: '高空俯拍',
+          text: '强调人物渺小、孤独或环境关系，适合转场、情绪铺垫和空间交代。',
+        },
+        {
+          term: '虫视仰拍',
+          text: '视角更夸张，压迫感更强，适合强人物气场、紧张氛围和视觉冲击镜头。',
+        },
+      ],
+    },
+  ],
+};
+
+const spellPromptGuide = {
+  intro:
+    '这组提示词适合玄幻、仙侠、战斗特效类短剧镜头。写提示词时要同时交代站姿、手势、灵力颜色、特效形态、运动方向和击发结果，避免只写“释放法术”这类泛词。',
+  sections: [
+    {
+      title: '01 基础攻击与防御法术',
+      image: '/operation-assets/spell-prompt-guide-01.jpg',
+      summary:
+        '适合常规战斗镜头，重点写清楚施法动作、能量颜色、凝聚位置和法术飞行方向，用来快速建立仙侠战斗的视觉冲击。',
+      spells: [
+        {
+          name: '火球术',
+          text: '双脚稳稳踏地，身形微沉，单掌向前推出，掌心凝聚炽红火团，焰光跳动刺眼，发力瞬间火球裹挟热浪呼啸轰出。',
+        },
+        {
+          name: '冰锥术',
+          text: '双腿分立站稳，上身前倾，五指在身前快速凝诀，寒气自掌心蔓延，数根泛着冷光的冰锥凭空成型，齐齐射向目标。',
+        },
+        {
+          name: '风刃术',
+          text: '侧身站立，重心落在后脚，双掌横挥，青色气流凝结成锋利光刃，数道风刃交错飞出，划破空气发出锐响。',
+        },
+        {
+          name: '雷弧弹',
+          text: '身姿挺拔，手臂前伸，指尖迸发蓝紫色电光，灵力汇聚成带电光球，雷弧缠绕球体，脱手后一路闪击向前。',
+        },
+        {
+          name: '灵力护罩',
+          text: '沉腰扎步，双臂向两侧划开，淡色灵光从体内涌出，在周身凝成半球形光罩，光壁流转纹路，隔绝外力冲击。',
+        },
+        {
+          name: '踏空而行',
+          text: '膝盖微曲，脚下灵光闪烁，双手自然虚按两侧，足底生出流光托举身体，步伐轻点凌空迈步，衣袂随风飘动。',
+        },
+      ],
+    },
+    {
+      title: '02 控制、分身与辅助法术',
+      image: '/operation-assets/spell-prompt-guide-02.jpg',
+      summary:
+        '适合需要战术变化、人物协作或辅助状态的镜头。重点写结印、符文、光绳、剑气、修复光晕和隐匿过程，让法术效果更具体。',
+      spells: [
+        {
+          name: '分身术',
+          text: '原地静立，周身灵力震荡，双手快速结印，光影接连分化，数道外形一致的分身从本体旁显现，虚实交错难以分辨。',
+        },
+        {
+          name: '束缚咒',
+          text: '站姿端正，手臂平举，十指交织缠绕，淡色光绳自指尖飞出，灵活穿梭后牢牢捆缚目标，绳身布满细碎符文。',
+        },
+        {
+          name: '剑气斩',
+          text: '一脚前踏蓄力，单手并指成剑指，指尖凝练细长白光剑气，手臂猛然劈落，一道狭长光斩横扫而出，撕裂前方空间。',
+        },
+        {
+          name: '治愈灵光',
+          text: '盘膝而坐，腰背挺直，双掌轻贴患处，暖白色光晕源源不断涌出，柔光渗入躯体，体表浮现细碎光纹修复损伤。',
+        },
+        {
+          name: '土刺突刺',
+          text: '双脚扎根地面，单掌按向地面，灵力灌入地底，地表接连隆起，尖锐石刺破土而出，带着土黄色光芒向上穿刺。',
+        },
+        {
+          name: '隐身术',
+          text: '静立不动，双手在胸前画圈结印，周身蒙上一层朦胧雾光，身影逐渐变得透明，气息与光影一同隐匿于环境之中。',
+        },
+      ],
+    },
+    {
+      title: '03 身法、环境与高阶法术',
+      image: '/operation-assets/spell-prompt-guide-03.jpg',
+      summary:
+        '适合大场面、转场、躲避、阻隔和高阶术法镜头。重点写环境变化、元素屏障、身形移动、雾气遮蔽和法阵光效。',
+      spells: [
+        {
+          name: '御风术',
+          text: '双脚平稳站立，身形微提，双掌在身侧向上虚引，淡青气流缠裹周身，踏空之时风劲托举身形，来去迅捷无声。',
+        },
+        {
+          name: '火墙术',
+          text: '沉腰扎步，双臂左右展开，双掌同时向前推送，数道火柱拔地而起连成火墙，赤红火光熊熊燃烧，阻隔前路与攻势。',
+        },
+        {
+          name: '水幕天华',
+          text: '立身中正，双手于胸前翻转结印，水汽在空中汇聚成晶莹水幕，波光流转，既能抵挡术法攻击，也可折射视线。',
+        },
+        {
+          name: '遁地术',
+          text: '屈膝俯身，单掌按向地面，灵力灌入土层，周身泛起土黄色灵光，身形转瞬沉入地下，地面仅留淡淡涟漪。',
+        },
+        {
+          name: '凝神诀',
+          text: '盘膝端坐，腰背挺直，双手于膝上掐定静心法印，莹白微光笼罩眉心，平复心绪，稳固神魂，抵御幻术侵扰。',
+        },
+        {
+          name: '化雾术',
+          text: '脚步轻移，单手在身前缓缓挥划，灰白浓雾自掌心源源不断涌出，隐去身形与气息，便于隐匿脱身。',
+        },
+      ],
+    },
+  ],
 };
 
 const imageReconstructionGuide = {
@@ -1446,6 +1642,8 @@ function App() {
 
             <StoryboardReferencePanel id="phase-04-reference" />
             <CinematographyGuide id="phase-04-cinematography-guide" />
+            <LensLanguageGuide id="phase-04-lens-language-guide" />
+            <SpellPromptGuide id="phase-04-spell-prompt-guide" />
             <LightingPromptGuide id="phase-04-lighting-guide" />
             <ImageReconstructionGuide id="phase-04-reconstruction-guide" />
             <ArrowCameraMethod id="phase-04-arrow-camera" />
@@ -2483,6 +2681,83 @@ function CinematographyGuide({ id }) {
             <code>{cinematographyGuide.examplePrompt}</code>
           </div>
         </GuideSubPanel>
+    </CollapsiblePanel>
+  );
+}
+
+function LensLanguageGuide({ id }) {
+  return (
+    <CollapsiblePanel
+      bodyClassName="arrow-camera-body"
+      className="arrow-camera-method lens-language-guide"
+      desc={lensLanguageGuide.intro}
+      headingClassName="arrow-camera-head"
+      id={id}
+      kicker="镜头语言速查"
+      meta={<div className="arrow-camera-source">适合补充到分镜提示词、单镜头描述、人物气场和情绪氛围控制里。</div>}
+      title="镜头语言速查：焦段、创意镜头与拍摄视角"
+    >
+      {lensLanguageGuide.sections.map((section) => (
+        <GuideSubPanel className="lens-language-panel" key={section.title} title={section.title}>
+          <p className="lens-language-summary">{section.summary}</p>
+          <div className="lens-language-point-grid">
+            {section.points.map((point) => (
+              <article className="lens-language-point" key={point.term}>
+                <strong>{point.term}</strong>
+                <p>{point.text}</p>
+              </article>
+            ))}
+          </div>
+          <figure className="arrow-camera-figure lens-language-figure">
+            <PreviewableImage
+              src={section.image}
+              alt={`${section.title} 参考图`}
+              previewAlt={`${section.title} 参考图`}
+              triggerClassName="arrow-camera-image-trigger lens-language-image-trigger"
+            />
+          </figure>
+        </GuideSubPanel>
+      ))}
+    </CollapsiblePanel>
+  );
+}
+
+function SpellPromptGuide({ id }) {
+  return (
+    <CollapsiblePanel
+      bodyClassName="arrow-camera-body"
+      className="arrow-camera-method spell-prompt-guide"
+      desc={spellPromptGuide.intro}
+      headingClassName="arrow-camera-head"
+      id={id}
+      kicker="仙侠特效"
+      meta={<div className="arrow-camera-source">适合玄幻、仙侠、战斗、身法、护盾、隐匿和治疗类镜头的提示词补充。</div>}
+      title="仙侠法术特效提示词速查"
+    >
+      {spellPromptGuide.sections.map((section) => (
+        <GuideSubPanel className="spell-prompt-panel" key={section.title} title={section.title}>
+          <p className="spell-prompt-summary">{section.summary}</p>
+          <div className="spell-prompt-grid">
+            {section.spells.map((spell, spellIndex) => (
+              <article className="spell-prompt-card" key={spell.name}>
+                <span>{String(spellIndex + 1).padStart(2, '0')}</span>
+                <div>
+                  <strong>{spell.name}</strong>
+                  <p>{spell.text}</p>
+                </div>
+              </article>
+            ))}
+          </div>
+          <figure className="arrow-camera-figure spell-prompt-figure">
+            <PreviewableImage
+              src={section.image}
+              alt={`${section.title} 参考图`}
+              previewAlt={`${section.title} 参考图`}
+              triggerClassName="arrow-camera-image-trigger spell-prompt-image-trigger"
+            />
+          </figure>
+        </GuideSubPanel>
+      ))}
     </CollapsiblePanel>
   );
 }

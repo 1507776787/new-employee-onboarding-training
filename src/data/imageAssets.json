@@ -464,5 +464,59 @@
     "height": 1011,
     "originalBytes": 287382,
     "optimizedBytes": 167894
+  },
+  "/operation-assets/lens-language-guide-01.jpg": {
+    "src": "/operation-assets/lens-language-guide-01.webp",
+    "width": 1272,
+    "height": 1694,
+    "optimizedWidth": 1272,
+    "optimizedHeight": 1694,
+    "originalBytes": 772418,
+    "optimizedBytes": 221264
+  },
+  "/operation-assets/lens-language-guide-02.jpg": {
+    "src": "/operation-assets/lens-language-guide-02.webp",
+    "width": 1272,
+    "height": 1738,
+    "optimizedWidth": 1272,
+    "optimizedHeight": 1738,
+    "originalBytes": 640180,
+    "optimizedBytes": 160948
+  },
+  "/operation-assets/lens-language-guide-03.jpg": {
+    "src": "/operation-assets/lens-language-guide-03.webp",
+    "width": 1272,
+    "height": 1722,
+    "optimizedWidth": 1272,
+    "optimizedHeight": 1722,
+    "originalBytes": 598222,
+    "optimizedBytes": 139144
+  },
+  "/operation-assets/spell-prompt-guide-01.jpg": {
+    "src": "/operation-assets/spell-prompt-guide-01.webp",
+    "width": 1272,
+    "height": 1694,
+    "optimizedWidth": 1272,
+    "optimizedHeight": 1694,
+    "originalBytes": 918141,
+    "optimizedBytes": 298872
+  },
+  "/operation-assets/spell-prompt-guide-02.jpg": {
+    "src": "/operation-assets/spell-prompt-guide-02.webp",
+    "width": 1272,
+    "height": 1690,
+    "optimizedWidth": 1272,
+    "optimizedHeight": 1690,
+    "originalBytes": 921843,
+    "optimizedBytes": 305938
+  },
+  "/operation-assets/spell-prompt-guide-03.jpg": {
+    "src": "/operation-assets/spell-prompt-guide-03.webp",
+    "width": 1272,
+    "height": 1698,
+    "optimizedWidth": 1272,
+    "optimizedHeight": 1698,
+    "originalBytes": 949088,
+    "optimizedBytes": 316230
   }
 }
